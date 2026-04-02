@@ -132,6 +132,9 @@ export const SignInForm = ({
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const emailValue = form.watch('email');
+  const passwordValue = form.watch('password');
+  const hasInput = Boolean(emailValue && passwordValue);
 
   const onCloseTwoFactorAuthenticationDialog = () => {
     form.setValue('totpCode', '');
@@ -325,11 +328,11 @@ export const SignInForm = ({
   return (
     <Form {...form}>
       <form
-        className={cn('flex w-full flex-col gap-y-4', className)}
+        className={cn('flex w-full flex-col gap-y-[15px]', className)}
         onSubmit={form.handleSubmit(onFormSubmit)}
       >
         <fieldset
-          className="flex w-full flex-col gap-y-4"
+          className="flex w-full flex-col gap-y-[15px]"
           disabled={isSubmitting || isPasskeyLoading}
         >
           <FormField
@@ -337,12 +340,17 @@ export const SignInForm = ({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="sr-only">
                   <Trans>Email</Trans>
                 </FormLabel>
 
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder={_(msg`Username`)}
+                    className="h-[46px] w-[360px] rounded-full border border-white/20 bg-transparent px-6 text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -355,35 +363,51 @@ export const SignInForm = ({
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="sr-only">
                   <Trans>Password</Trans>
                 </FormLabel>
 
                 <FormControl>
-                  <PasswordInput {...field} />
+                  <PasswordInput
+                    placeholder={_(msg`Password`)}
+                    className="h-[46px] w-[360px] rounded-full border border-white/20 bg-transparent px-6 text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormMessage />
-
-                <p className="mt-2 text-right">
-                  <Link
-                    to="/forgot-password"
-                    className="text-sm text-muted-foreground duration-200 hover:opacity-70"
-                  >
-                    <Trans>Forgot your password?</Trans>
-                  </Link>
-                </p>
               </FormItem>
             )}
           />
+
+          <div className="flex w-[360px] items-center justify-between text-sm">
+            <label className="flex items-center gap-2 text-gray-400">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border border-gray-600 bg-gray-800 accent-cyan-300"
+              />
+              <span>
+                <Trans>Remember me</Trans>
+              </span>
+            </label>
+
+            <Link to="/forgot-password" className="text-cyan-300 hover:underline">
+              <Trans>Forgot password</Trans>
+            </Link>
+          </div>
 
           <Button
             type="submit"
             size="lg"
             loading={isSubmitting}
-            className="dark:bg-documenso dark:hover:opacity-90"
+            className={cn(
+              'mt-1 h-[44px] w-[360px] rounded-[10px] px-6',
+              hasInput
+                ? 'border border-[#48EAE5] bg-[#48EAE5] text-[#0B0C0E] hover:bg-[#38d4cf]'
+                : 'border border-[#495057] bg-[#2B3035] text-white hover:bg-[#353b42]',
+            )}
           >
-            {isSubmitting ? <Trans>Signing in...</Trans> : <Trans>Sign In</Trans>}
+            {isSubmitting ? <Trans>Signing in...</Trans> : <Trans>Login</Trans>}
           </Button>
 
           {!isEmbeddedRedirect && (
@@ -403,7 +427,7 @@ export const SignInForm = ({
                   type="button"
                   size="lg"
                   variant="outline"
-                  className="border bg-background text-muted-foreground"
+                  className="border-white/10 bg-[#04090f] text-slate-200 hover:bg-[#08111c]"
                   disabled={isSubmitting}
                   onClick={onSignInWithGoogleClick}
                 >
@@ -417,7 +441,7 @@ export const SignInForm = ({
                   type="button"
                   size="lg"
                   variant="outline"
-                  className="border bg-background text-muted-foreground"
+                  className="border-white/10 bg-[#04090f] text-slate-200 hover:bg-[#08111c]"
                   disabled={isSubmitting}
                   onClick={onSignInWithMicrosoftClick}
                 >
@@ -435,7 +459,7 @@ export const SignInForm = ({
                   type="button"
                   size="lg"
                   variant="outline"
-                  className="border bg-background text-muted-foreground"
+                  className="border-white/10 bg-[#04090f] text-slate-200 hover:bg-[#08111c]"
                   disabled={isSubmitting}
                   onClick={onSignInWithOIDCClick}
                 >
@@ -452,7 +476,7 @@ export const SignInForm = ({
             variant="outline"
             disabled={isSubmitting}
             loading={isPasskeyLoading}
-            className="border bg-background text-muted-foreground"
+            className="h-[40px] w-[360px] border border-white/20 bg-transparent text-slate-200 hover:bg-[#08111c]"
             onClick={onSignInWithPasskey}
           >
             {!isPasskeyLoading && <KeyRoundIcon className="-ml-1 mr-1 h-5 w-5" />}

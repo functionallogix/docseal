@@ -78,45 +78,83 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
   }, []);
 
   return (
-    <div className="w-screen max-w-lg px-4">
-      <div className="z-10 rounded-xl border border-border bg-neutral-100 p-6 dark:bg-background">
-        {signupError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertDescription>{_(signupError)}</AlertDescription>
-          </Alert>
-        )}
-
-        <h1 className="text-2xl font-semibold">
-          <Trans>Sign in to your account</Trans>
-        </h1>
-
-        <p className="mt-2 text-sm text-muted-foreground">
-          <Trans>Welcome back, we are lucky to have you.</Trans>
-        </p>
-        <hr className="-mx-6 my-4" />
-
-        <SignInForm
-          isGoogleSSOEnabled={isGoogleSSOEnabled}
-          isMicrosoftSSOEnabled={isMicrosoftSSOEnabled}
-          isOIDCSSOEnabled={isOIDCSSOEnabled}
-          oidcProviderLabel={oidcProviderLabel}
-          returnTo={returnTo}
-        />
-
-        {!isEmbeddedRedirect && env('NEXT_PUBLIC_DISABLE_SIGNUP') !== 'true' && (
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            <Trans>
-              Don't have an account?{' '}
-              <Link
-                to={returnTo ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : '/signup'}
-                className="text-documenso-700 duration-200 hover:opacity-70"
-              >
-                Sign up
-              </Link>
-            </Trans>
-          </p>
-        )}
+    <div className="relative min-h-screen overflow-hidden bg-black">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-0 top-0 h-full w-[48%] overflow-hidden">
+          <img
+            src="/static/bg-left.svg"
+            alt=""
+            aria-hidden="true"
+            className="absolute left-[-21%] top-[-18%] h-[136%] w-[136%] max-w-none object-cover opacity-95"
+          />
+        </div>
       </div>
+
+      <header className="absolute right-0 top-0 z-20 p-6">
+        <img src="/static/logo-docseal.svg" alt="Docseal logo" className="h-8 w-auto opacity-90" />
+      </header>
+
+      <main className="relative z-10 flex min-h-screen items-center justify-end pb-32 pr-16">
+        <section className="ml-16 w-full max-w-md text-white">
+          <div className="mb-6">
+            <div className="flex h-[60px] w-[60px] items-center justify-center rounded-[15px] border border-[#48EAE566] bg-[#48EAE533] px-[17px] py-[13px]">
+              <img
+                src="/static/nexis-user-icon.svg"
+                alt="User icon"
+                className="h-7 w-7"
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+
+          <div className="w-full">
+            {signupError && (
+              <Alert variant="destructive" className="mb-5 w-[360px]">
+                <AlertDescription>{_(signupError)}</AlertDescription>
+              </Alert>
+            )}
+
+            <h1 className="mb-2 text-3xl font-bold leading-tight">
+              <Trans>Log in to your account</Trans>
+            </h1>
+
+            <p className="mb-8 text-base text-gray-400">
+              <Trans>Welcome back! Please enter your details.</Trans>
+            </p>
+
+            <div className="w-[360px]">
+              <SignInForm
+                className="nexis-signin-form"
+                isGoogleSSOEnabled={isGoogleSSOEnabled}
+                isMicrosoftSSOEnabled={isMicrosoftSSOEnabled}
+                isOIDCSSOEnabled={isOIDCSSOEnabled}
+                oidcProviderLabel={oidcProviderLabel}
+                returnTo={returnTo}
+              />
+            </div>
+
+            {!isEmbeddedRedirect && env('NEXT_PUBLIC_DISABLE_SIGNUP') !== 'true' && (
+              <p className="mt-6 w-[360px] text-left text-sm text-gray-400">
+                <Trans>
+                  Don't have an account?{' '}
+                  <Link
+                    to={returnTo ? `/signup?returnTo=${encodeURIComponent(returnTo)}` : '/signup'}
+                    className="text-cyan-300 hover:underline"
+                  >
+                    Sign up
+                  </Link>
+                </Trans>
+              </p>
+            )}
+          </div>
+        </section>
+      </main>
+
+      <footer className="absolute bottom-0 right-0 z-10 flex items-center gap-3 p-6">
+        <span className="text-sm text-white">Powered by</span>
+        <img src="/static/nexis-mos-logo.svg" alt="MOS logo" className="h-8 w-8" />
+        <span className="text-sm text-white">Mapped out solutions</span>
+      </footer>
     </div>
   );
 }
