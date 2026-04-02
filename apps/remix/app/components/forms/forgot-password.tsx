@@ -64,20 +64,25 @@ export const ForgotPasswordForm = ({ className }: ForgotPasswordFormProps) => {
   return (
     <Form {...form}>
       <form
-        className={cn('flex w-full flex-col gap-y-4', className)}
+        className={cn('flex w-full flex-col gap-y-[15px]', className)}
         onSubmit={form.handleSubmit(onFormSubmit)}
       >
-        <fieldset className="flex w-full flex-col gap-y-4" disabled={isSubmitting}>
+        <fieldset className="flex w-full flex-col gap-y-[15px]" disabled={isSubmitting}>
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="sr-only">
                   <Trans>Email</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder={_(msg`Email address`)}
+                    className="h-[46px] w-[360px] rounded-full border border-white/20 bg-transparent px-6 text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,7 +90,11 @@ export const ForgotPasswordForm = ({ className }: ForgotPasswordFormProps) => {
           />
         </fieldset>
 
-        <Button size="lg" loading={isSubmitting}>
+        <Button
+          size="lg"
+          loading={isSubmitting}
+          className="mt-2 h-[44px] w-[360px] rounded-[10px] border border-[#48EAE5] bg-[#48EAE5] px-6 text-[#0B0C0E] hover:bg-[#38d4cf]"
+        >
           {isSubmitting ? <Trans>Sending Reset Email...</Trans> : <Trans>Reset Password</Trans>}
         </Button>
       </form>

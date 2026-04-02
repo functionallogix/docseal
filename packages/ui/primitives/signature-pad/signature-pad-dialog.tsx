@@ -2,10 +2,11 @@ import type { HTMLAttributes } from 'react';
 import { useState } from 'react';
 
 import type { MessageDescriptor } from '@lingui/core';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
 
-import { parseMessageDescriptor } from '@documenso/lib/utils/i18n';
 import { Dialog, DialogClose, DialogContent, DialogFooter } from '@documenso/ui/primitives/dialog';
 
 import { cn } from '../../lib/utils';
@@ -41,6 +42,15 @@ export const SignaturePadDialog = ({
 
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [signature, setSignature] = useState<string>(value ?? '');
+
+  const confirmLabel =
+    dialogConfirmText &&
+    (typeof dialogConfirmText === 'string'
+      ? dialogConfirmText
+      : // `i18n._` may be unavailable if no Lingui provider is mounted (e.g. SSR edge-cases).
+        ((i18n as unknown as { _: undefined | ((d: MessageDescriptor) => string) })?._?.(
+          dialogConfirmText,
+        ) ?? dialogConfirmText.id));
 
   return (
     <div
@@ -111,7 +121,44 @@ export const SignaturePadDialog = ({
       </motion.button>
 
       <Dialog open={showSignatureModal} onOpenChange={disabled ? undefined : setShowSignatureModal}>
-        <DialogContent hideClose={true} className="p-6 pt-4">
+        <DialogContent
+          position="center"
+          hideClose={true}
+          overlayClassName="bg-black/75 backdrop-blur-[2px]"
+          className={cn(
+            'nexis-signature-dialog relative w-[min(880px,calc(100vw-1.5rem))] gap-4 overflow-hidden rounded-[22px] border border-white/10 bg-[#06110f]/70 p-5 shadow-[0_40px_160px_rgba(0,0,0,0.8)] backdrop-blur-xl',
+            'sm:rounded-[26px] sm:p-6',
+            // Tabs look
+            '[&_[role=tabslist]]:gap-2 [&_[role=tabslist]]:border-white/10',
+            '[&_[role=tab]]:px-3 [&_[role=tab]]:py-3 [&_[role=tab]]:text-white/55',
+            '[&_[role=tab][data-state=active]]:text-white',
+            '[&_[role=tab]_.bg-foreground\\/40]:bg-[#48EAE5]/60',
+            // Signature panel look (transparent so dialog bg continues)
+            '[&_.aspect-signature-pad]:rounded-[18px] [&_.aspect-signature-pad]:border [&_.aspect-signature-pad]:border-white/10',
+            '[&_.aspect-signature-pad]:bg-transparent [&_.aspect-signature-pad]:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]',
+            '[&_.aspect-signature-pad]:backdrop-blur-0',
+            '[&_[role=tabpanel]]:!bg-transparent dark:[&_[role=tabpanel]]:!bg-transparent',
+          )}
+        >
+          <img
+            src="/static/signature-dialog-glow.svg"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-24 -top-24 h-[420px] w-[520px] select-none opacity-90"
+          />
+
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-black/20" />
+
+          <DialogClose asChild>
+            <button
+              type="button"
+              className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/70 transition hover:bg-white/[0.08] hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-300/40"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </DialogClose>
+
           <SignaturePad
             id="signature"
             fullName={fullName}
@@ -124,27 +171,28 @@ export const SignaturePadDialog = ({
             drawSignatureEnabled={drawSignatureEnabled}
           />
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="ghost">
-                <Trans>Cancel</Trans>
-              </Button>
-            </DialogClose>
-
+          <DialogFooter className="mt-1 gap-3 sm:flex-col sm:items-stretch sm:justify-start sm:space-x-0">
             <Button
               type="button"
+              size="lg"
               disabled={!signature}
+              className="h-11 w-full rounded-[14px] border border-[#48EAE5] bg-[#48EAE5] px-6 font-semibold text-[#0B0C0E] shadow-[0_10px_40px_rgba(72,234,229,0.15)] hover:bg-[#38d4cf]"
               onClick={() => {
                 onChange(signature);
                 setShowSignatureModal(false);
               }}
             >
-              {dialogConfirmText ? (
-                parseMessageDescriptor(i18n._, dialogConfirmText)
-              ) : (
-                <Trans>Next</Trans>
-              )}
+              {confirmLabel ?? <Trans>Next</Trans>}
             </Button>
+
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="h-10 w-full text-center text-sm text-cyan-300/90 transition hover:text-cyan-200"
+              >
+                <Trans>Cancel</Trans>
+              </button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

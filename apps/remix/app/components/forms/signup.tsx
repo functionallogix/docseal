@@ -11,7 +11,6 @@ import { FcGoogle } from 'react-icons/fc';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { z } from 'zod';
 
-import communityCardsImage from '@documenso/assets/images/community-cards.png';
 import { authClient } from '@documenso/auth/client';
 import { useAnalytics } from '@documenso/lib/client-only/hooks/use-analytics';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
@@ -30,8 +29,6 @@ import { Input } from '@documenso/ui/primitives/input';
 import { PasswordInput } from '@documenso/ui/primitives/password-input';
 import { SignaturePadDialog } from '@documenso/ui/primitives/signature-pad/signature-pad-dialog';
 import { useToast } from '@documenso/ui/primitives/use-toast';
-
-import { UserProfileTimur } from '~/components/general/user-profile-timur';
 
 export const ZSignUpFormSchema = z
   .object({
@@ -196,231 +193,205 @@ export const SignUpForm = ({
   }, [form]);
 
   return (
-    <div className={cn('flex justify-center gap-x-12', className)}>
-      <div className="relative hidden flex-1 overflow-hidden rounded-xl border border-border xl:flex">
-        <div className="absolute -inset-8 -z-[2] backdrop-blur">
-          <img
-            src={communityCardsImage}
-            alt="community-cards"
-            className="h-full w-full object-cover dark:brightness-95 dark:contrast-[70%] dark:invert"
-          />
-        </div>
-
-        <div className="absolute -inset-8 -z-[1] bg-background/50 backdrop-blur-[2px]" />
-
-        <div className="relative flex h-full w-full flex-col items-center justify-evenly">
-          <div className="rounded-2xl border bg-background px-4 py-1 text-sm font-medium">
-            <Trans>User profiles are here!</Trans>
-          </div>
-
-          <div className="w-full max-w-md">
-            <UserProfileTimur
-              rows={2}
-              className="rounded-2xl border border-border bg-background shadow-md"
+    <div className={cn('w-full', className)}>
+      <Form {...form}>
+        <form
+          className="flex w-full flex-col gap-y-2 text-sm"
+          onSubmit={form.handleSubmit(onFormSubmit)}
+        >
+          <fieldset className="flex w-full flex-col gap-y-2" disabled={isSubmitting}>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="sr-only">
+                    <Trans>Full Name</Trans>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder={_(msg`Full name`)}
+                      className="h-9 w-full rounded-full border border-white/20 bg-transparent px-4 text-sm text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div />
-        </div>
-      </div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="sr-only">
+                    <Trans>Email Address</Trans>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder={_(msg`Email address`)}
+                      className="h-9 w-full rounded-full border border-white/20 bg-transparent px-4 text-sm text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      <div className="relative z-10 flex min-h-[min(850px,80vh)] w-full max-w-lg flex-col rounded-xl border border-border bg-neutral-100 p-6 dark:bg-background">
-        <div className="h-20">
-          <h1 className="text-xl font-semibold md:text-2xl">
-            <Trans>Create a new account</Trans>
-          </h1>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="sr-only">
+                    <Trans>Password</Trans>
+                  </FormLabel>
 
-          <p className="mt-2 text-xs text-muted-foreground md:text-sm">
+                  <FormControl>
+                    <PasswordInput
+                      placeholder={_(msg`Password`)}
+                      className="h-9 w-full rounded-full border border-white/20 bg-transparent px-4 text-sm text-white placeholder:text-gray-500 focus-visible:ring-cyan-400/60"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="signature"
+              render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel className="sr-only">
+                    <Trans>Sign Here</Trans>
+                  </FormLabel>
+                  <FormControl>
+                    <SignaturePadDialog
+                      disabled={isSubmitting}
+                      value={value}
+                      dialogConfirmText={msg`Create account`}
+                      onChange={(v) => onChange(v ?? '')}
+                      className={cn(
+                        '!aspect-auto min-h-[12.5rem] w-full rounded-2xl border border-white/25 bg-white/[0.06]',
+                        '[&_svg]:!text-cyan-400/85',
+                        '[&_button]:rounded-2xl hover:[&_button]:bg-white/[0.08]',
+                      )}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {hasSocialAuthEnabled && (
+              <div className="relative flex items-center justify-center gap-x-4 py-1 text-[10px] uppercase tracking-wider text-slate-500">
+                <div className="h-px flex-1 bg-white/20" />
+                <span className="bg-transparent text-slate-400">
+                  <Trans>Or</Trans>
+                </span>
+                <div className="h-px flex-1 bg-white/20" />
+              </div>
+            )}
+
+            {isGoogleSSOEnabled && (
+              <Button
+                type="button"
+                size="sm"
+                variant={'outline'}
+                className="h-8 w-full border border-white/20 bg-transparent text-xs text-slate-200 hover:bg-[#08111c] md:h-9 md:text-sm"
+                disabled={isSubmitting}
+                onClick={onSignUpWithGoogleClick}
+              >
+                <FcGoogle className="mr-2 h-4 w-4" />
+                <Trans>Sign Up with Google</Trans>
+              </Button>
+            )}
+
+            {isMicrosoftSSOEnabled && (
+              <Button
+                type="button"
+                size="sm"
+                variant={'outline'}
+                className="h-8 w-full border border-white/20 bg-transparent text-xs text-slate-200 hover:bg-[#08111c] md:h-9 md:text-sm"
+                disabled={isSubmitting}
+                onClick={onSignUpWithMicrosoftClick}
+              >
+                <img
+                  className="mr-2 h-3.5 w-3.5"
+                  alt="Microsoft Logo"
+                  src={'/static/microsoft.svg'}
+                />
+                <Trans>Sign Up with Microsoft</Trans>
+              </Button>
+            )}
+
+            {isOIDCSSOEnabled && (
+              <Button
+                type="button"
+                size="sm"
+                variant={'outline'}
+                className="h-8 w-full border border-white/20 bg-transparent text-xs text-slate-200 hover:bg-[#08111c] md:h-9 md:text-sm"
+                disabled={isSubmitting}
+                onClick={onSignUpWithOIDCClick}
+              >
+                <FaIdCardClip className="mr-2 h-4 w-4" />
+                <Trans>Sign Up with OIDC</Trans>
+              </Button>
+            )}
+          </fieldset>
+
+          <p className="mb-2 text-left text-[11px] text-gray-400 md:mb-3 md:text-xs">
             <Trans>
-              Create your account and start using state-of-the-art document signing. Open and
-              beautiful signing is within your grasp.
+              Already have an account?{' '}
+              <Link
+                to={returnTo ? `/signin?returnTo=${encodeURIComponent(returnTo)}` : '/signin'}
+                className="text-cyan-300 hover:underline"
+              >
+                Sign in
+              </Link>
             </Trans>
           </p>
-        </div>
 
-        <hr className="-mx-6 my-4" />
-
-        <Form {...form}>
-          <form
-            className="flex w-full flex-1 flex-col gap-y-4"
-            onSubmit={form.handleSubmit(onFormSubmit)}
+          <Button
+            loading={form.formState.isSubmitting}
+            type="submit"
+            size="sm"
+            className="h-9 w-full rounded-[10px] border border-[#48EAE5] bg-[#48EAE5] px-4 text-sm font-semibold text-[#0B0C0E] hover:bg-[#38d4cf] md:h-10"
           >
-            <fieldset
-              className={cn(
-                'flex h-[550px] w-full flex-col gap-y-4',
-                hasSocialAuthEnabled && 'h-[650px]',
-              )}
-              disabled={isSubmitting}
-            >
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <Trans>Full Name</Trans>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <Trans>Create account</Trans>
+          </Button>
+        </form>
+      </Form>
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <Trans>Email Address</Trans>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <Trans>Password</Trans>
-                    </FormLabel>
-
-                    <FormControl>
-                      <PasswordInput {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="signature"
-                render={({ field: { onChange, value } }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <Trans>Sign Here</Trans>
-                    </FormLabel>
-                    <FormControl>
-                      <SignaturePadDialog
-                        disabled={isSubmitting}
-                        value={value}
-                        onChange={(v) => onChange(v ?? '')}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {hasSocialAuthEnabled && (
-                <div className="relative flex items-center justify-center gap-x-4 py-2 text-xs uppercase">
-                  <div className="h-px flex-1 bg-border" />
-                  <span className="bg-transparent text-muted-foreground">
-                    <Trans>Or</Trans>
-                  </span>
-                  <div className="h-px flex-1 bg-border" />
-                </div>
-              )}
-
-              {isGoogleSSOEnabled && (
-                <Button
-                  type="button"
-                  size="lg"
-                  variant={'outline'}
-                  className="border bg-background text-muted-foreground"
-                  disabled={isSubmitting}
-                  onClick={onSignUpWithGoogleClick}
-                >
-                  <FcGoogle className="mr-2 h-5 w-5" />
-                  <Trans>Sign Up with Google</Trans>
-                </Button>
-              )}
-
-              {isMicrosoftSSOEnabled && (
-                <Button
-                  type="button"
-                  size="lg"
-                  variant={'outline'}
-                  className="border bg-background text-muted-foreground"
-                  disabled={isSubmitting}
-                  onClick={onSignUpWithMicrosoftClick}
-                >
-                  <img
-                    className="mr-2 h-4 w-4"
-                    alt="Microsoft Logo"
-                    src={'/static/microsoft.svg'}
-                  />
-                  <Trans>Sign Up with Microsoft</Trans>
-                </Button>
-              )}
-
-              {isOIDCSSOEnabled && (
-                <Button
-                  type="button"
-                  size="lg"
-                  variant={'outline'}
-                  className="border bg-background text-muted-foreground"
-                  disabled={isSubmitting}
-                  onClick={onSignUpWithOIDCClick}
-                >
-                  <FaIdCardClip className="mr-2 h-5 w-5" />
-                  <Trans>Sign Up with OIDC</Trans>
-                </Button>
-              )}
-
-              <p className="mt-4 text-sm text-muted-foreground">
-                <Trans>
-                  Already have an account?{' '}
-                  <Link to="/signin" className="text-documenso-700 duration-200 hover:opacity-70">
-                    Sign in instead
-                  </Link>
-                </Trans>
-              </p>
-            </fieldset>
-
-            <Button
-              loading={form.formState.isSubmitting}
-              type="submit"
-              size="lg"
-              className="mt-6 w-full"
-            >
-              <Trans>Create account</Trans>
-            </Button>
-          </form>
-        </Form>
-        <p className="mt-6 text-xs text-muted-foreground">
-          <Trans>
-            By proceeding, you agree to our{' '}
-            <Link
-              to="https://documen.so/terms"
-              target="_blank"
-              className="text-documenso-700 duration-200 hover:opacity-70"
-            >
-              Terms of Service
-            </Link>{' '}
-            and{' '}
-            <Link
-              to="https://documen.so/privacy"
-              target="_blank"
-              className="text-documenso-700 duration-200 hover:opacity-70"
-            >
-              Privacy Policy
-            </Link>
-            .
-          </Trans>
-        </p>
-      </div>
+      <p className="mt-2 w-full text-[10px] leading-snug text-gray-400 md:mt-3 md:text-[11px]">
+        <Trans>
+          By proceeding, you agree to our{' '}
+          <Link
+            to="https://documen.so/terms"
+            target="_blank"
+            className="text-cyan-300 hover:underline"
+          >
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link
+            to="https://documen.so/privacy"
+            target="_blank"
+            className="text-cyan-300 hover:underline"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </Trans>
+      </p>
     </div>
   );
 };

@@ -69,3 +69,11 @@
     --font-noto: 'Noto Sans', 'Noto Sans Korean', 'Noto Sans Japanese', 'Noto Sans Chinese';
   }
 }
+
+/* Nexis auth: one screen, no page scroll (shell is h-dvh). */
+html:has(.auth-nexis-viewport),
+html:has(.auth-nexis-viewport) body {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
