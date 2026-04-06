@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { msg } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { EnvelopeType } from '@prisma/client';
 import { FolderType, OrganisationType } from '@prisma/client';
 import { useParams, useSearchParams } from 'react-router';
@@ -12,14 +11,13 @@ import { useSessionStorage } from '@documenso/lib/client-only/hooks/use-session-
 import { useCurrentOrganisation } from '@documenso/lib/client-only/providers/organisation';
 import { STATS_COUNT_CAP } from '@documenso/lib/constants/document';
 import { SKIP_QUERY_BATCH_META } from '@documenso/lib/constants/trpc';
-import { formatAvatarUrl } from '@documenso/lib/utils/avatars';
 import { parseToIntegerArray } from '@documenso/lib/utils/params';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
 import { ExtendedDocumentStatus } from '@documenso/prisma/types/extended-document-status';
 import { trpc } from '@documenso/trpc/react';
 import type { TFindDocumentsInternalResponse } from '@documenso/trpc/server/document-router/find-documents-internal.types';
 import { ZFindDocumentsInternalRequestSchema } from '@documenso/trpc/server/document-router/find-documents-internal.types';
-import { Avatar, AvatarFallback, AvatarImage } from '@documenso/ui/primitives/avatar';
+import { cn } from '@documenso/ui/lib/utils';
 import type { RowSelectionState } from '@documenso/ui/primitives/data-table';
 import { Tabs, TabsList, TabsTrigger } from '@documenso/ui/primitives/tabs';
 
@@ -136,69 +134,65 @@ export default function DocumentsPage() {
   return (
     <EnvelopeDropZoneWrapper type={EnvelopeType.DOCUMENT}>
       <div className="mx-auto w-full max-w-screen-xl px-4 md:px-8">
-        <FolderGrid type={FolderType.DOCUMENT} parentId={folderId ?? null} />
+        <FolderGrid nexisChrome type={FolderType.DOCUMENT} parentId={folderId ?? null} />
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-8">
-          <div className="flex flex-row items-center">
-            <Avatar className="mr-3 h-12 w-12 border-2 border-solid border-white dark:border-border">
-              {team.avatarImageId && <AvatarImage src={formatAvatarUrl(team.avatarImageId)} />}
-              <AvatarFallback className="text-xs text-muted-foreground">
-                {team.name.slice(0, 1)}
-              </AvatarFallback>
-            </Avatar>
+        <div className="mt-6 border-t border-white/10 pt-6">
+          <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:gap-4">
+            <div className="flex h-11 w-max max-w-full items-center overflow-x-auto rounded-xl border border-white/10 bg-[#0a0a0a] px-2 md:px-3">
+              <Tabs value={findDocumentSearchParams.status || 'ALL'} className="w-max">
+                <TabsList className="inline-flex h-full w-max flex-nowrap items-center justify-start gap-1 bg-transparent p-0">
+                  {[
+                    ExtendedDocumentStatus.INBOX,
+                    ExtendedDocumentStatus.PENDING,
+                    ExtendedDocumentStatus.COMPLETED,
+                    ExtendedDocumentStatus.DRAFT,
+                    ExtendedDocumentStatus.ALL,
+                  ]
+                    .filter((value) => {
+                      if (organisation.type === OrganisationType.PERSONAL) {
+                        return value !== ExtendedDocumentStatus.INBOX;
+                      }
 
-            <h2 className="text-4xl font-semibold">
-              <Trans>Documents</Trans>
-            </h2>
-          </div>
-
-          <div className="-m-1 flex flex-wrap gap-x-4 gap-y-6 overflow-hidden p-1">
-            <Tabs value={findDocumentSearchParams.status || 'ALL'} className="overflow-x-auto">
-              <TabsList>
-                {[
-                  ExtendedDocumentStatus.INBOX,
-                  ExtendedDocumentStatus.PENDING,
-                  ExtendedDocumentStatus.COMPLETED,
-                  ExtendedDocumentStatus.DRAFT,
-                  ExtendedDocumentStatus.ALL,
-                ]
-                  .filter((value) => {
-                    if (organisation.type === OrganisationType.PERSONAL) {
-                      return value !== ExtendedDocumentStatus.INBOX;
-                    }
-
-                    return true;
-                  })
-                  .map((value) => (
-                    <TabsTrigger
-                      key={value}
-                      className="min-w-[60px] hover:text-foreground"
-                      value={value}
-                      asChild
-                    >
-                      <Link to={getTabHref(value)} preventScrollReset>
-                        <DocumentStatus status={value} />
-
-                        {value !== ExtendedDocumentStatus.ALL && (
-                          <span className="ml-1 inline-block opacity-50">
-                            {stats[value] >= STATS_COUNT_CAP
-                              ? `${STATS_COUNT_CAP.toLocaleString()}+`
-                              : stats[value]}
-                          </span>
+                      return true;
+                    })
+                    .map((value) => (
+                      <TabsTrigger
+                        key={value}
+                        className={cn(
+                          'min-w-[56px] rounded-md border-0 bg-transparent px-3 py-2 text-sm text-slate-400 shadow-none ring-offset-black hover:bg-white/5 hover:text-slate-200 data-[state=active]:bg-white/10 data-[state=active]:text-white',
                         )}
-                      </Link>
-                    </TabsTrigger>
-                  ))}
-              </TabsList>
-            </Tabs>
+                        value={value}
+                        asChild
+                      >
+                        <Link to={getTabHref(value)} preventScrollReset>
+                          <DocumentStatus status={value} />
 
-            {team && <DocumentsTableSenderFilter teamId={team.id} />}
-
-            <div className="flex w-48 flex-wrap items-center justify-between gap-x-2 gap-y-4">
-              <PeriodSelector />
+                          {value !== ExtendedDocumentStatus.ALL && (
+                            <span className="ml-1 inline-block opacity-50">
+                              {stats[value] >= STATS_COUNT_CAP
+                                ? `${STATS_COUNT_CAP.toLocaleString()}+`
+                                : stats[value]}
+                            </span>
+                          )}
+                        </Link>
+                      </TabsTrigger>
+                    ))}
+                </TabsList>
+              </Tabs>
             </div>
-            <div className="flex w-48 flex-wrap items-center justify-between gap-x-2 gap-y-4">
-              <DocumentSearch initialValue={findDocumentSearchParams.query} />
+
+            <div className="flex min-w-0 flex-1 flex-wrap items-center justify-start gap-2 sm:justify-end md:gap-3">
+              {team && <DocumentsTableSenderFilter teamId={team.id} />}
+
+              <div className="w-44 min-w-[10rem] shrink-0 [&_button]:h-11">
+                <PeriodSelector />
+              </div>
+              <div className="min-w-[12rem] flex-1 sm:max-w-xs sm:flex-none md:w-52">
+                <DocumentSearch
+                  initialValue={findDocumentSearchParams.query}
+                  className="h-11 rounded-lg border-white/15 bg-black/40 text-sm text-white placeholder:text-slate-500"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -207,6 +201,7 @@ export default function DocumentsPage() {
           <div>
             {data && data.count === 0 ? (
               <DocumentsTableEmptyState
+                nexisChrome
                 status={findDocumentSearchParams.status || ExtendedDocumentStatus.ALL}
               />
             ) : (
@@ -214,6 +209,7 @@ export default function DocumentsPage() {
                 data={data}
                 isLoading={isLoading}
                 isLoadingError={isLoadingError}
+                variant="nexis"
                 onMoveDocument={(documentId) => {
                   setDocumentToMove(documentId);
                   setIsMovingDocument(true);

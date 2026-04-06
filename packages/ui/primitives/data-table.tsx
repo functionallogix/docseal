@@ -11,6 +11,7 @@ import type {
 } from '@tanstack/react-table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
+import { cn } from '../lib/utils';
 import { Skeleton } from './skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
@@ -45,6 +46,8 @@ export interface DataTableProps<TData, TValue> {
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: (selection: RowSelectionState) => void;
   getRowId?: (row: TData) => string;
+  /** Merges with default `rounded-md border` on the table wrapper. */
+  tableContainerClassName?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -67,6 +70,7 @@ export function DataTable<TData, TValue>({
   rowSelection,
   onRowSelectionChange,
   getRowId,
+  tableContainerClassName,
 }: DataTableProps<TData, TValue>) {
   const pagination = useMemo<PaginationState>(() => {
     if (currentPage !== undefined && perPage !== undefined) {
@@ -120,7 +124,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className={cn('overflow-hidden rounded-md border', tableContainerClassName)}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

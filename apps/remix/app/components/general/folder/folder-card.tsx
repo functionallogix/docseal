@@ -14,6 +14,7 @@ import { Link } from 'react-router';
 import { formatDocumentsPath, formatTemplatesPath } from '@documenso/lib/utils/teams';
 import { trpc } from '@documenso/trpc/react';
 import { type TFolderWithSubfolders } from '@documenso/trpc/server/folder-router/schema';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import { Card, CardContent } from '@documenso/ui/primitives/card';
 import {
@@ -25,15 +26,23 @@ import {
 } from '@documenso/ui/primitives/dropdown-menu';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisDropdownMenuContentClassName } from '~/utils/nexis-ui';
 
 export type FolderCardProps = {
   folder: TFolderWithSubfolders;
+  nexisChrome?: boolean;
   onMove: (folder: TFolderWithSubfolders) => void;
   onSettings: (folder: TFolderWithSubfolders) => void;
   onDelete: (folder: TFolderWithSubfolders) => void;
 };
 
-export const FolderCard = ({ folder, onMove, onSettings, onDelete }: FolderCardProps) => {
+export const FolderCard = ({
+  folder,
+  nexisChrome,
+  onMove,
+  onSettings,
+  onDelete,
+}: FolderCardProps) => {
   const team = useCurrentTeam();
 
   const { mutateAsync: updateFolderMutation } = trpc.folder.updateFolder.useMutation();
@@ -58,19 +67,48 @@ export const FolderCard = ({ folder, onMove, onSettings, onDelete }: FolderCardP
 
   return (
     <Link to={formatPath()} data-folder-id={folder.id} data-folder-name={folder.name}>
-      <Card className="hover:bg-muted/50 border-border h-full border transition-all">
+      <Card
+        className={cn(
+          'h-full border transition-all',
+          nexisChrome
+            ? 'border-white/10 bg-[#121212] hover:border-white/15 hover:bg-[#161616]'
+            : 'border-border hover:bg-muted/50',
+        )}
+      >
         <CardContent className="p-4">
           <div className="flex min-w-0 items-center gap-3">
-            <FolderIcon className="text-documenso h-6 w-6 flex-shrink-0" />
+            <FolderIcon
+              className={cn(
+                'h-6 w-6 flex-shrink-0',
+                nexisChrome ? 'text-[#48EAE5]' : 'text-documenso',
+              )}
+            />
 
             <div className="flex w-full min-w-0 items-center justify-between">
               <div className="min-w-0 flex-1">
-                <h3 className="flex min-w-0 items-center gap-2 font-medium">
+                <h3
+                  className={cn(
+                    'flex min-w-0 items-center gap-2 font-medium',
+                    nexisChrome && 'text-white',
+                  )}
+                >
                   <span className="truncate">{folder.name}</span>
-                  {folder.pinned && <PinIcon className="text-documenso h-3 w-3 flex-shrink-0" />}
+                  {folder.pinned && (
+                    <PinIcon
+                      className={cn(
+                        'h-3 w-3 flex-shrink-0',
+                        nexisChrome ? 'text-[#48EAE5]' : 'text-documenso',
+                      )}
+                    />
+                  )}
                 </h3>
 
-                <div className="text-muted-foreground mt-1 flex space-x-2 truncate text-xs">
+                <div
+                  className={cn(
+                    'mt-1 flex space-x-2 truncate text-xs',
+                    nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                  )}
+                >
                   <span>
                     {folder.type === FolderType.TEMPLATE ? (
                       <Plural
@@ -109,7 +147,11 @@ export const FolderCard = ({ folder, onMove, onSettings, onDelete }: FolderCardP
                   </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent onClick={(e) => e.stopPropagation()} align="end">
+                <DropdownMenuContent
+                  onClick={(e) => e.stopPropagation()}
+                  align="end"
+                  className={cn(nexisChrome && nexisDropdownMenuContentClassName)}
+                >
                   <DropdownMenuItem onClick={() => onMove(folder)}>
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     <Trans>Move</Trans>
@@ -125,7 +167,7 @@ export const FolderCard = ({ folder, onMove, onSettings, onDelete }: FolderCardP
                     <Trans>Settings</Trans>
                   </DropdownMenuItem>
 
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className={nexisChrome ? 'bg-white/15' : undefined} />
 
                   <DropdownMenuItem onClick={() => onDelete(folder)}>
                     <TrashIcon className="mr-2 h-4 w-4" />
@@ -141,19 +183,47 @@ export const FolderCard = ({ folder, onMove, onSettings, onDelete }: FolderCardP
   );
 };
 
-export const FolderCardEmpty = ({ type }: { type: FolderType }) => {
+export const FolderCardEmpty = ({
+  type,
+  nexisChrome,
+}: {
+  type: FolderType;
+  nexisChrome?: boolean;
+}) => {
   return (
-    <Card className="hover:bg-muted/50 border-border h-full border transition-all">
+    <Card
+      className={cn(
+        'h-full border transition-all',
+        nexisChrome
+          ? 'border-dashed border-white/15 bg-[#0a0a0a] hover:border-[#48EAE5]/40 hover:bg-[#101010]'
+          : 'border-border hover:bg-muted/50',
+      )}
+    >
       <CardContent className="p-4">
         <div className="flex items-center gap-3">
-          <FolderPlusIcon className="text-muted-foreground/60 h-6 w-6" />
+          <FolderPlusIcon
+            className={cn(
+              'h-6 w-6',
+              nexisChrome ? 'text-[#48EAE5]/80' : 'text-muted-foreground/60',
+            )}
+          />
 
           <div>
-            <h3 className="text-muted-foreground flex items-center gap-2 font-medium">
+            <h3
+              className={cn(
+                'flex items-center gap-2 font-medium',
+                nexisChrome ? 'text-slate-200' : 'text-muted-foreground',
+              )}
+            >
               <Trans>Create folder</Trans>
             </h3>
 
-            <div className="text-muted-foreground/60 mt-1 flex space-x-2 truncate text-xs">
+            <div
+              className={cn(
+                'mt-1 flex space-x-2 truncate text-xs',
+                nexisChrome ? 'text-slate-500' : 'text-muted-foreground/60',
+              )}
+            >
               {type === FolderType.DOCUMENT ? (
                 <Trans>Organise your documents</Trans>
               ) : (

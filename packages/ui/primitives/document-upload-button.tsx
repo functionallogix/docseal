@@ -14,11 +14,14 @@ import { APP_DOCUMENT_UPLOAD_SIZE_LIMIT, IS_BILLING_ENABLED } from '@documenso/l
 import { megabytesToBytes } from '@documenso/lib/universal/unit-convertions';
 import { isPersonalLayout } from '@documenso/lib/utils/organisations';
 
-import { Button } from './button';
+import { cn } from '../lib/utils';
+import { Button, type ButtonProps } from './button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 
 export type DocumentUploadButtonProps = {
   className?: string;
+  /** Passed to the root `Button` (e.g. `none` + text styles for link-like uploads). */
+  variant?: ButtonProps['variant'];
   disabled?: boolean;
   loading?: boolean;
   disabledMessage?: MessageDescriptor;
@@ -32,6 +35,7 @@ export type DocumentUploadButtonProps = {
 
 export const DocumentUploadButton = ({
   className,
+  variant = 'default',
   loading,
   onDrop,
   onDropRejected,
@@ -79,7 +83,7 @@ export const DocumentUploadButton = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button className="hover:bg-warning/80 bg-warning" asChild>
+            <Button className="bg-warning hover:bg-warning/80" asChild>
               <Link
                 to={
                   isPersonalLayoutMode
@@ -99,11 +103,20 @@ export const DocumentUploadButton = ({
     );
   }
 
+  const { className: dropzoneClassName, ...rootProps } = getRootProps();
+
   return (
-    <Button loading={loading} aria-disabled={disabled} {...getRootProps()} {...props}>
+    <Button
+      variant={variant}
+      loading={loading}
+      aria-disabled={disabled}
+      className={cn(dropzoneClassName, className)}
+      {...rootProps}
+      {...props}
+    >
       <div className="flex items-center gap-2">
         <input data-testid="document-upload-input" {...getInputProps()} />
-        {!loading && <Upload className="h-4 w-4" />}
+        {!loading && <Upload className="h-4 w-4 shrink-0" />}
         {disabled ? _(disabledMessage) : _(heading[type])}
       </div>
     </Button>

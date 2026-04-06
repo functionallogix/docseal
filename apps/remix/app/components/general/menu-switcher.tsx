@@ -23,10 +23,14 @@ import {
   DropdownMenuTrigger,
 } from '@documenso/ui/primitives/dropdown-menu';
 
+import { useOptionalCurrentTeam } from '~/providers/team';
+
 export const MenuSwitcher = () => {
   const { _ } = useLingui();
 
   const { user } = useSession();
+  const team = useOptionalCurrentTeam();
+  const isNexisDashboard = Boolean(team);
 
   const [languageSwitcherOpen, setLanguageSwitcherOpen] = useState(false);
 
@@ -54,9 +58,20 @@ export const MenuSwitcher = () => {
             primaryText={user.name}
             secondaryText={_(msg`Personal Account`)}
             rightSideComponent={
-              <ChevronsUpDown className="text-muted-foreground ml-auto h-4 w-4" />
+              <ChevronsUpDown
+                className={cn(
+                  'ml-auto h-4 w-4',
+                  isNexisDashboard ? 'text-white/45' : 'text-muted-foreground',
+                )}
+              />
             }
             textSectionClassName="hidden lg:flex"
+            avatarClass={isNexisDashboard ? 'border-[#48EAE5]/50 bg-[#48EAE5] ring-0' : undefined}
+            avatarFallbackClassName={
+              isNexisDashboard ? 'bg-[#48EAE5] text-[#0B0C0E] font-semibold' : undefined
+            }
+            primaryTextClassName={isNexisDashboard ? 'text-white' : undefined}
+            secondaryTextClassName={isNexisDashboard ? 'text-slate-400' : undefined}
           />
         </Button>
       </DropdownMenuTrigger>
@@ -66,7 +81,7 @@ export const MenuSwitcher = () => {
         align="end"
         forceMount
       >
-        <DropdownMenuItem className="text-muted-foreground px-4 py-2" asChild>
+        <DropdownMenuItem className="px-4 py-2 text-muted-foreground" asChild>
           <Link
             to="/settings/organisations?action=add-organisation"
             className="flex items-center justify-between"
@@ -78,34 +93,34 @@ export const MenuSwitcher = () => {
         <DropdownMenuSeparator />
 
         {isUserAdmin && (
-          <DropdownMenuItem className="text-muted-foreground px-4 py-2" asChild>
+          <DropdownMenuItem className="px-4 py-2 text-muted-foreground" asChild>
             <Link to="/admin">
               <Trans>Admin panel</Trans>
             </Link>
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem className="text-muted-foreground px-4 py-2" asChild>
+        <DropdownMenuItem className="px-4 py-2 text-muted-foreground" asChild>
           <Link to="/inbox">
             <Trans>Personal Inbox</Trans>
           </Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="text-muted-foreground px-4 py-2" asChild>
+        <DropdownMenuItem className="px-4 py-2 text-muted-foreground" asChild>
           <Link to="/settings/profile">
             <Trans>User settings</Trans>
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="text-muted-foreground px-4 py-2"
+          className="px-4 py-2 text-muted-foreground"
           onClick={() => setLanguageSwitcherOpen(true)}
         >
           <Trans>Language</Trans>
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="text-destructive/90 hover:!text-destructive px-4 py-2"
+          className="px-4 py-2 text-destructive/90 hover:!text-destructive"
           onSelect={async () => authClient.signOut()}
         >
           <Trans>Sign Out</Trans>

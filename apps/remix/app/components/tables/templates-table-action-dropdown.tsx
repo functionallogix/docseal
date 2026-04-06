@@ -5,6 +5,7 @@ import type { Recipient, TemplateDirectLink } from '@prisma/client';
 import { Copy, Edit, FolderIcon, MoreHorizontal, Share2Icon, Trash2, Upload } from 'lucide-react';
 import { Link } from 'react-router';
 
+import { cn } from '@documenso/ui/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@documenso/ui/primitives/dropdown-menu';
+
+import {
+  nexisDropdownMenuContentClassName,
+  nexisDropdownMenuLabelClassName,
+} from '~/utils/nexis-ui';
 
 import { TemplateBulkSendDialog } from '../dialogs/template-bulk-send-dialog';
 import { TemplateDeleteDialog } from '../dialogs/template-delete-dialog';
@@ -33,13 +39,18 @@ export type TemplatesTableActionDropdownProps = {
   templateRootPath: string;
   teamId: number;
   onDelete?: () => Promise<void> | void;
+  variant?: 'default' | 'nexis';
 };
+
+const nexisMenuRowHoverClass =
+  'hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white';
 
 export const TemplatesTableActionDropdown = ({
   row,
   templateRootPath,
   teamId,
   onDelete,
+  variant = 'default',
 }: TemplatesTableActionDropdownProps) => {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDuplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
@@ -52,12 +63,23 @@ export const TemplatesTableActionDropdown = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger data-testid="template-table-action-btn">
-        <MoreHorizontal className="h-5 w-5 text-muted-foreground" />
+      <DropdownMenuTrigger
+        data-testid="template-table-action-btn"
+        className={variant === 'nexis' ? 'text-slate-500 outline-none hover:text-white' : undefined}
+      >
+        <MoreHorizontal className={cn('h-5 w-5', variant !== 'nexis' && 'text-muted-foreground')} />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-52" align="start" forceMount>
-        <DropdownMenuLabel>Action</DropdownMenuLabel>
+      <DropdownMenuContent
+        className={cn('w-52', variant === 'nexis' && nexisDropdownMenuContentClassName)}
+        align="start"
+        forceMount
+      >
+        <DropdownMenuLabel
+          className={variant === 'nexis' ? nexisDropdownMenuLabelClassName : undefined}
+        >
+          Action
+        </DropdownMenuLabel>
 
         <DropdownMenuItem disabled={!canMutate} asChild>
           <Link to={formatPath}>
@@ -79,7 +101,12 @@ export const TemplatesTableActionDropdown = ({
             trigger={
               <div
                 data-testid="template-direct-link"
-                className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                className={cn(
+                  'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
+                  variant === 'nexis'
+                    ? nexisMenuRowHoverClass
+                    : 'hover:bg-accent hover:text-accent-foreground',
+                )}
               >
                 <Share2Icon className="mr-2 h-4 w-4" />
                 <Trans>Direct link</Trans>
@@ -98,7 +125,14 @@ export const TemplatesTableActionDropdown = ({
             templateId={row.id}
             recipients={row.recipients}
             trigger={
-              <div className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground">
+              <div
+                className={cn(
+                  'relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
+                  variant === 'nexis'
+                    ? nexisMenuRowHoverClass
+                    : 'hover:bg-accent hover:text-accent-foreground',
+                )}
+              >
                 <Upload className="mr-2 h-4 w-4" />
                 <Trans>Bulk Send via CSV</Trans>
               </div>

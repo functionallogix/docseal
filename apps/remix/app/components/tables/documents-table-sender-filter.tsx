@@ -48,8 +48,9 @@ export const DocumentsTableSenderFilter = ({ teamId }: DocumentsTableSenderFilte
 
   return (
     <MultiSelectCombobox
+      className="h-11"
       emptySelectionPlaceholder={
-        <p className="text-muted-foreground font-normal">
+        <p className="font-normal text-muted-foreground">
           <Trans>
             <span className="text-muted-foreground/70">Sender:</span> All
           </Trans>

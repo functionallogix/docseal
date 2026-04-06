@@ -51,6 +51,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitive
 import type { Toast } from '@documenso/ui/primitives/use-toast';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import { nexisTextActionClassName } from '~/utils/nexis-ui';
+
 const ZAddRecipientsForNewDocumentSchema = z.object({
   distributeDocument: z.boolean(),
   useCustomDocument: z.boolean().default(false),
@@ -83,6 +85,8 @@ export type TemplateUseDialogProps = {
   documentDistributionMethod?: DocumentDistributionMethod;
   documentRootPath: string;
   trigger?: React.ReactNode;
+  /** MOS Nexis dashboard — text-only trigger (same as Edit / Sign in tables). */
+  nexisChrome?: boolean;
 };
 
 export function TemplateUseDialog({
@@ -93,6 +97,7 @@ export function TemplateUseDialog({
   templateId,
   templateSigningOrder,
   trigger,
+  nexisChrome,
 }: TemplateUseDialogProps) {
   const { toast } = useToast();
   const { _ } = useLingui();
@@ -245,8 +250,11 @@ export function TemplateUseDialog({
     <Dialog open={open} onOpenChange={(value) => !form.formState.isSubmitting && setOpen(value)}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" className="bg-background">
-            <Plus className="-ml-1 mr-2 h-4 w-4" />
+          <Button
+            variant={nexisChrome ? 'none' : 'outline'}
+            className={cn(nexisChrome ? nexisTextActionClassName : 'w-32 bg-background')}
+          >
+            {!nexisChrome && <Plus className="-ml-1 mr-2 h-4 w-4" />}
             <Trans>Use Template</Trans>
           </Button>
         )}

@@ -8,17 +8,23 @@ import { useSession } from '@documenso/lib/client-only/providers/session';
 import type { TDocumentMany as TDocumentRow } from '@documenso/lib/types/document';
 import { isDocumentCompleted } from '@documenso/lib/utils/document';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisTextActionClassName } from '~/utils/nexis-ui';
 
 import { EnvelopeDownloadDialog } from '../dialogs/envelope-download-dialog';
 
 export type DocumentsTableActionButtonProps = {
   row: TDocumentRow;
+  variant?: 'default' | 'nexis';
 };
 
-export const DocumentsTableActionButton = ({ row }: DocumentsTableActionButtonProps) => {
+export const DocumentsTableActionButton = ({
+  row,
+  variant = 'default',
+}: DocumentsTableActionButtonProps) => {
   const { user } = useSession();
 
   const team = useCurrentTeam();
@@ -37,6 +43,8 @@ export const DocumentsTableActionButton = ({ row }: DocumentsTableActionButtonPr
   const documentsPath = formatDocumentsPath(team.url);
   const formatPath = `${documentsPath}/${row.envelopeId}/edit`;
 
+  const isNexis = variant === 'nexis';
+
   // TODO: Consider if want to keep this logic for hiding viewing for CC'ers
   if (recipient?.role === RecipientRole.CC && isComplete === false) {
     return null;
@@ -54,56 +62,89 @@ export const DocumentsTableActionButton = ({ row }: DocumentsTableActionButtonPr
   })
     .with(
       isOwner ? { isDraft: true, isOwner: true } : { isDraft: true, isCurrentTeamDocument: true },
-      () => (
-        <Button className="w-32" asChild>
-          <Link to={formatPath}>
-            <Edit className="-ml-1 mr-2 h-4 w-4" />
+      () =>
+        isNexis ? (
+          <Link to={formatPath} className={nexisTextActionClassName}>
             <Trans>Edit</Trans>
+          </Link>
+        ) : (
+          <Button className="w-32" asChild>
+            <Link to={formatPath}>
+              <Edit className="-ml-1 mr-2 h-4 w-4" />
+              <Trans>Edit</Trans>
+            </Link>
+          </Button>
+        ),
+    )
+    .with({ isRecipient: true, isPending: true, isSigned: false }, () =>
+      isNexis ? (
+        <Link to={`/sign/${recipient?.token}`} className={nexisTextActionClassName}>
+          {match(role)
+            .with(RecipientRole.SIGNER, () => <Trans>Sign</Trans>)
+            .with(RecipientRole.APPROVER, () => <Trans>Approve</Trans>)
+            .otherwise(() => (
+              <Trans>View</Trans>
+            ))}
+        </Link>
+      ) : (
+        <Button className="w-32" asChild>
+          <Link to={`/sign/${recipient?.token}`}>
+            {match(role)
+              .with(RecipientRole.SIGNER, () => (
+                <>
+                  <Pencil className="-ml-1 mr-2 h-4 w-4" />
+                  <Trans>Sign</Trans>
+                </>
+              ))
+              .with(RecipientRole.APPROVER, () => (
+                <>
+                  <CheckCircle className="-ml-1 mr-2 h-4 w-4" />
+                  <Trans>Approve</Trans>
+                </>
+              ))
+              .otherwise(() => (
+                <>
+                  <EyeIcon className="-ml-1 mr-2 h-4 w-4" />
+                  <Trans>View</Trans>
+                </>
+              ))}
           </Link>
         </Button>
       ),
     )
-    .with({ isRecipient: true, isPending: true, isSigned: false }, () => (
-      <Button className="w-32" asChild>
-        <Link to={`/sign/${recipient?.token}`}>
-          {match(role)
-            .with(RecipientRole.SIGNER, () => (
-              <>
-                <Pencil className="-ml-1 mr-2 h-4 w-4" />
-                <Trans>Sign</Trans>
-              </>
-            ))
-            .with(RecipientRole.APPROVER, () => (
-              <>
-                <CheckCircle className="-ml-1 mr-2 h-4 w-4" />
-                <Trans>Approve</Trans>
-              </>
-            ))
-            .otherwise(() => (
-              <>
-                <EyeIcon className="-ml-1 mr-2 h-4 w-4" />
-                <Trans>View</Trans>
-              </>
-            ))}
-        </Link>
-      </Button>
-    ))
-    .with({ isPending: true, isSigned: true }, () => (
-      <Button className="w-32" disabled={true}>
-        <EyeIcon className="-ml-1 mr-2 h-4 w-4" />
-        <Trans>View</Trans>
-      </Button>
-    ))
+    .with({ isPending: true, isSigned: true }, () =>
+      isNexis ? (
+        <span
+          className={cn(
+            nexisTextActionClassName,
+            'pointer-events-none cursor-not-allowed opacity-50',
+          )}
+        >
+          <Trans>View</Trans>
+        </span>
+      ) : (
+        <Button className="w-32" disabled={true}>
+          <EyeIcon className="-ml-1 mr-2 h-4 w-4" />
+          <Trans>View</Trans>
+        </Button>
+      ),
+    )
     .with({ isComplete: true }, () => (
       <EnvelopeDownloadDialog
         envelopeId={row.envelopeId}
         envelopeStatus={row.status}
         token={recipient?.token}
         trigger={
-          <Button className="w-32">
-            <Download className="-ml-1 mr-2 inline h-4 w-4" />
-            <Trans>Download</Trans>
-          </Button>
+          isNexis ? (
+            <button type="button" className={nexisTextActionClassName}>
+              <Trans>Download</Trans>
+            </button>
+          ) : (
+            <Button className="w-32">
+              <Download className="-ml-1 mr-2 inline h-4 w-4" />
+              <Trans>Download</Trans>
+            </Button>
+          )
         }
       />
     ))

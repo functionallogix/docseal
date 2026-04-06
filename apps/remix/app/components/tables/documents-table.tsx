@@ -12,6 +12,7 @@ import { useSession } from '@documenso/lib/client-only/providers/session';
 import { isDocumentCompleted } from '@documenso/lib/utils/document';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
 import type { TFindDocumentsResponse } from '@documenso/trpc/server/document-router/find-documents.types';
+import { cn } from '@documenso/ui/lib/utils';
 import { Checkbox } from '@documenso/ui/primitives/checkbox';
 import type { DataTableColumnDef, RowSelectionState } from '@documenso/ui/primitives/data-table';
 import { DataTable } from '@documenso/ui/primitives/data-table';
@@ -34,6 +35,7 @@ export type DocumentsTableProps = {
   enableSelection?: boolean;
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: (selection: RowSelectionState) => void;
+  variant?: 'default' | 'nexis';
 };
 
 type DocumentsTableRow = TFindDocumentsResponse['data'][number];
@@ -46,6 +48,7 @@ export const DocumentsTable = ({
   enableSelection,
   rowSelection,
   onRowSelectionChange,
+  variant = 'default',
 }: DocumentsTableProps) => {
   const { _, i18n } = useLingui();
 
@@ -91,7 +94,17 @@ export const DocumentsTable = ({
       },
       {
         header: _(msg`Title`),
-        cell: ({ row }) => <DataTableTitle row={row.original} teamUrl={team?.url} />,
+        cell: ({ row }) => (
+          <DataTableTitle
+            row={row.original}
+            teamUrl={team?.url}
+            linkClassName={
+              variant === 'nexis'
+                ? 'text-[#48EAE5] hover:text-[#5eead4] hover:underline'
+                : undefined
+            }
+          />
+        ),
       },
       {
         id: 'sender',
@@ -119,9 +132,10 @@ export const DocumentsTable = ({
         cell: ({ row }) =>
           (!row.original.deletedAt || isDocumentCompleted(row.original.status)) && (
             <div className="flex items-center gap-x-4">
-              <DocumentsTableActionButton row={row.original} />
+              <DocumentsTableActionButton row={row.original} variant={variant} />
               <DocumentsTableActionDropdown
                 row={row.original}
+                variant={variant}
                 onMoveDocument={onMoveDocument ? () => onMoveDocument(row.original.id) : undefined}
               />
             </div>
@@ -130,7 +144,7 @@ export const DocumentsTable = ({
     );
 
     return cols;
-  }, [team, onMoveDocument, enableSelection]);
+  }, [team, onMoveDocument, enableSelection, variant, _, i18n]);
 
   const onPaginationChange = (page: number, perPage: number) => {
     startTransition(() => {
@@ -148,11 +162,17 @@ export const DocumentsTable = ({
     totalPages: 1,
   };
 
+  const nexisTableWrap =
+    variant === 'nexis'
+      ? 'rounded-xl border border-white/10 bg-[#050505] [&_thead]:bg-[#0a0a0a] [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-slate-500 [&_tbody_tr:nth-child(even)]:bg-white/[0.03] [&_tbody_tr]:border-white/[0.06]'
+      : undefined;
+
   return (
     <div className="relative">
       <DataTable
         columns={columns}
         data={results.data}
+        tableContainerClassName={nexisTableWrap}
         perPage={results.perPage}
         currentPage={results.currentPage}
         totalPages={results.totalPages}
@@ -202,8 +222,18 @@ export const DocumentsTable = ({
       </DataTable>
 
       {isPending && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-          <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div
+          className={cn(
+            'absolute inset-0 flex items-center justify-center',
+            variant === 'nexis' ? 'bg-black/50' : 'bg-background/50',
+          )}
+        >
+          <Loader
+            className={cn(
+              'h-8 w-8 animate-spin',
+              variant === 'nexis' ? 'text-[#48EAE5]' : 'text-muted-foreground',
+            )}
+          />
         </div>
       )}
     </div>
@@ -213,9 +243,10 @@ export const DocumentsTable = ({
 type DataTableTitleProps = {
   row: DocumentsTableRow;
   teamUrl: string;
+  linkClassName?: string;
 };
 
-const DataTableTitle = ({ row, teamUrl }: DataTableTitleProps) => {
+const DataTableTitle = ({ row, teamUrl, linkClassName }: DataTableTitleProps) => {
   const { user } = useSession();
 
   const recipient = row.recipients.find((recipient) => recipient.email === user.email);
@@ -236,7 +267,10 @@ const DataTableTitle = ({ row, teamUrl }: DataTableTitleProps) => {
       <Link
         to={formatPath}
         title={row.title}
-        className="block max-w-[10rem] truncate font-medium hover:underline md:max-w-[20rem]"
+        className={cn(
+          'block max-w-[10rem] truncate font-medium hover:underline md:max-w-[20rem]',
+          linkClassName,
+        )}
       >
         {row.title}
       </Link>
@@ -245,7 +279,10 @@ const DataTableTitle = ({ row, teamUrl }: DataTableTitleProps) => {
       <Link
         to={`/sign/${recipient?.token}`}
         title={row.title}
-        className="block max-w-[10rem] truncate font-medium hover:underline md:max-w-[20rem]"
+        className={cn(
+          'block max-w-[10rem] truncate font-medium hover:underline md:max-w-[20rem]',
+          linkClassName,
+        )}
       >
         {row.title}
       </Link>

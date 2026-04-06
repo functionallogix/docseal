@@ -19,6 +19,7 @@ import { useUpdateSearchParams } from '@documenso/lib/client-only/hooks/use-upda
 import { useCurrentOrganisation } from '@documenso/lib/client-only/providers/organisation';
 import { formatTemplatesPath } from '@documenso/lib/utils/teams';
 import type { TFindTemplatesResponse } from '@documenso/trpc/server/template-router/schema';
+import { cn } from '@documenso/ui/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@documenso/ui/primitives/alert';
 import { Checkbox } from '@documenso/ui/primitives/checkbox';
 import type { DataTableColumnDef, RowSelectionState } from '@documenso/ui/primitives/data-table';
@@ -44,6 +45,7 @@ type TemplatesTableProps = {
   enableSelection?: boolean;
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: (selection: RowSelectionState) => void;
+  variant?: 'default' | 'nexis';
 };
 
 type TemplatesTableRow = TFindTemplatesResponse['data'][number];
@@ -57,6 +59,7 @@ export const TemplatesTable = ({
   enableSelection,
   rowSelection,
   onRowSelectionChange,
+  variant = 'default',
 }: TemplatesTableProps) => {
   const { _, i18n } = useLingui();
   const { remaining } = useLimits();
@@ -230,12 +233,14 @@ export const TemplatesTable = ({
                 documentDistributionMethod={row.original.templateMeta?.distributionMethod}
                 recipients={row.original.recipients}
                 documentRootPath={documentRootPath}
+                nexisChrome={variant === 'nexis'}
               />
 
               <TemplatesTableActionDropdown
                 row={row.original}
                 teamId={team?.id}
                 templateRootPath={templateRootPath}
+                variant={variant}
               />
             </div>
           );
@@ -244,7 +249,7 @@ export const TemplatesTable = ({
     );
 
     return cols;
-  }, [documentRootPath, team?.id, templateRootPath, enableSelection]);
+  }, [documentRootPath, team?.id, templateRootPath, enableSelection, variant, _, i18n]);
 
   const onPaginationChange = (page: number, perPage: number) => {
     startTransition(() => {
@@ -261,6 +266,11 @@ export const TemplatesTable = ({
     currentPage: 1,
     totalPages: 1,
   };
+
+  const nexisTableWrap =
+    variant === 'nexis'
+      ? 'rounded-xl border border-white/10 bg-[#050505] [&_thead]:bg-[#0a0a0a] [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-slate-500 [&_tbody_tr:nth-child(even)]:bg-white/[0.03] [&_tbody_tr]:border-white/[0.06]'
+      : undefined;
 
   return (
     <div className="relative">
@@ -295,6 +305,7 @@ export const TemplatesTable = ({
         rowSelection={rowSelection}
         onRowSelectionChange={onRowSelectionChange}
         getRowId={(row) => row.envelopeId}
+        tableContainerClassName={nexisTableWrap}
         error={{
           enable: isLoadingError || false,
         }}
@@ -333,8 +344,18 @@ export const TemplatesTable = ({
       </DataTable>
 
       {isPending && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/50">
-          <Loader className="h-8 w-8 animate-spin text-gray-500" />
+        <div
+          className={cn(
+            'absolute inset-0 flex items-center justify-center',
+            variant === 'nexis' ? 'bg-black/50' : 'bg-white/50',
+          )}
+        >
+          <Loader
+            className={cn(
+              'h-8 w-8 animate-spin',
+              variant === 'nexis' ? 'text-[#48EAE5]' : 'text-gray-500',
+            )}
+          />
         </div>
       )}
     </div>

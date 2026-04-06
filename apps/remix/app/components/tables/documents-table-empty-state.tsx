@@ -1,13 +1,20 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { Bird, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, RotateCw } from 'lucide-react';
 import { match } from 'ts-pattern';
 
 import { ExtendedDocumentStatus } from '@documenso/prisma/types/extended-document-status';
+import { cn } from '@documenso/ui/lib/utils';
 
-export type DocumentsTableEmptyStateProps = { status: ExtendedDocumentStatus };
+export type DocumentsTableEmptyStateProps = {
+  status: ExtendedDocumentStatus;
+  nexisChrome?: boolean;
+};
 
-export const DocumentsTableEmptyState = ({ status }: DocumentsTableEmptyStateProps) => {
+export const DocumentsTableEmptyState = ({
+  status,
+  nexisChrome,
+}: DocumentsTableEmptyStateProps) => {
   const { _ } = useLingui();
 
   const {
@@ -28,7 +35,7 @@ export const DocumentsTableEmptyState = ({ status }: DocumentsTableEmptyStatePro
     .with(ExtendedDocumentStatus.ALL, () => ({
       title: msg`We're all empty`,
       message: msg`You have not yet created or received any documents. To create a document please upload one.`,
-      icon: Bird,
+      icon: RotateCw,
     }))
     .otherwise(() => ({
       title: msg`Nothing to do`,
@@ -38,15 +45,20 @@ export const DocumentsTableEmptyState = ({ status }: DocumentsTableEmptyStatePro
 
   return (
     <div
-      className="text-muted-foreground/60 flex h-60 flex-col items-center justify-center gap-y-4"
+      className={cn(
+        'flex h-60 flex-col items-center justify-center gap-y-4',
+        nexisChrome ? 'text-slate-500' : 'text-muted-foreground/60',
+      )}
       data-testid="empty-document-state"
     >
       <Icon className="h-12 w-12" strokeWidth={1.5} />
 
       <div className="text-center">
-        <h3 className="text-lg font-semibold">{_(title)}</h3>
+        <h3 className={cn('text-lg font-semibold', nexisChrome ? 'text-slate-200' : undefined)}>
+          {_(title)}
+        </h3>
 
-        <p className="mt-2 max-w-[60ch]">{_(message)}</p>
+        <p className={cn('mt-2 max-w-[60ch]', nexisChrome && 'text-slate-500')}>{_(message)}</p>
       </div>
     </div>
   );

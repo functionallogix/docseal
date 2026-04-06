@@ -18,6 +18,7 @@ import { trpc } from '@documenso/trpc/react';
 import type { TCreateEnvelopePayload } from '@documenso/trpc/server/envelope-router/create-envelope.types';
 import { buildDropzoneRejectionDescription } from '@documenso/ui/lib/handle-dropzone-rejection';
 import { cn } from '@documenso/ui/lib/utils';
+import type { ButtonProps } from '@documenso/ui/primitives/button';
 import { DocumentUploadButton } from '@documenso/ui/primitives/document-upload-button';
 import {
   Tooltip,
@@ -31,6 +32,10 @@ import { useCurrentTeam } from '~/providers/team';
 
 export type EnvelopeUploadButtonProps = {
   className?: string;
+  /** Passed to the underlying upload button. */
+  buttonClassName?: string;
+  /** Root `Button` variant (e.g. `none` for text-style uploads). */
+  buttonVariant?: ButtonProps['variant'];
   type: EnvelopeType;
   folderId?: string;
 };
@@ -38,7 +43,13 @@ export type EnvelopeUploadButtonProps = {
 /**
  * Upload an envelope
  */
-export const EnvelopeUploadButton = ({ className, type, folderId }: EnvelopeUploadButtonProps) => {
+export const EnvelopeUploadButton = ({
+  className,
+  buttonClassName,
+  buttonVariant,
+  type,
+  folderId,
+}: EnvelopeUploadButtonProps) => {
   const { t, i18n } = useLingui();
   const { toast } = useToast();
   const { user } = useSession();
@@ -181,6 +192,8 @@ export const EnvelopeUploadButton = ({ className, type, folderId }: EnvelopeUplo
           <TooltipTrigger asChild>
             <div>
               <DocumentUploadButton
+                className={buttonClassName}
+                variant={buttonVariant}
                 loading={isLoading}
                 disabled={remaining.documents === 0 || !user.emailVerified}
                 disabledMessage={disabledMessage}

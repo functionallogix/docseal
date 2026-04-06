@@ -3,17 +3,15 @@ import { useMemo, useState } from 'react';
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { EnvelopeType, OrganisationType } from '@prisma/client';
-import { Bird } from 'lucide-react';
+import { RotateCw } from 'lucide-react';
 import { parseAsStringLiteral, useQueryState } from 'nuqs';
 import { useParams, useSearchParams } from 'react-router';
 
 import { useSessionStorage } from '@documenso/lib/client-only/hooks/use-session-storage';
 import { useCurrentOrganisation } from '@documenso/lib/client-only/providers/organisation';
 import { FolderType } from '@documenso/lib/types/folder-type';
-import { formatAvatarUrl } from '@documenso/lib/utils/avatars';
 import { formatDocumentsPath, formatTemplatesPath } from '@documenso/lib/utils/teams';
 import { trpc } from '@documenso/trpc/react';
-import { Avatar, AvatarFallback, AvatarImage } from '@documenso/ui/primitives/avatar';
 import type { RowSelectionState } from '@documenso/ui/primitives/data-table';
 import { Tabs, TabsList, TabsTrigger } from '@documenso/ui/primitives/tabs';
 
@@ -100,35 +98,24 @@ export default function TemplatesPage() {
   return (
     <EnvelopeDropZoneWrapper type={EnvelopeType.TEMPLATE}>
       <div className="mx-auto max-w-screen-xl px-4 md:px-8">
-        {!isOrgView && <FolderGrid type={FolderType.TEMPLATE} parentId={folderId ?? null} />}
+        {!isOrgView && (
+          <FolderGrid nexisChrome type={FolderType.TEMPLATE} parentId={folderId ?? null} />
+        )}
 
         <div className="mt-8">
-          <div className="flex flex-row items-center">
-            <Avatar className="mr-3 h-12 w-12 border-2 border-solid border-white dark:border-border">
-              {team.avatarImageId && <AvatarImage src={formatAvatarUrl(team.avatarImageId)} />}
-              <AvatarFallback className="text-xs text-muted-foreground">
-                {team.name.slice(0, 1)}
-              </AvatarFallback>
-            </Avatar>
-
-            <h1 className="truncate text-2xl font-semibold md:text-3xl">
-              <Trans>Templates</Trans>
-            </h1>
-          </div>
-
           {showOrgTab && (
-            <div className="mt-6">
+            <div className="mb-6">
               <Tabs value={view} onValueChange={handleViewChange} data-testid="template-view-tabs">
-                <TabsList>
+                <TabsList className="h-auto gap-1 bg-transparent p-0">
                   <TabsTrigger
-                    className="min-w-[60px] hover:text-foreground"
+                    className="rounded-md border-0 bg-transparent px-3 py-2 text-sm text-slate-400 shadow-none ring-offset-black hover:bg-white/5 hover:text-slate-200 data-[state=active]:bg-white/10 data-[state=active]:text-white"
                     value="team"
                     data-testid="template-tab-team"
                   >
                     <Trans>Team</Trans>
                   </TabsTrigger>
                   <TabsTrigger
-                    className="min-w-[60px] hover:text-foreground"
+                    className="rounded-md border-0 bg-transparent px-3 py-2 text-sm text-slate-400 shadow-none ring-offset-black hover:bg-white/5 hover:text-slate-200 data-[state=active]:bg-white/10 data-[state=active]:text-white"
                     value="organisation"
                     data-testid="template-tab-organisation"
                   >
@@ -139,17 +126,17 @@ export default function TemplatesPage() {
             </div>
           )}
 
-          <div className="mt-8">
+          <div className="mt-2">
             {activeQuery.data && activeQuery.data.count === 0 ? (
-              <div className="flex h-96 flex-col items-center justify-center gap-y-4 text-muted-foreground/60">
-                <Bird className="h-12 w-12" strokeWidth={1.5} />
+              <div className="flex h-96 flex-col items-center justify-center gap-y-4 text-slate-500">
+                <RotateCw className="h-12 w-12" strokeWidth={1.5} />
 
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold">
+                  <h3 className="text-lg font-semibold text-slate-200">
                     <Trans>We're all empty</Trans>
                   </h3>
 
-                  <p className="mt-2 max-w-[50ch]">
+                  <p className="mt-2 max-w-[50ch] text-slate-500">
                     {isOrgView ? (
                       <Trans>No organisation templates are shared with your team yet.</Trans>
                     ) : (
@@ -171,6 +158,7 @@ export default function TemplatesPage() {
                 enableSelection={!isOrgView}
                 rowSelection={isOrgView ? {} : rowSelection}
                 onRowSelectionChange={isOrgView ? undefined : setRowSelection}
+                variant="nexis"
               />
             )}
           </div>

@@ -5,9 +5,16 @@ import { useLingui } from '@lingui/react';
 import { useSearchParams } from 'react-router';
 
 import { useDebouncedValue } from '@documenso/lib/client-only/hooks/use-debounced-value';
+import { cn } from '@documenso/ui/lib/utils';
 import { Input } from '@documenso/ui/primitives/input';
 
-export const DocumentSearch = ({ initialValue = '' }: { initialValue?: string }) => {
+export const DocumentSearch = ({
+  initialValue = '',
+  className,
+}: {
+  initialValue?: string;
+  className?: string;
+}) => {
   const { _ } = useLingui();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,6 +50,7 @@ export const DocumentSearch = ({ initialValue = '' }: { initialValue?: string })
       placeholder={_(msg`Search documents...`)}
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
+      className={cn(className)}
     />
   );
 };

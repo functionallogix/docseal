@@ -107,24 +107,33 @@ export default function Layout({ loaderData, params, matches }: Route.ComponentP
     );
   }
 
+  const nexisDashboard = Boolean(currentTeam);
+
   return (
     <OrganisationProvider organisation={currentOrganisation}>
       <TeamProvider team={currentTeam || null}>
-        <OrganisationBillingBanner />
-
-        {!user.emailVerified && <VerifyEmailBanner email={user.email} />}
-
-        {banner && !hideHeader && <AppBanner banner={banner} />}
-
-        {!hideHeader && <Header />}
-
-        <main
-          className={cn({
-            'mt-8 pb-8 md:mt-12 md:pb-12': !hideHeader,
-          })}
+        <div
+          className={cn(
+            nexisDashboard && !hideHeader && 'nexis-dashboard min-h-dvh bg-black text-white',
+          )}
         >
-          <Outlet />
-        </main>
+          <OrganisationBillingBanner />
+
+          {!user.emailVerified && <VerifyEmailBanner email={user.email} />}
+
+          {banner && !hideHeader && <AppBanner banner={banner} />}
+
+          {!hideHeader && <Header />}
+
+          <main
+            className={cn({
+              'mt-8 pb-8 md:mt-12 md:pb-12': !hideHeader && !nexisDashboard,
+              'mt-6 pb-10 md:mt-8 md:pb-12': !hideHeader && nexisDashboard,
+            })}
+          >
+            <Outlet />
+          </main>
+        </div>
       </TeamProvider>
     </OrganisationProvider>
   );

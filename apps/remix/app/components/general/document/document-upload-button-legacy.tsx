@@ -30,15 +30,19 @@ import {
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
 
 export type DocumentUploadButtonLegacyProps = {
   className?: string;
   type: EnvelopeType;
+  /** MOS Nexis — cyan text + icon instead of solid upload button. */
+  nexisChrome?: boolean;
 };
 
 export const DocumentUploadButtonLegacy = ({
   className,
   type,
+  nexisChrome,
 }: DocumentUploadButtonLegacyProps) => {
   const { _ } = useLingui();
   const { toast } = useToast();
@@ -179,6 +183,7 @@ export const DocumentUploadButtonLegacy = ({
           <TooltipTrigger asChild>
             <div>
               <DocumentUploadButtonPrimitive
+                className={nexisChrome ? nexisPrimaryButtonClassName : undefined}
                 loading={isLoading}
                 disabled={disabledMessage !== undefined}
                 disabledMessage={disabledMessage}

@@ -10,6 +10,7 @@ import { useParams } from 'react-router';
 import { z } from 'zod';
 
 import { trpc } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -40,12 +41,15 @@ type TCreateFolderFormSchema = z.infer<typeof ZCreateFolderFormSchema>;
 export type FolderCreateDialogProps = {
   type: FolderType;
   trigger?: React.ReactNode;
+  /** Merged onto the default trigger button when `trigger` is omitted. */
+  triggerButtonClassName?: string;
   parentFolderId?: string | null;
 } & Omit<DialogPrimitive.DialogProps, 'children'>;
 
 export const FolderCreateDialog = ({
   type,
   trigger,
+  triggerButtonClassName,
   parentFolderId,
   ...props
 }: FolderCreateDialogProps) => {
@@ -100,7 +104,7 @@ export const FolderCreateDialog = ({
         {trigger ?? (
           <Button
             variant="outline"
-            className="flex items-center"
+            className={cn('flex items-center', triggerButtonClassName)}
             data-testid="folder-create-button"
           >
             <FolderPlusIcon className="mr-2 h-4 w-4" />

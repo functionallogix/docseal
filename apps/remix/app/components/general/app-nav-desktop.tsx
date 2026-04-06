@@ -33,6 +33,7 @@ export const AppNavDesktop = ({
   const [modifierKey, setModifierKey] = useState(() => 'Ctrl');
 
   const currentTeam = useOptionalCurrentTeam();
+  const isNexisDashboard = Boolean(currentTeam);
 
   useEffect(() => {
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown';
@@ -86,10 +87,20 @@ export const AppNavDesktop = ({
                   key={href}
                   to={href}
                   className={cn(
-                    'text-muted-foreground dark:text-muted-foreground/60 focus-visible:ring-ring ring-offset-background rounded-md font-medium leading-5 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2',
-                    {
-                      'text-foreground dark:text-muted-foreground': pathname?.startsWith(href),
-                    },
+                    'font-medium leading-5 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    isNexisDashboard
+                      ? cn(
+                          'rounded-lg px-3 py-1.5 text-sm text-white/55 transition-colors hover:text-white/90',
+                          pathname?.startsWith(href) &&
+                            'border border-white/15 bg-white/[0.08] text-white',
+                        )
+                      : cn(
+                          'rounded-md text-muted-foreground hover:opacity-80 dark:text-muted-foreground/60',
+                          {
+                            'text-foreground dark:text-muted-foreground':
+                              pathname?.startsWith(href),
+                          },
+                        ),
                   )}
                 >
                   {_(label)}
@@ -102,16 +113,26 @@ export const AppNavDesktop = ({
 
       <Button
         variant="outline"
-        className="text-muted-foreground flex w-full max-w-96 items-center justify-between rounded-lg"
+        className={cn(
+          'flex w-full max-w-96 items-center justify-between',
+          isNexisDashboard
+            ? 'rounded-full border-white/10 bg-[#141414] text-slate-400 hover:bg-[#1a1a1a] hover:text-slate-200'
+            : 'rounded-lg text-muted-foreground',
+        )}
         onClick={() => setIsCommandMenuOpen(true)}
       >
         <div className="flex items-center">
-          <Search className="mr-2 h-5 w-5" />
+          <Search className="mr-2 h-5 w-5 shrink-0 opacity-70" />
           <Trans>Search</Trans>
         </div>
 
         <div>
-          <div className="text-muted-foreground bg-muted flex items-center rounded-md px-1.5 py-0.5 text-xs tracking-wider">
+          <div
+            className={cn(
+              'flex items-center rounded-md px-1.5 py-0.5 text-xs tracking-wider',
+              isNexisDashboard ? 'bg-white/5 text-slate-500' : 'bg-muted text-muted-foreground',
+            )}
+          >
             {modifierKey}+K
           </div>
         </div>

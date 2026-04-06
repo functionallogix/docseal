@@ -24,6 +24,7 @@ import type { TDocumentMany as TDocumentRow } from '@documenso/lib/types/documen
 import { isDocumentCompleted } from '@documenso/lib/utils/document';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
 import { DocumentShareButton } from '@documenso/ui/components/document/document-share-button';
+import { cn } from '@documenso/ui/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,17 +38,23 @@ import { DocumentDuplicateDialog } from '~/components/dialogs/document-duplicate
 import { DocumentResendDialog } from '~/components/dialogs/document-resend-dialog';
 import { DocumentRecipientLinkCopyDialog } from '~/components/general/document/document-recipient-link-copy-dialog';
 import { useCurrentTeam } from '~/providers/team';
+import {
+  nexisDropdownMenuContentClassName,
+  nexisDropdownMenuLabelClassName,
+} from '~/utils/nexis-ui';
 
 import { EnvelopeDownloadDialog } from '../dialogs/envelope-download-dialog';
 
 export type DocumentsTableActionDropdownProps = {
   row: TDocumentRow;
   onMoveDocument?: () => void;
+  variant?: 'default' | 'nexis';
 };
 
 export const DocumentsTableActionDropdown = ({
   row,
   onMoveDocument,
+  variant = 'default',
 }: DocumentsTableActionDropdownProps) => {
   const { user } = useSession();
   const team = useCurrentTeam();
@@ -75,12 +82,21 @@ export const DocumentsTableActionDropdown = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger data-testid="document-table-action-btn">
-        <MoreHorizontal className="text-muted-foreground h-5 w-5" />
+      <DropdownMenuTrigger
+        data-testid="document-table-action-btn"
+        className={variant === 'nexis' ? 'text-slate-500 outline-none hover:text-white' : undefined}
+      >
+        <MoreHorizontal className={cn('h-5 w-5', variant !== 'nexis' && 'text-muted-foreground')} />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-52" align="start" forceMount>
-        <DropdownMenuLabel>
+      <DropdownMenuContent
+        className={cn('w-52', variant === 'nexis' && nexisDropdownMenuContentClassName)}
+        align="start"
+        forceMount
+      >
+        <DropdownMenuLabel
+          className={variant === 'nexis' ? nexisDropdownMenuLabelClassName : undefined}
+        >
           <Trans>Action</Trans>
         </DropdownMenuLabel>
 
@@ -158,7 +174,9 @@ export const DocumentsTableActionDropdown = ({
           {canManageDocument ? _(msg`Delete`) : _(msg`Hide`)}
         </DropdownMenuItem>
 
-        <DropdownMenuLabel>
+        <DropdownMenuLabel
+          className={variant === 'nexis' ? nexisDropdownMenuLabelClassName : undefined}
+        >
           <Trans>Share</Trans>
         </DropdownMenuLabel>
 
