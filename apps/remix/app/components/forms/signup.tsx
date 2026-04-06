@@ -279,7 +279,7 @@ export const SignUpForm = ({
                       dialogConfirmText={msg`Create account`}
                       onChange={(v) => onChange(v ?? '')}
                       className={cn(
-                        '!aspect-auto min-h-[12.5rem] w-full rounded-2xl border border-white/25 bg-white/[0.06]',
+                        'w-full rounded-2xl border border-white/25 bg-white/[0.06]',
                         '[&_svg]:!text-cyan-400/85',
                         '[&_button]:rounded-2xl hover:[&_button]:bg-white/[0.08]',
                       )}

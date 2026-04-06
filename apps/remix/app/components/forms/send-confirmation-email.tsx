@@ -27,9 +27,14 @@ export type TSendConfirmationEmailFormSchema = z.infer<typeof ZSendConfirmationE
 
 export type SendConfirmationEmailFormProps = {
   className?: string;
+  /** Pill fields + cyan CTA for Nexis email screens. */
+  variant?: 'default' | 'nexis';
 };
 
-export const SendConfirmationEmailForm = ({ className }: SendConfirmationEmailFormProps) => {
+export const SendConfirmationEmailForm = ({
+  className,
+  variant = 'default',
+}: SendConfirmationEmailFormProps) => {
   const { _ } = useLingui();
   const { toast } = useToast();
 
@@ -64,23 +69,42 @@ export const SendConfirmationEmailForm = ({ className }: SendConfirmationEmailFo
     }
   };
 
+  const isNexis = variant === 'nexis';
+
   return (
     <Form {...form}>
       <form
-        className={cn('mt-6 flex w-full flex-col gap-y-4', className)}
+        className={cn(
+          isNexis
+            ? 'mt-8 flex w-full flex-col gap-y-3 text-start'
+            : 'mt-6 flex w-full flex-col gap-y-4',
+          className,
+        )}
         onSubmit={form.handleSubmit(onFormSubmit)}
       >
-        <fieldset className="flex w-full flex-col gap-y-4" disabled={isSubmitting}>
+        <fieldset
+          className={cn('flex w-full flex-col', isNexis ? 'gap-y-3' : 'gap-y-4')}
+          disabled={isSubmitting}
+        >
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className={isNexis ? 'sr-only' : undefined}>
                   <Trans>Email address</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder={isNexis ? _(msg`Email address`) : undefined}
+                    className={
+                      isNexis
+                        ? 'h-11 w-full rounded-full border border-white/20 bg-black/40 px-5 text-sm text-white backdrop-blur-sm placeholder:text-gray-500 focus-visible:ring-cyan-400/60'
+                        : undefined
+                    }
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -88,8 +112,22 @@ export const SendConfirmationEmailForm = ({ className }: SendConfirmationEmailFo
 
           <FormMessage />
 
-          <Button size="lg" type="submit" disabled={isSubmitting} loading={isSubmitting}>
-            <Trans>Send confirmation email</Trans>
+          <Button
+            size={isNexis ? 'default' : 'lg'}
+            type="submit"
+            disabled={isSubmitting}
+            loading={isSubmitting}
+            className={
+              isNexis
+                ? 'h-11 w-full rounded-full border border-[#48EAE5] bg-[#48EAE5] text-sm font-semibold text-[#0B0C0E] hover:bg-[#38d4cf]'
+                : undefined
+            }
+          >
+            {isNexis ? (
+              <Trans>Resend confirmation email</Trans>
+            ) : (
+              <Trans>Send confirmation email</Trans>
+            )}
           </Button>
         </fieldset>
       </form>

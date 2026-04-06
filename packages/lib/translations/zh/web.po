@@ -1015,6 +1015,10 @@ msgstr "用于标识您组织的唯一 URL"
 msgid "A unique URL to identify your team"
 msgstr "用于标识你团队的唯一 URL"
 
+#: apps/remix/app/components/embed/embed-direct-template-client-page.tsx
+msgid "A valid email is required"
+msgstr ""
+
 #: apps/remix/app/components/dialogs/team-email-add-dialog.tsx
 msgid "A verification email will be sent to the provided email."
 msgstr "验证邮件将发送到所填写的邮箱。"
@@ -1561,8 +1565,8 @@ msgid "Almost done"
 msgstr "即将完成"
 
 #: apps/remix/app/components/forms/signup.tsx
-msgid "Already have an account? <0>Sign in instead</0>"
-msgstr "已经有账号？<0>改为登录</0>"
+msgid "Already have an account? <0>Sign in</0>"
+msgstr ""
 
 #: apps/remix/app/components/tables/organisation-billing-invoices-table.tsx
 msgid "Amount"
@@ -2804,6 +2808,7 @@ msgid "Confirm Deletion"
 msgstr "确认删除"
 
 #: apps/remix/app/routes/_unauthenticated+/unverified-account.tsx
+#: apps/remix/app/routes/_unauthenticated+/unverified-account.tsx
 #: packages/email/template-components/template-confirmation-email.tsx
 msgid "Confirm email"
 msgstr "确认邮箱"
@@ -2881,8 +2886,8 @@ msgid "Controls how long recipients have to complete signing before the document
 msgstr "控制收件人在文档过期前完成签署的时间长度。过期后，收件人将无法再签署该文档。"
 
 #: apps/remix/app/components/forms/email-preferences-form.tsx
-msgid "Controls the default email settings when new documents or templates are created"
-msgstr "控制新建文档或模板时的默认邮件设置"
+msgid "Controls the default email settings when new documents or templates are created. Updating these settings will not affect existing documents or templates."
+msgstr ""
 
 #: apps/remix/app/components/forms/document-preferences-form.tsx
 msgid "Controls the default language of an uploaded document. This will be used as the language in email communications with the recipients."
@@ -2994,7 +2999,7 @@ msgstr "创建"
 msgid "Create a <0>free account</0> to access your signed documents at any time."
 msgstr "创建一个<0>免费账户</0>，即可随时访问您的已签署文档。"
 
-#: apps/remix/app/components/forms/signup.tsx
+#: apps/remix/app/routes/_unauthenticated+/signup.tsx
 msgid "Create a new account"
 msgstr "创建新账号"
 
@@ -3015,6 +3020,7 @@ msgstr "创建支持工单"
 msgid "Create a team to collaborate with your team members."
 msgstr "创建一个团队，与团队成员协作。"
 
+#: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/routes/_unauthenticated+/organisation.invite.$token.tsx
 #: packages/email/template-components/template-document-self-signed.tsx
@@ -3172,7 +3178,7 @@ msgstr "创建 Webhook"
 msgid "Create your account and start using state-of-the-art document signing."
 msgstr "创建你的账号，开始使用最先进的文档签署功能。"
 
-#: apps/remix/app/components/forms/signup.tsx
+#: apps/remix/app/routes/_unauthenticated+/signup.tsx
 msgid "Create your account and start using state-of-the-art document signing. Open and beautiful signing is within your grasp."
 msgstr "创建你的账号，开始使用最先进的文档签署功能。开放且优雅的签署体验触手可及。"
 
@@ -3870,6 +3876,10 @@ msgstr "文档由 <0>{0}</0> 创建"
 msgid "Document created from direct template"
 msgstr "通过直链模板创建的文档"
 
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Document created from direct template email"
+msgstr ""
+
 #: apps/remix/app/components/general/template/template-page-view-recent-activity.tsx
 msgid "Document created using a <0>direct link</0>"
 msgstr "文档通过<0>直接链接</0>创建"
@@ -4450,7 +4460,10 @@ msgid "Email"
 msgstr "邮箱"
 
 #: apps/remix/app/components/dialogs/organisation-member-invite-dialog.tsx
+#: apps/remix/app/components/forms/forgot-password.tsx
 #: apps/remix/app/components/forms/send-confirmation-email.tsx
+#: apps/remix/app/components/forms/send-confirmation-email.tsx
+#: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/components/general/claim-account.tsx
 msgid "Email address"
 msgstr "邮箱地址"
@@ -4561,6 +4574,10 @@ msgstr "邮件已发送！"
 #: apps/remix/app/components/general/envelope-editor/envelope-editor-fields-page.tsx
 msgid "Email Settings"
 msgstr "邮件设置"
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "Email the owner when a document is created from a direct template"
+msgstr ""
 
 #: packages/ui/components/document/document-email-checkboxes.tsx
 msgid "Email the owner when a recipient signs"
@@ -5288,6 +5305,7 @@ msgstr "请为每个收件人分别提供邮箱（必填）和姓名（可选）
 msgid "For example, if the claim has a new flag \"FLAG_1\" set to true, then this organisation will get that flag added."
 msgstr "例如，如果声明中新加了一个标记“FLAG_1”并设为 true，则该组织会获得该标记。"
 
+#: apps/remix/app/components/forms/signin.tsx
 #: apps/remix/app/routes/_unauthenticated+/check-email.tsx
 msgid "Forgot password"
 msgstr "忘记密码"
@@ -5300,7 +5318,6 @@ msgstr "忘记密码"
 msgid "Forgot Password?"
 msgstr "忘记密码？"
 
-#: apps/remix/app/components/forms/signin.tsx
 #: apps/remix/app/routes/_unauthenticated+/forgot-password.tsx
 #: packages/email/template-components/template-forgot-password.tsx
 msgid "Forgot your password?"
@@ -5329,6 +5346,10 @@ msgstr "免费签名设置"
 #: packages/lib/constants/i18n.ts
 msgid "French"
 msgstr "法语"
+
+#: apps/remix/app/components/forms/signup.tsx
+msgid "Full name"
+msgstr ""
 
 #: apps/remix/app/components/embed/embed-direct-template-client-page.tsx
 #: apps/remix/app/components/embed/embed-document-signing-page-v1.tsx
@@ -6175,6 +6196,11 @@ msgstr "正在加载..."
 msgid "Local timezone"
 msgstr "本地时区"
 
+#: apps/remix/app/routes/_unauthenticated+/signin.tsx
+msgid "Log in to your account"
+msgstr ""
+
+#: apps/remix/app/components/forms/signin.tsx
 #: apps/remix/app/components/general/direct-template/direct-template-signing-auth-page.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-auth-account.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-auth-page.tsx
@@ -7239,6 +7265,8 @@ msgstr "此浏览器不支持通行密钥"
 
 #: apps/remix/app/components/forms/reset-password.tsx
 #: apps/remix/app/components/forms/signin.tsx
+#: apps/remix/app/components/forms/signin.tsx
+#: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/components/forms/signup.tsx
 #: apps/remix/app/components/general/app-command-menu.tsx
 #: apps/remix/app/components/general/document-signing/document-signing-auth-dialog.tsx
@@ -8045,6 +8073,10 @@ msgstr "拒签原因：{reason}"
 msgid "Reload"
 msgstr "重新加载"
 
+#: apps/remix/app/components/forms/signin.tsx
+msgid "Remember me"
+msgstr ""
+
 #: apps/remix/app/routes/_unauthenticated+/forgot-password.tsx
 msgid "Remembered your password? <0>Sign In</0>"
 msgstr "想起密码了？<0>登录</0>"
@@ -8197,6 +8229,10 @@ msgstr "重新发送"
 #: apps/remix/app/components/general/document-signing/access-auth-2fa-form.tsx
 msgid "Resend code"
 msgstr "重新发送代码"
+
+#: apps/remix/app/components/forms/send-confirmation-email.tsx
+msgid "Resend confirmation email"
+msgstr ""
 
 #: apps/remix/app/components/general/verify-email-banner.tsx
 msgid "Resend Confirmation Email"
@@ -8920,7 +8956,6 @@ msgid "Sign Here"
 msgstr "在此签名"
 
 #: apps/remix/app/components/forms/signin.tsx
-#: apps/remix/app/components/forms/signin.tsx
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
 #: apps/remix/app/routes/_unauthenticated+/signin.tsx
@@ -8930,7 +8965,6 @@ msgstr "登录"
 
 #: apps/remix/app/components/general/document-signing/document-signing-auth-dialog.tsx
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
-#: apps/remix/app/routes/_unauthenticated+/signin.tsx
 msgid "Sign in to your account"
 msgstr "登录到你的账号"
 
@@ -10386,6 +10420,10 @@ msgid "This email is already being used by another team."
 msgstr "此邮箱已被其他团队使用。"
 
 #: packages/ui/components/document/document-email-checkboxes.tsx
+msgid "This email is sent to the document owner when a recipient creates a document via a direct template link."
+msgstr ""
+
+#: packages/ui/components/document/document-email-checkboxes.tsx
 msgid "This email is sent to the document owner when a recipient has signed the document."
 msgstr "当某个收件人签署文档时，将向文档所有者发送此邮件。"
 
@@ -11337,10 +11375,6 @@ msgstr "未找到用户。"
 msgid "User Organisations"
 msgstr "用户组织"
 
-#: apps/remix/app/components/forms/signup.tsx
-msgid "User profiles are here!"
-msgstr "用户资料来了！"
-
 #: apps/remix/app/components/general/menu-switcher.tsx
 msgid "User settings"
 msgstr "用户设置"
@@ -11348,6 +11382,10 @@ msgstr "用户设置"
 #: apps/remix/app/components/forms/signup.tsx
 msgid "User with this email already exists. Please use a different email address."
 msgstr "使用该邮箱的用户已存在。请使用其他邮箱地址。"
+
+#: apps/remix/app/components/forms/signin.tsx
+msgid "Username"
+msgstr ""
 
 #: apps/remix/app/components/tables/organisation-insights-table.tsx
 #: apps/remix/app/routes/_authenticated+/admin+/_layout.tsx
@@ -11394,6 +11432,10 @@ msgstr "验证并完成"
 msgid "Verify Domain"
 msgstr "验证域名"
 
+#: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
+msgid "Verify email"
+msgstr ""
+
 #: apps/remix/app/routes/_unauthenticated+/verify-email._index.tsx
 msgid "Verify Email"
 msgstr "验证邮箱"
@@ -11418,6 +11460,10 @@ msgstr "验证邮箱后即可上传文档。"
 #: packages/email/templates/confirm-team-email.tsx
 msgid "Verify your team email address"
 msgstr "验证您的团队邮箱地址"
+
+#: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
+msgid "Verifying your email…"
+msgstr ""
 
 #: apps/remix/app/components/forms/editor/editor-field-checkbox-form.tsx
 #: apps/remix/app/components/forms/editor/editor-field-radio-form.tsx
@@ -12044,13 +12090,13 @@ msgstr "Webhooks"
 msgid "Welcome"
 msgstr "欢迎"
 
-#: apps/remix/app/routes/_unauthenticated+/signin.tsx
-msgid "Welcome back, we are lucky to have you."
-msgstr "欢迎回来，我们很高兴再次见到你。"
-
 #: apps/remix/app/routes/_authenticated+/dashboard.tsx
 msgid "Welcome back! Here's an overview of your account."
 msgstr "欢迎回来！以下是您的账户概览。"
+
+#: apps/remix/app/routes/_unauthenticated+/signin.tsx
+msgid "Welcome back! Please enter your details."
+msgstr ""
 
 #: apps/remix/app/routes/_unauthenticated+/o.$orgUrl.signin.tsx
 msgid "Welcome to {organisationName}"
@@ -13048,12 +13094,12 @@ msgid "Your Email"
 msgstr "您的邮箱"
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
-msgid "Your email has already been confirmed. You can now use all features of Documenso."
-msgstr "您的邮箱已确认。您现在可以使用 Documenso 的全部功能。"
+msgid "Your email has already been confirmed. You can now use all features of MOS."
+msgstr ""
 
 #: apps/remix/app/routes/_unauthenticated+/verify-email.$token.tsx
-msgid "Your email has been successfully confirmed! You can now use all features of Documenso."
-msgstr "你的邮箱已成功确认！你现在可以使用 Documenso 的所有功能。"
+msgid "Your email has been successfully confirmed! You can now use all features of MOS."
+msgstr ""
 
 #. placeholder {0}: teamEmail.team.name
 #. placeholder {1}: teamEmail.team.url
@@ -13230,4 +13276,3 @@ msgstr "您的验证码："
 #: apps/remix/app/routes/_authenticated+/o.$orgUrl.settings.sso.tsx
 msgid "your-domain.com another-domain.com"
 msgstr "your-domain.com another-domain.com"
-
