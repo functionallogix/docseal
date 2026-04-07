@@ -106,6 +106,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitive
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
+
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 
 export const ZAddSettingsFormSchema = z.object({
   templateType: z.nativeEnum(TemplateType).optional(),
@@ -185,6 +188,7 @@ export const EnvelopeEditorSettingsDialog = ({
 }: EnvelopeEditorSettingsDialogProps) => {
   const { t } = useLingui();
   const { toast } = useToast();
+  const nexisChrome = useEnvelopeEditorNexisChrome();
 
   const { envelope, updateEnvelopeAsync, editorConfig, isEmbedded, organisationEmails } =
     useCurrentEnvelopeEditor();
@@ -368,11 +372,22 @@ export const EnvelopeEditorSettingsDialog = ({
         )}
       </DialogTrigger>
 
-      <DialogContent className="flex w-full !max-w-5xl flex-row gap-0 p-0">
+      <DialogContent
+        className={cn(
+          'flex w-full !max-w-5xl flex-row gap-0 p-0',
+          nexisChrome &&
+            'overflow-hidden rounded-xl border border-white/10 !bg-dialog-panel text-slate-200',
+        )}
+      >
         {/* Sidebar. */}
-        <div className="flex w-80 flex-col border-r bg-accent/20">
+        <div
+          className={cn(
+            'flex w-80 flex-col border-r bg-accent/20',
+            nexisChrome && 'border-white/10 bg-dialog-panel',
+          )}
+        >
           <DialogHeader className="p-6 pb-4" data-testid="envelope-editor-settings-dialog-header">
-            <DialogTitle>
+            <DialogTitle className={cn(nexisChrome && 'text-white')}>
               <Trans>Document Settings</Trans>
             </DialogTitle>
           </DialogHeader>
@@ -388,9 +403,16 @@ export const EnvelopeEditorSettingsDialog = ({
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   variant="ghost"
-                  className={cn('w-full justify-start', {
-                    'bg-secondary': activeTab === tab.id,
-                  })}
+                  className={cn(
+                    'w-full justify-start',
+                    nexisChrome
+                      ? activeTab === tab.id
+                        ? 'bg-white/10 text-white'
+                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                      : {
+                          'bg-secondary': activeTab === tab.id,
+                        },
+                  )}
                 >
                   <tab.icon className="mr-2 h-5 w-5" />
                   {t(tab.title)}
@@ -401,16 +423,24 @@ export const EnvelopeEditorSettingsDialog = ({
         </div>
 
         {/* Content. */}
-        <div className="flex w-full flex-col">
-          <CardHeader className="border-b pb-4">
-            <CardTitle>{selectedTab ? t(selectedTab.title) : ''}</CardTitle>
-            <CardDescription>{selectedTab ? t(selectedTab.description) : ''}</CardDescription>
+        <div className={cn('flex w-full flex-col', nexisChrome && 'bg-dialog-panel')}>
+          <CardHeader className={cn('border-b pb-4', nexisChrome && 'border-white/10')}>
+            <CardTitle className={cn(nexisChrome && 'text-white')}>
+              {selectedTab ? t(selectedTab.title) : ''}
+            </CardTitle>
+            <CardDescription className={cn(nexisChrome && 'text-slate-500')}>
+              {selectedTab ? t(selectedTab.description) : ''}
+            </CardDescription>
           </CardHeader>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onFormSubmit)}>
               <fieldset
-                className="flex h-[45rem] max-h-[calc(100vh-14rem)] w-full flex-col space-y-6 overflow-y-auto px-6 py-6"
+                className={cn(
+                  'flex h-[45rem] max-h-[calc(100vh-14rem)] w-full flex-col space-y-6 overflow-y-auto px-6 py-6',
+                  nexisChrome &&
+                    'text-slate-200 [&_button[role=combobox]]:border-white/15 [&_button[role=combobox]]:bg-black/40 [&_input]:border-white/15 [&_input]:bg-black/40 [&_label]:text-slate-300 [&_textarea]:border-white/15 [&_textarea]:bg-black/40',
+                )}
                 disabled={form.formState.isSubmitting}
                 key={activeTab}
               >
@@ -953,14 +983,31 @@ export const EnvelopeEditorSettingsDialog = ({
                   .otherwise(() => null)}
               </fieldset>
 
-              <div className="flex flex-row justify-end gap-4 p-6">
+              <div
+                className={cn(
+                  'flex flex-row justify-end gap-4 p-6',
+                  nexisChrome && 'border-t border-white/10',
+                )}
+              >
                 <DialogClose asChild>
-                  <Button variant="secondary" disabled={form.formState.isSubmitting}>
+                  <Button
+                    variant="secondary"
+                    disabled={form.formState.isSubmitting}
+                    className={cn(
+                      nexisChrome &&
+                        'border-white/15 bg-black/40 text-white hover:bg-white/10 hover:text-white',
+                    )}
+                  >
                     <Trans>Cancel</Trans>
                   </Button>
                 </DialogClose>
 
-                <Button type="submit" loading={form.formState.isSubmitting}>
+                <Button
+                  type="submit"
+                  loading={form.formState.isSubmitting}
+                  variant={nexisChrome ? 'none' : 'default'}
+                  className={cn(nexisChrome && nexisPrimaryButtonClassName)}
+                >
                   <Trans>Update</Trans>
                 </Button>
               </div>

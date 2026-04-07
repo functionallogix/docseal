@@ -18,6 +18,14 @@ export type RecipientRoleSelectProps = SelectProps & {
   hideApproverRole?: boolean;
 
   isAssistantEnabled?: boolean;
+  /** Merged into `SelectTrigger` (e.g. Nexis envelope editor dark row). */
+  triggerClassName?: string;
+  /** Merged into `SelectContent`. */
+  contentClassName?: string;
+  /** Merged into each `SelectItem`. */
+  itemClassName?: string;
+  /** Merged into each role row `TooltipContent`. */
+  tooltipContentClassName?: string;
 };
 
 export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSelectProps>(
@@ -28,18 +36,26 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
       hideViewerRole,
       hideApproverRole,
       isAssistantEnabled = true,
+      triggerClassName,
+      contentClassName,
+      itemClassName,
+      tooltipContentClassName,
       ...props
     },
     ref,
   ) => (
     <Select {...props}>
-      <SelectTrigger ref={ref} className="w-[50px] bg-background p-2" title={props.value}>
+      <SelectTrigger
+        ref={ref}
+        className={cn('w-[50px] bg-background p-2', triggerClassName)}
+        title={props.value}
+      >
         {/* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */}
         {ROLE_ICONS[props.value as RecipientRole]}
       </SelectTrigger>
 
-      <SelectContent align="end">
-        <SelectItem value={RecipientRole.SIGNER}>
+      <SelectContent align="end" className={contentClassName}>
+        <SelectItem value={RecipientRole.SIGNER} className={itemClassName}>
           <div className="flex items-center">
             <div className="flex w-[150px] items-center">
               <span className="mr-2">{ROLE_ICONS[RecipientRole.SIGNER]}</span>
@@ -49,7 +65,9 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
               <TooltipTrigger>
                 <InfoIcon className="h-4 w-4" />
               </TooltipTrigger>
-              <TooltipContent className="z-9999 max-w-md p-4 text-foreground">
+              <TooltipContent
+                className={cn('z-9999 max-w-md p-4 text-foreground', tooltipContentClassName)}
+              >
                 <p>
                   <Trans>
                     The recipient is required to sign the document for it to be completed.
@@ -61,7 +79,7 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
         </SelectItem>
 
         {!hideApproverRole && (
-          <SelectItem value={RecipientRole.APPROVER}>
+          <SelectItem value={RecipientRole.APPROVER} className={itemClassName}>
             <div className="flex items-center">
               <div className="flex w-[150px] items-center">
                 <span className="mr-2">{ROLE_ICONS[RecipientRole.APPROVER]}</span>
@@ -71,7 +89,9 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
                 <TooltipTrigger>
                   <InfoIcon className="h-4 w-4" />
                 </TooltipTrigger>
-                <TooltipContent className="z-9999 max-w-md p-4 text-foreground">
+                <TooltipContent
+                  className={cn('z-9999 max-w-md p-4 text-foreground', tooltipContentClassName)}
+                >
                   <p>
                     <Trans>
                       The recipient is required to approve the document for it to be completed.
@@ -84,7 +104,7 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
         )}
 
         {!hideViewerRole && (
-          <SelectItem value={RecipientRole.VIEWER}>
+          <SelectItem value={RecipientRole.VIEWER} className={itemClassName}>
             <div className="flex items-center">
               <div className="flex w-[150px] items-center">
                 <span className="mr-2">{ROLE_ICONS[RecipientRole.VIEWER]}</span>
@@ -107,7 +127,7 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
         )}
 
         {!hideCCerRole && (
-          <SelectItem value={RecipientRole.CC}>
+          <SelectItem value={RecipientRole.CC} className={itemClassName}>
             <div className="flex items-center">
               <div className="flex w-[150px] items-center">
                 <span className="mr-2">{ROLE_ICONS[RecipientRole.CC]}</span>
@@ -117,7 +137,9 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
                 <TooltipTrigger>
                   <InfoIcon className="h-4 w-4" />
                 </TooltipTrigger>
-                <TooltipContent className="z-9999 max-w-md p-4 text-foreground">
+                <TooltipContent
+                  className={cn('z-9999 max-w-md p-4 text-foreground', tooltipContentClassName)}
+                >
                   <p>
                     <Trans>
                       The recipient is not required to take any action and receives a copy of the
@@ -135,6 +157,7 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
             value={RecipientRole.ASSISTANT}
             disabled={!isAssistantEnabled}
             className={cn(
+              itemClassName,
               !isAssistantEnabled &&
                 'cursor-not-allowed opacity-50 data-[disabled]:pointer-events-auto',
             )}
@@ -148,7 +171,9 @@ export const RecipientRoleSelect = forwardRef<HTMLButtonElement, RecipientRoleSe
                 <TooltipTrigger>
                   <InfoIcon className="h-4 w-4" />
                 </TooltipTrigger>
-                <TooltipContent className="z-9999 max-w-md p-4 text-foreground">
+                <TooltipContent
+                  className={cn('z-9999 max-w-md p-4 text-foreground', tooltipContentClassName)}
+                >
                   <p>
                     {isAssistantEnabled ? (
                       <Trans>

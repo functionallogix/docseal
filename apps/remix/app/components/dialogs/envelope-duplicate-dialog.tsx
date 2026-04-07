@@ -99,7 +99,12 @@ export const EnvelopeDuplicateDialog = ({
         )}
 
         <DialogFooter>
-          <Button type="button" variant="secondary" disabled={isDuplicating}>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={isDuplicating}
+            onClick={() => setOpen(false)}
+          >
             <Trans>Cancel</Trans>
           </Button>
 

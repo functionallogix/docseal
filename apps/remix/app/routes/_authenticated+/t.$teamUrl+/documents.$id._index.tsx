@@ -33,6 +33,7 @@ import {
   DocumentStatus as DocumentStatusComponent,
   FRIENDLY_STATUS_MAP,
 } from '~/components/general/document/document-status';
+import { EnvelopeEditorNexisChromeProvider } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
 import { EnvelopeRendererFileSelector } from '~/components/general/envelope-editor/envelope-file-selector';
 import { EnvelopeGenericPageRenderer } from '~/components/general/envelope-editor/envelope-generic-page-renderer';
 import { GenericErrorLayout } from '~/components/general/generic-error-layout';
@@ -40,6 +41,13 @@ import { EnvelopePdfViewer } from '~/components/general/pdf-viewer/envelope-pdf-
 import PDFViewerLazy from '~/components/general/pdf-viewer/pdf-viewer-lazy';
 import { StackAvatarsWithTooltip } from '~/components/general/stack-avatars-with-tooltip';
 import { useCurrentTeam } from '~/providers/team';
+import {
+  nexisTeamDocumentBackLinkClassName,
+  nexisTeamDocumentHeroSectionClassName,
+  nexisTeamDocumentPageShellClassName,
+  nexisTeamDocumentSidebarCardClassName,
+  nexisTeamDocumentViewerCardClassName,
+} from '~/utils/nexis-ui';
 
 import type { Route } from './+types/documents.$id._index';
 
@@ -98,182 +106,217 @@ export default function DocumentPage({ params }: Route.ComponentProps) {
   const isMultiEnvelopeItem = envelope.envelopeItems.length > 1 && envelope.internalVersion === 2;
 
   return (
-    <div className="mx-auto -mt-4 w-full max-w-screen-xl px-4 md:px-8">
-      {envelope.status === DocumentStatus.PENDING && (
-        <DocumentRecipientLinkCopyDialog recipients={envelope.recipients} />
-      )}
-
-      <Link to={documentRootPath} className="flex items-center text-documenso-700 hover:opacity-80">
-        <ChevronLeft className="mr-2 inline-block h-5 w-5" />
-        <Trans>Documents</Trans>
-      </Link>
-
-      <div className="flex flex-row justify-between truncate">
-        <div>
-          <h1
-            className="mt-4 block max-w-[20rem] truncate text-2xl font-semibold md:max-w-[30rem] md:text-3xl"
-            title={envelope.title}
-          >
-            {envelope.title}
-          </h1>
-
-          <div className="mt-2.5 flex items-center gap-x-6">
-            <DocumentStatusComponent
-              inheritColor
-              status={envelope.status}
-              className="text-muted-foreground"
-            />
-
-            {envelope.recipients.length > 0 && (
-              <div className="flex items-center text-muted-foreground">
-                <Users2 className="mr-2 h-5 w-5" />
-
-                <StackAvatarsWithTooltip
-                  recipients={envelope.recipients}
-                  documentStatus={envelope.status}
-                  position="bottom"
-                >
-                  <span>
-                    <Plural
-                      value={envelope.recipients.length}
-                      one="# Recipient"
-                      other="# Recipients"
-                    />
-                  </span>
-                </StackAvatarsWithTooltip>
-              </div>
-            )}
-
-            {envelope.deletedAt && (
-              <Badge variant="destructive">
-                <Trans>Document deleted</Trans>
-              </Badge>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 grid w-full grid-cols-12 gap-8">
-        {envelope.internalVersion === 2 ? (
-          <div className="relative col-span-12 lg:col-span-6 xl:col-span-7">
-            <EnvelopeRenderProvider
-              version="current"
-              envelope={envelope}
-              envelopeItems={envelope.envelopeItems}
-              token={undefined}
-              fields={envelope.fields}
-              recipients={envelope.recipients}
-              overrideSettings={{
-                showRecipientSigningStatus: true,
-                showRecipientTooltip: true,
-              }}
-            >
-              {isMultiEnvelopeItem && (
-                <EnvelopeRendererFileSelector fields={envelope.fields} className="mb-4 p-0" />
-              )}
-
-              <Card className="rounded-xl before:rounded-xl" gradient>
-                <CardContent className="p-2">
-                  <EnvelopePdfViewer
-                    customPageRenderer={EnvelopeGenericPageRenderer}
-                    scrollParentRef="window"
-                    errorMessage={PDF_VIEWER_ERROR_MESSAGES.preview}
-                  />
-                </CardContent>
-              </Card>
-            </EnvelopeRenderProvider>
-          </div>
-        ) : (
-          <Card
-            className="relative col-span-12 rounded-xl before:rounded-xl lg:col-span-6 xl:col-span-7"
-            gradient
-          >
-            <CardContent className="p-2">
-              {envelope.status !== DocumentStatus.COMPLETED && (
-                <DocumentReadOnlyFields
-                  fields={mapFieldsWithRecipients(envelope.fields, envelope.recipients)}
-                  documentMeta={envelope.documentMeta || undefined}
-                  showRecipientTooltip={true}
-                  showRecipientColors={true}
-                  recipientIds={envelope.recipients.map((recipient) => recipient.id)}
-                />
-              )}
-
-              <PDFViewerLazy
-                data={getDocumentDataUrlForPdfViewer({
-                  envelopeId: envelope.id,
-                  envelopeItemId: envelope.envelopeItems[0]?.id,
-                  documentDataId: envelope.envelopeItems[0]?.documentDataId,
-                  version: 'current',
-                  token: undefined,
-                  presignToken: undefined,
-                })}
-                key={envelope.envelopeItems[0]?.id}
-                scrollParentRef="window"
-              />
-            </CardContent>
-          </Card>
+    <EnvelopeEditorNexisChromeProvider value={true}>
+      <div
+        className={cn(
+          'mx-auto -mt-4 w-full max-w-screen-xl px-4 md:px-8',
+          nexisTeamDocumentPageShellClassName,
+        )}
+      >
+        {envelope.status === DocumentStatus.PENDING && (
+          <DocumentRecipientLinkCopyDialog recipients={envelope.recipients} />
         )}
 
-        <div
-          className={cn('col-span-12 lg:col-span-6 xl:col-span-5', isMultiEnvelopeItem && 'mt-20')}
+        <Link
+          to={documentRootPath}
+          className={cn('flex items-center hover:opacity-80', nexisTeamDocumentBackLinkClassName)}
         >
-          <div className="space-y-6">
-            <section className="flex flex-col rounded-xl border border-border bg-widget pb-4 pt-6">
-              <div className="flex flex-row items-center justify-between px-4">
-                <h3 className="text-2xl font-semibold text-foreground">
-                  {t(FRIENDLY_STATUS_MAP[envelope.status].labelExtended)}
-                </h3>
+          <ChevronLeft className="mr-2 inline-block h-5 w-5" />
+          <Trans>Documents</Trans>
+        </Link>
 
-                <DocumentPageViewDropdown envelope={envelope} />
-              </div>
+        <div className="flex flex-row justify-between truncate">
+          <div>
+            <h1
+              className="mt-4 block max-w-[20rem] truncate text-2xl font-semibold text-white md:max-w-[30rem] md:text-3xl"
+              title={envelope.title}
+            >
+              {envelope.title}
+            </h1>
 
-              <p className="mt-2 px-4 text-sm text-muted-foreground">
-                {match(envelope.status)
-                  .with(DocumentStatus.COMPLETED, () => (
-                    <Trans>This document has been signed by all recipients</Trans>
-                  ))
-                  .with(DocumentStatus.REJECTED, () => (
-                    <Trans>This document has been rejected by a recipient</Trans>
-                  ))
-                  .with(DocumentStatus.DRAFT, () => (
-                    <Trans>This document is currently a draft and has not been sent</Trans>
-                  ))
-                  .with(DocumentStatus.PENDING, () => {
-                    const pendingRecipients = envelope.recipients.filter(
-                      (recipient) => recipient.signingStatus === 'NOT_SIGNED',
-                    );
+            <div className="mt-2.5 flex items-center gap-x-6">
+              <DocumentStatusComponent
+                inheritColor
+                status={envelope.status}
+                className={cn(
+                  envelope.status === DocumentStatus.PENDING ? 'text-[#48EAE5]' : 'text-slate-400',
+                )}
+              />
 
-                    return (
+              {envelope.recipients.length > 0 && (
+                <div className="flex items-center text-slate-400">
+                  <Users2 className="mr-2 h-5 w-5" />
+
+                  <StackAvatarsWithTooltip
+                    recipients={envelope.recipients}
+                    documentStatus={envelope.status}
+                    position="bottom"
+                  >
+                    <span>
                       <Plural
-                        value={pendingRecipients.length}
-                        one="Waiting on 1 recipient"
-                        other="Waiting on # recipients"
+                        value={envelope.recipients.length}
+                        one="# Recipient"
+                        other="# Recipients"
                       />
-                    );
-                  })
-                  .exhaustive()}
-              </p>
+                    </span>
+                  </StackAvatarsWithTooltip>
+                </div>
+              )}
 
-              <div className="mt-4 border-t px-4 pt-4">
-                <DocumentPageViewButton envelope={envelope} />
-              </div>
-            </section>
+              {envelope.deletedAt && (
+                <Badge variant="destructive">
+                  <Trans>Document deleted</Trans>
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
 
-            {/* Document information section. */}
-            <DocumentPageViewInformation envelope={envelope} userId={user.id} />
+        <div className="mt-6 grid w-full grid-cols-12 gap-8">
+          {envelope.internalVersion === 2 ? (
+            <div className="relative col-span-12 lg:col-span-6 xl:col-span-7">
+              <EnvelopeRenderProvider
+                version="current"
+                envelope={envelope}
+                envelopeItems={envelope.envelopeItems}
+                token={undefined}
+                fields={envelope.fields}
+                recipients={envelope.recipients}
+                overrideSettings={{
+                  showRecipientSigningStatus: true,
+                  showRecipientTooltip: true,
+                }}
+              >
+                {isMultiEnvelopeItem && (
+                  <EnvelopeRendererFileSelector fields={envelope.fields} className="mb-4 p-0" />
+                )}
 
-            {/* Recipients section. */}
-            <DocumentPageViewRecipients envelope={envelope} documentRootPath={documentRootPath} />
+                <Card
+                  className={cn('rounded-xl', nexisTeamDocumentViewerCardClassName)}
+                  gradient={false}
+                >
+                  <CardContent className="p-2">
+                    <EnvelopePdfViewer
+                      customPageRenderer={EnvelopeGenericPageRenderer}
+                      scrollParentRef="window"
+                      errorMessage={PDF_VIEWER_ERROR_MESSAGES.preview}
+                    />
+                  </CardContent>
+                </Card>
+              </EnvelopeRenderProvider>
+            </div>
+          ) : (
+            <Card
+              className={cn(
+                'relative col-span-12 rounded-xl lg:col-span-6 xl:col-span-7',
+                nexisTeamDocumentViewerCardClassName,
+              )}
+              gradient={false}
+            >
+              <CardContent className="p-2">
+                {envelope.status !== DocumentStatus.COMPLETED && (
+                  <DocumentReadOnlyFields
+                    fields={mapFieldsWithRecipients(envelope.fields, envelope.recipients)}
+                    documentMeta={envelope.documentMeta || undefined}
+                    showRecipientTooltip={true}
+                    showRecipientColors={true}
+                    recipientIds={envelope.recipients.map((recipient) => recipient.id)}
+                  />
+                )}
 
-            {/* Recent activity section. */}
-            <DocumentPageViewRecentActivity
-              documentId={mapSecondaryIdToDocumentId(envelope.secondaryId)}
-              userId={user.id}
-            />
+                <PDFViewerLazy
+                  data={getDocumentDataUrlForPdfViewer({
+                    envelopeId: envelope.id,
+                    envelopeItemId: envelope.envelopeItems[0]?.id,
+                    documentDataId: envelope.envelopeItems[0]?.documentDataId,
+                    version: 'current',
+                    token: undefined,
+                    presignToken: undefined,
+                  })}
+                  key={envelope.envelopeItems[0]?.id}
+                  scrollParentRef="window"
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          <div
+            className={cn(
+              'col-span-12 lg:col-span-6 xl:col-span-5',
+              isMultiEnvelopeItem && 'mt-20',
+            )}
+          >
+            <div className="space-y-6">
+              <section
+                className={cn(
+                  'flex flex-col rounded-xl border pb-4 pt-6',
+                  nexisTeamDocumentHeroSectionClassName,
+                )}
+              >
+                <div className="flex flex-row items-center justify-between px-4">
+                  <h3 className="text-2xl font-semibold text-white">
+                    {t(FRIENDLY_STATUS_MAP[envelope.status].labelExtended)}
+                  </h3>
+
+                  <DocumentPageViewDropdown envelope={envelope} />
+                </div>
+
+                <p className="mt-2 px-4 text-sm text-slate-400">
+                  {match(envelope.status)
+                    .with(DocumentStatus.COMPLETED, () => (
+                      <Trans>This document has been signed by all recipients</Trans>
+                    ))
+                    .with(DocumentStatus.REJECTED, () => (
+                      <Trans>This document has been rejected by a recipient</Trans>
+                    ))
+                    .with(DocumentStatus.DRAFT, () => (
+                      <Trans>This document is currently a draft and has not been sent</Trans>
+                    ))
+                    .with(DocumentStatus.PENDING, () => {
+                      const pendingRecipients = envelope.recipients.filter(
+                        (recipient) => recipient.signingStatus === 'NOT_SIGNED',
+                      );
+
+                      return (
+                        <Plural
+                          value={pendingRecipients.length}
+                          one="Waiting on 1 recipient"
+                          other="Waiting on # recipients"
+                        />
+                      );
+                    })
+                    .exhaustive()}
+                </p>
+
+                <div className="border-t px-4 pt-4">
+                  <DocumentPageViewButton envelope={envelope} />
+                </div>
+              </section>
+
+              {/* Document information section. */}
+              <DocumentPageViewInformation
+                envelope={envelope}
+                userId={user.id}
+                className={nexisTeamDocumentSidebarCardClassName}
+              />
+
+              {/* Recipients section. */}
+              <DocumentPageViewRecipients
+                envelope={envelope}
+                documentRootPath={documentRootPath}
+                className={nexisTeamDocumentSidebarCardClassName}
+              />
+
+              {/* Recent activity section. */}
+              <DocumentPageViewRecentActivity
+                documentId={mapSecondaryIdToDocumentId(envelope.secondaryId)}
+                userId={user.id}
+                className={nexisTeamDocumentSidebarCardClassName}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </EnvelopeEditorNexisChromeProvider>
   );
 }

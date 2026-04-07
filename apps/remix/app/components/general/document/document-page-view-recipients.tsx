@@ -26,6 +26,7 @@ import { isDocumentCompleted } from '@documenso/lib/utils/document';
 import { formatSigningLink, isRecipientExpired } from '@documenso/lib/utils/recipients';
 import { CopyTextButton } from '@documenso/ui/components/common/copy-text-button';
 import { SignatureIcon } from '@documenso/ui/icons/signature';
+import { cn } from '@documenso/ui/lib/utils';
 import { AvatarWithText } from '@documenso/ui/primitives/avatar';
 import { Badge } from '@documenso/ui/primitives/badge';
 import { PopoverHover } from '@documenso/ui/primitives/popover';
@@ -40,11 +41,13 @@ import { useToast } from '@documenso/ui/primitives/use-toast';
 export type DocumentPageViewRecipientsProps = {
   envelope: TEnvelope;
   documentRootPath: string;
+  className?: string;
 };
 
 export const DocumentPageViewRecipients = ({
   envelope,
   documentRootPath,
+  className,
 }: DocumentPageViewRecipientsProps) => {
   const { _, i18n } = useLingui();
   const { toast } = useToast();
@@ -68,7 +71,12 @@ export const DocumentPageViewRecipients = ({
   }, [searchParams, setSearchParams]);
 
   return (
-    <section className="flex flex-col rounded-xl border border-border bg-widget dark:bg-background">
+    <section
+      className={cn(
+        'flex flex-col rounded-xl border border-border bg-widget dark:bg-background',
+        className,
+      )}
+    >
       <div className="flex flex-row items-center justify-between px-4 py-3">
         <h1 className="font-medium text-foreground">
           <Trans>Recipients</Trans>

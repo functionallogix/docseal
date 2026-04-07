@@ -27,6 +27,8 @@ import { getRecipientColorStyles } from '@documenso/ui/lib/recipient-colors';
 import { cn } from '@documenso/ui/lib/utils';
 import { FRIENDLY_FIELD_TYPE } from '@documenso/ui/primitives/document-flow/types';
 
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
+
 const MIN_HEIGHT_PX = 12;
 const MIN_WIDTH_PX = 36;
 
@@ -96,6 +98,7 @@ export const EnvelopeEditorFieldDragDrop = ({
   selectedRecipientId,
   selectedEnvelopeItemId,
 }: EnvelopeEditorFieldDragDropProps) => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
   const { envelope, editorFields, isTemplate, getRecipientColorKey } = useCurrentEnvelopeEditor();
 
   const { t } = useLingui();
@@ -156,6 +159,16 @@ export const EnvelopeEditorFieldDragDrop = ({
     (event: MouseEvent) => {
       if (!selectedField || !selectedRecipientId || !selectedEnvelopeItemId) {
         return;
+      }
+
+      const el = event.target;
+      if (el instanceof Element) {
+        if (
+          el.closest('[data-envelope-fields-sidebar]') ||
+          el.closest('[data-envelope-recipient-selector-popover]')
+        ) {
+          return;
+        }
       }
 
       const $page = getPage(event, PDF_VIEWER_PAGE_SELECTOR);
@@ -260,7 +273,7 @@ export const EnvelopeEditorFieldDragDrop = ({
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-x-2 gap-y-2.5">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-2.5" data-envelope-field-palette>
         {fieldButtonList.map((field) => (
           <button
             disabled={isFieldsDisabled}
@@ -270,18 +283,41 @@ export const EnvelopeEditorFieldDragDrop = ({
             onMouseDown={() => setSelectedField(field.type)}
             data-selected={selectedField === field.type ? true : undefined}
             className={cn(
-              'group flex h-12 cursor-pointer items-center justify-center rounded-lg border border-border px-4 transition-colors',
-              selectedRecipientStyles.fieldButton,
+              'group flex h-12 cursor-pointer items-center justify-center rounded-lg border px-4 transition-colors',
+              nexisChrome
+                ? cn(
+                    'border-white/15 bg-black/30 hover:bg-white/[0.06]',
+                    'data-[selected]:bg-[#48EAE5]/12 data-[selected]:border-[#48EAE5]/55 data-[selected]:shadow-[0_0_18px_-8px_rgba(72,234,229,0.4)]',
+                    field.type === FieldType.CHECKBOX &&
+                      'data-[selected]:!border-[#495057] data-[selected]:!bg-[#48EAE5] data-[selected]:shadow-[0_0_20px_-6px_rgba(72,234,229,0.55)]',
+                  )
+                : 'border-border',
+              !nexisChrome && selectedRecipientStyles.fieldButton,
             )}
           >
             <p
               className={cn(
-                'flex items-center justify-center gap-x-1.5 font-noto text-sm font-normal text-muted-foreground group-data-[selected]:text-foreground',
+                'flex items-center justify-center gap-x-1.5 font-noto text-sm font-normal group-data-[selected]:text-foreground',
+                nexisChrome
+                  ? cn(
+                      'text-slate-400 group-data-[selected]:text-[#48EAE5]',
+                      field.type === FieldType.CHECKBOX && 'group-data-[selected]:!text-[#0B0C0E]',
+                    )
+                  : 'text-muted-foreground',
                 field.className,
-                selectedRecipientStyles.fieldButtonText,
+                !nexisChrome && selectedRecipientStyles.fieldButtonText,
               )}
             >
-              {field.type !== FieldType.SIGNATURE && <field.icon className="h-4 w-4" />}
+              {field.type !== FieldType.SIGNATURE && (
+                <field.icon
+                  className={cn(
+                    'h-4 w-4',
+                    nexisChrome &&
+                      field.type === FieldType.CHECKBOX &&
+                      'group-data-[selected]:text-[#0B0C0E]',
+                  )}
+                />
+              )}
               {t(field.name)}
             </p>
           </button>

@@ -35,6 +35,8 @@ export type DocumentDropzoneProps = {
   onDropRejected?: (fileRejections: FileRejection[]) => void;
   type?: 'document' | 'template';
   maxFiles?: number;
+  /** Dark dashboard — black surface, cyan `#48EAE5` accents (no primary gradient border). */
+  chrome?: 'nexis';
   [key: string]: unknown;
 };
 
@@ -48,11 +50,13 @@ export const DocumentDropzone = ({
   disabledMessage = msg`You cannot upload documents at this time.`,
   type = 'document',
   maxFiles,
+  chrome,
   ...props
 }: DocumentDropzoneProps) => {
   const { _ } = useLingui();
 
   const organisation = useCurrentOrganisation();
+  const isNexis = chrome === 'nexis';
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -87,86 +91,229 @@ export const DocumentDropzone = ({
       <Card
         role="button"
         className={cn(
-          'focus-visible:ring-ring ring-offset-background group flex flex-1 cursor-pointer flex-col items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+          'group flex flex-1 cursor-pointer flex-col items-center justify-center ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          isNexis && 'shadow-none ring-offset-black focus-visible:ring-[#48EAE5] dark:shadow-none',
+          isNexis &&
+            !disabled &&
+            'rounded-none !border-0 border-transparent bg-transparent shadow-none hover:bg-white/[0.03]',
+          isNexis &&
+            disabled &&
+            'rounded-none !border-0 border-transparent bg-transparent opacity-90 shadow-none hover:bg-white/[0.02]',
           className,
         )}
-        gradient={!disabled}
+        gradient={!disabled && !isNexis}
         degrees={120}
         aria-disabled={disabled}
         {...getRootProps()}
         {...props}
       >
-        <CardContent className="text-muted-foreground/40 flex flex-col items-center justify-center p-6">
+        <CardContent
+          className={cn(
+            'flex flex-col items-center justify-center p-6',
+            isNexis ? 'text-slate-500' : 'text-muted-foreground/40',
+          )}
+        >
           {disabled ? (
             // Disabled State
             <div className="flex">
               <motion.div
-                className="group-hover:bg-destructive/2 border-muted-foreground/20 group-hover:border-destructive/10 dark:bg-muted/80 a z-10 flex aspect-[3/4] w-24 origin-top-right -rotate-[22deg] flex-col gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'a z-10 flex aspect-[3/4] w-24 origin-top-right -rotate-[22deg] flex-col gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-white/10 bg-[#000000] group-hover:border-red-500/30 group-hover:bg-red-950/20'
+                    : 'group-hover:bg-destructive/2 border-muted-foreground/20 bg-white/80 group-hover:border-destructive/10 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneDisabledCardLeftVariants}
               >
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-full rounded-[2px]" />
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-5/6 rounded-[2px]" />
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-full rounded-[2px]" />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-5/6 rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
               </motion.div>
               <motion.div
-                className="group-hover:bg-destructive/5 border-muted-foreground/20 group-hover:border-destructive/50 dark:bg-muted/80 z-20 flex aspect-[3/4] w-24 flex-col items-center justify-center gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'z-20 flex aspect-[3/4] w-24 flex-col items-center justify-center gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-white/10 bg-[#000000] group-hover:border-red-500/40'
+                    : 'border-muted-foreground/20 bg-white/80 group-hover:border-destructive/50 group-hover:bg-destructive/5 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneDisabledCardCenterVariants}
               >
                 <AlertTriangle
                   strokeWidth="2px"
-                  className="text-muted-foreground/20 group-hover:text-destructive h-12 w-12"
+                  className={cn(
+                    'h-12 w-12',
+                    isNexis
+                      ? 'text-amber-500/60 group-hover:text-red-400'
+                      : 'text-muted-foreground/20 group-hover:text-destructive',
+                  )}
                 />
               </motion.div>
               <motion.div
-                className="group-hover:bg-destructive/2 border-muted-foreground/20 group-hover:border-destructive/10 dark:bg-muted/80 z-10 flex aspect-[3/4] w-24 origin-top-left rotate-[22deg] flex-col gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'z-10 flex aspect-[3/4] w-24 origin-top-left rotate-[22deg] flex-col gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-white/10 bg-[#000000] group-hover:border-red-500/30 group-hover:bg-red-950/20'
+                    : 'group-hover:bg-destructive/2 border-muted-foreground/20 bg-white/80 group-hover:border-destructive/10 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneDisabledCardRightVariants}
               >
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-full rounded-[2px]" />
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-5/6 rounded-[2px]" />
-                <div className="bg-muted-foreground/10 group-hover:bg-destructive/10 h-2 w-full rounded-[2px]" />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-5/6 rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-white/10 group-hover:bg-red-500/30'
+                      : 'bg-muted-foreground/10 group-hover:bg-destructive/10',
+                  )}
+                />
               </motion.div>
             </div>
           ) : (
             // Non Disabled State
             <div className="flex">
               <motion.div
-                className="border-muted-foreground/20 group-hover:border-documenso/80 dark:bg-muted/80 a z-10 flex aspect-[3/4] w-24 origin-top-right -rotate-[22deg] flex-col gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'a z-10 flex aspect-[3/4] w-24 origin-top-right -rotate-[22deg] flex-col gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-[#48EAE5]/30 bg-black/80 group-hover:border-[#48EAE5]/60'
+                    : 'border-muted-foreground/20 bg-white/80 group-hover:border-documenso/80 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneCardLeftVariants}
               >
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-full rounded-[2px]" />
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-5/6 rounded-[2px]" />
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-full rounded-[2px]" />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-5/6 rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
               </motion.div>
               <motion.div
-                className="border-muted-foreground/20 group-hover:border-documenso/80 dark:bg-muted/80 z-20 flex aspect-[3/4] w-24 flex-col items-center justify-center gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'z-20 flex aspect-[3/4] w-24 flex-col items-center justify-center gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-[#48EAE5]/40 bg-black/90 group-hover:border-[#48EAE5]'
+                    : 'border-muted-foreground/20 bg-white/80 group-hover:border-documenso/80 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneCardCenterVariants}
               >
                 <Plus
                   strokeWidth="2px"
-                  className="text-muted-foreground/20 group-hover:text-documenso h-12 w-12"
+                  className={cn(
+                    'h-12 w-12',
+                    isNexis
+                      ? 'text-[#48EAE5]/50 group-hover:text-[#48EAE5]'
+                      : 'text-muted-foreground/20 group-hover:text-documenso',
+                  )}
                 />
               </motion.div>
               <motion.div
-                className="border-muted-foreground/20 group-hover:border-documenso/80 dark:bg-muted/80 z-10 flex aspect-[3/4] w-24 origin-top-left rotate-[22deg] flex-col gap-y-1 rounded-lg border bg-white/80 px-2 py-4 backdrop-blur-sm"
+                className={cn(
+                  'z-10 flex aspect-[3/4] w-24 origin-top-left rotate-[22deg] flex-col gap-y-1 rounded-lg border px-2 py-4 backdrop-blur-sm',
+                  isNexis
+                    ? 'border-[#48EAE5]/30 bg-black/80 group-hover:border-[#48EAE5]/60'
+                    : 'border-muted-foreground/20 bg-white/80 group-hover:border-documenso/80 dark:bg-muted/80',
+                )}
                 variants={DocumentDropzoneCardRightVariants}
               >
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-full rounded-[2px]" />
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-5/6 rounded-[2px]" />
-                <div className="bg-muted-foreground/20 group-hover:bg-documenso h-2 w-full rounded-[2px]" />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-5/6 rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
+                <div
+                  className={cn(
+                    'h-2 w-full rounded-[2px]',
+                    isNexis
+                      ? 'bg-[#48EAE5]/30 group-hover:bg-[#48EAE5]'
+                      : 'bg-muted-foreground/20 group-hover:bg-documenso',
+                  )}
+                />
               </motion.div>
             </div>
           )}
 
           <input {...getInputProps()} />
 
-          <p className="text-foreground mt-6 font-medium">{_(heading[type])}</p>
+          <p className={cn('mt-6 font-medium', isNexis ? 'text-white' : 'text-foreground')}>
+            {_(heading[type])}
+          </p>
 
-          <p className="text-muted-foreground/80 mt-1 text-center text-sm">
+          <p
+            className={cn(
+              'mt-1 text-center text-sm',
+              isNexis ? 'text-slate-500' : 'text-muted-foreground/80',
+            )}
+          >
             {_(disabled ? disabledMessage : msg`Drag & drop your PDF here.`)}
           </p>
 
           {disabled && IS_BILLING_ENABLED() && (
-            <Button className="hover:bg-warning/80 bg-warning mt-4 w-32" asChild>
+            <Button className="mt-4 w-32 bg-warning hover:bg-warning/80" asChild>
               <Link to={`/o/${organisation.url}/settings/billing`}>
                 <Trans>Upgrade</Trans>
               </Link>

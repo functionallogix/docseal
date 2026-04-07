@@ -54,6 +54,7 @@ import { useCurrentTeam } from '~/providers/team';
 
 import { EnvelopeEditorFieldDragDrop } from './envelope-editor-fields-drag-drop';
 import { EnvelopeEditorFieldsPageRenderer } from './envelope-editor-fields-page-renderer';
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 import { EnvelopeRendererFileSelector } from './envelope-file-selector';
 import { EnvelopeRecipientSelector } from './envelope-recipient-selector';
 
@@ -72,6 +73,7 @@ const FieldSettingsTypeTranslations: Record<FieldType, MessageDescriptor> = {
 };
 
 export const EnvelopeEditorFieldsPage = () => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
   const [searchParams] = useSearchParams();
 
   const team = useCurrentTeam();
@@ -161,7 +163,10 @@ export const EnvelopeEditorFieldsPage = () => {
   return (
     <div className="relative flex h-full">
       <div
-        className="flex h-full w-full flex-col overflow-y-auto px-2"
+        className={cn(
+          'flex h-full w-full flex-col overflow-y-auto px-2',
+          nexisChrome && 'bg-black',
+        )}
         ref={scrollableContainerRef}
       >
         {/* Horizontal envelope item selector */}
@@ -173,11 +178,12 @@ export const EnvelopeEditorFieldsPage = () => {
             editorConfig.envelopeItems.allowReplace &&
             envelopeItemPermissions.canFileBeChanged
               ? (item) => (
-                  <div className="relative flex h-5 w-5 flex-shrink-0 items-center justify-center">
+                  <>
                     <div
                       className={cn(
                         'h-2 w-2 rounded-full transition-opacity duration-150 group-hover:opacity-0',
-                        { 'bg-green-500': currentEnvelopeItem?.id === item.id },
+                        currentEnvelopeItem?.id === item.id &&
+                          (nexisChrome ? 'bg-[#48EAE5]' : 'bg-green-500'),
                       )}
                     />
                     <EnvelopeItemEditDialog
@@ -193,7 +199,7 @@ export const EnvelopeEditorFieldsPage = () => {
                         </span>
                       }
                     />
-                  </div>
+                  </>
                 )
               : undefined
           }
@@ -204,7 +210,12 @@ export const EnvelopeEditorFieldsPage = () => {
           {envelope.recipients.length === 0 && (
             <Alert
               variant="neutral"
-              className="mb-4 flex max-w-[800px] flex-row items-center justify-between space-y-0 rounded-sm border border-border bg-background"
+              className={cn(
+                'mb-4 flex max-w-[800px] flex-row items-center justify-between space-y-0 rounded-sm border',
+                nexisChrome
+                  ? 'border-white/10 bg-[#000000] text-slate-200'
+                  : 'border-border bg-background',
+              )}
             >
               <div className="flex flex-col gap-1">
                 <AlertTitle>
@@ -215,7 +226,14 @@ export const EnvelopeEditorFieldsPage = () => {
                 </AlertDescription>
               </div>
 
-              <Button variant="outline" onClick={() => void navigateToStep('upload')}>
+              <Button
+                variant="outline"
+                className={cn(
+                  nexisChrome &&
+                    'border-white/15 bg-black/40 text-white hover:bg-white/10 hover:text-white',
+                )}
+                onClick={() => void navigateToStep('upload')}
+              >
                 <Trans>Add Recipients</Trans>
               </Button>
             </Alert>
@@ -229,11 +247,21 @@ export const EnvelopeEditorFieldsPage = () => {
             />
           ) : (
             <div className="flex flex-col items-center justify-center py-32">
-              <FileTextIcon className="h-10 w-10 text-muted-foreground" />
-              <p className="mt-1 text-sm text-foreground">
+              <FileTextIcon
+                className={cn(
+                  'h-10 w-10',
+                  nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                )}
+              />
+              <p className={cn('mt-1 text-sm', nexisChrome ? 'text-slate-200' : 'text-foreground')}>
                 <Trans>No documents found</Trans>
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p
+                className={cn(
+                  'mt-1 text-sm',
+                  nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                )}
+              >
                 <Trans>Please upload a document to continue</Trans>
               </p>
             </div>
@@ -243,10 +271,23 @@ export const EnvelopeEditorFieldsPage = () => {
 
       {/* Right Section - Form Fields Panel */}
       {currentEnvelopeItem && envelope.recipients.length > 0 && (
-        <div className="sticky top-0 h-full w-80 flex-shrink-0 overflow-y-auto border-l border-border bg-background py-4">
+        <div
+          data-envelope-fields-sidebar
+          className={cn(
+            'sticky top-0 h-full w-80 flex-shrink-0 overflow-y-auto border-l py-4',
+            nexisChrome
+              ? 'border-white/10 bg-[#000000] text-slate-200'
+              : 'border-border bg-background',
+          )}
+        >
           {/* Recipient selector section. */}
           <section className="px-4">
-            <h3 className="mb-2 text-sm font-semibold text-foreground">
+            <h3
+              className={cn(
+                'mb-2 text-sm font-semibold',
+                nexisChrome ? 'text-[#48EAE5]' : 'text-foreground',
+              )}
+            >
               <Trans>Selected Recipient</Trans>
             </h3>
 
@@ -274,11 +315,16 @@ export const EnvelopeEditorFieldsPage = () => {
               )}
           </section>
 
-          <Separator className="my-4" />
+          <Separator className={cn('my-4', nexisChrome && 'bg-white/10')} />
 
           {/* Add fields section. */}
           <section className="px-4">
-            <h3 className="mb-2 text-sm font-semibold text-foreground">
+            <h3
+              className={cn(
+                'mb-2 text-sm font-semibold',
+                nexisChrome ? 'text-[#48EAE5]' : 'text-foreground',
+              )}
+            >
               <Trans>Add Fields</Trans>
             </h3>
 
@@ -293,7 +339,11 @@ export const EnvelopeEditorFieldsPage = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="mt-4 w-full"
+                  className={cn(
+                    'mt-4 w-full',
+                    nexisChrome &&
+                      'border-white/15 bg-black/40 text-white hover:bg-white/10 hover:text-white',
+                  )}
                   onClick={onDetectClick}
                   disabled={envelope.status !== DocumentStatus.DRAFT}
                   title={
@@ -327,7 +377,7 @@ export const EnvelopeEditorFieldsPage = () => {
           <AnimateGenericFadeInOut key={editorFields.selectedField?.formId}>
             {selectedField && (
               <section>
-                <Separator className="my-4" />
+                <Separator className={cn('my-4', nexisChrome && 'bg-white/10')} />
 
                 {searchParams.get('devmode') && (
                   <>
@@ -368,12 +418,22 @@ export const EnvelopeEditorFieldsPage = () => {
                       </div>
                     </div>
 
-                    <Separator className="my-4" />
+                    <Separator className={cn('my-4', nexisChrome && 'bg-white/10')} />
                   </>
                 )}
 
-                <div className="px-4 [&_label]:text-xs [&_label]:text-foreground/70">
-                  <h3 className="text-sm font-semibold">
+                <div
+                  className={cn(
+                    'px-4 [&_label]:text-xs',
+                    nexisChrome ? '[&_label]:text-slate-400' : '[&_label]:text-foreground/70',
+                  )}
+                >
+                  <h3
+                    className={cn(
+                      'text-sm font-semibold',
+                      nexisChrome ? 'text-slate-100' : undefined,
+                    )}
+                  >
                     {_(FieldSettingsTypeTranslations[selectedField.type])}
                   </h3>
 

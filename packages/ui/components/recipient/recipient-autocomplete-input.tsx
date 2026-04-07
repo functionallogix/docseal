@@ -5,6 +5,7 @@ import { PopoverAnchor } from '@radix-ui/react-popover';
 
 import { Popover, PopoverContent } from '@documenso/ui/primitives/popover';
 
+import { cn } from '../../lib/utils';
 import { Command, CommandGroup, CommandItem } from '../../primitives/command';
 import { Input } from '../../primitives/input';
 
@@ -22,6 +23,8 @@ type RecipientAutoCompleteInputProps = {
   options: RecipientAutoCompleteOption[];
   onSelect: (option: RecipientAutoCompleteOption) => void;
   onSearchQueryChange: (query: string) => void;
+  /** Merged into suggestion `PopoverContent` (e.g. Nexis dark theme). */
+  popoverContentClassName?: string;
 };
 
 type CombinedProps = RecipientAutoCompleteInputProps &
@@ -36,6 +39,8 @@ export const RecipientAutoCompleteInput = ({
   onSelect,
   options = [],
   onChange: _onChange,
+  className,
+  popoverContentClassName,
   ...props
 }: CombinedProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +63,7 @@ export const RecipientAutoCompleteInput = ({
         <PopoverAnchor asChild>
           <Input
             ref={inputRef}
-            className="w-full"
+            className={cn('w-full', className)}
             placeholder={placeholder}
             value={value}
             disabled={disabled}
@@ -69,7 +74,7 @@ export const RecipientAutoCompleteInput = ({
 
         <PopoverContent
           align="start"
-          className="w-full p-0"
+          className={cn('w-full p-0', popoverContentClassName)}
           onOpenAutoFocus={(e) => {
             e.preventDefault();
           }}

@@ -21,6 +21,7 @@ import { trpc } from '@documenso/trpc/react';
 import type { TCreateEnvelopeItemsPayload } from '@documenso/trpc/server/envelope-router/create-envelope-items.types';
 import type { TReplaceEnvelopeItemPdfPayload } from '@documenso/trpc/server/envelope-router/replace-envelope-item-pdf.types';
 import { buildDropzoneRejectionDescription } from '@documenso/ui/lib/handle-dropzone-rejection';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Card,
@@ -33,7 +34,9 @@ import { DocumentDropzone } from '@documenso/ui/primitives/document-dropzone';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { EnvelopeItemDeleteDialog } from '~/components/dialogs/envelope-item-delete-dialog';
+import { nexisEnvelopeActionIconSrc, nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
 
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 import { EnvelopeEditorRecipientForm } from './envelope-editor-recipient-form';
 import { EnvelopeItemTitleInput } from './envelope-editor-title-input';
 
@@ -47,6 +50,7 @@ type LocalFile = {
 };
 
 export const EnvelopeEditorUploadPage = () => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
   const organisation = useCurrentOrganisation();
 
   const { t, i18n } = useLingui();
@@ -465,14 +469,20 @@ export const EnvelopeEditorUploadPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-8">
+    <div className={cn('mx-auto max-w-4xl space-y-6 p-8', nexisChrome && 'text-slate-200')}>
       <input {...getReplaceInputProps()} />
-      <Card backdropBlur={false} className="border">
-        <CardHeader className="pb-3">
-          <CardTitle>
+      <Card
+        backdropBlur={false}
+        className={cn(
+          'border',
+          nexisChrome && 'rounded-xl border-white/10 bg-[#000000] shadow-none dark:shadow-none',
+        )}
+      >
+        <CardHeader className={cn('pb-3', nexisChrome && 'border-b border-white/10 pb-4')}>
+          <CardTitle className={cn(nexisChrome && 'text-white')}>
             <Trans>Documents</Trans>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className={cn(nexisChrome && 'text-slate-500')}>
             <Trans>Add and configure multiple documents</Trans>
           </CardDescription>
         </CardHeader>
@@ -483,7 +493,8 @@ export const EnvelopeEditorUploadPage = () => {
               data-testid="envelope-item-dropzone"
               onDrop={onFileDrop}
               allowMultiple
-              className="pb-4 pt-6"
+              className="pb-6 pt-6"
+              chrome={nexisChrome ? 'nexis' : undefined}
               disabled={dropzoneDisabledMessage !== null}
               disabledMessage={dropzoneDisabledMessage || undefined}
               disabledHeading={msg`Upload disabled`}
@@ -493,7 +504,9 @@ export const EnvelopeEditorUploadPage = () => {
           )}
 
           {/* Uploaded Files List */}
-          <div className="mt-4">
+          <div
+            className={cn(nexisChrome && localFiles.length > 0 && 'border-t border-white/10 p-4')}
+          >
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="files">
                 {(provided) => (
@@ -521,9 +534,14 @@ export const EnvelopeEditorUploadPage = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             style={provided.draggableProps.style}
-                            className={`flex items-center justify-between rounded-lg bg-accent/50 p-3 transition-shadow ${
-                              snapshot.isDragging ? 'shadow-md' : ''
-                            }`}
+                            className={cn(
+                              'flex items-center justify-between transition-shadow',
+                              nexisChrome
+                                ? 'rounded-none py-2 pl-0 pr-1'
+                                : 'rounded-lg bg-accent/50 p-3',
+                              !nexisChrome && snapshot.isDragging && 'shadow-md',
+                              nexisChrome && snapshot.isDragging && 'opacity-90',
+                            )}
                           >
                             <div className="flex items-center space-x-3">
                               {uploadConfig?.allowConfigureOrder && (
@@ -592,8 +610,15 @@ export const EnvelopeEditorUploadPage = () => {
                                   >
                                     {localFile.isReplacing ? (
                                       <Loader2Icon className="h-4 w-4 animate-spin text-muted-foreground" />
+                                    ) : nexisChrome ? (
+                                      <img
+                                        src={nexisEnvelopeActionIconSrc.pencil}
+                                        alt=""
+                                        className="h-6 w-6"
+                                        aria-hidden
+                                      />
                                     ) : (
-                                      <PencilIcon className="h-4 w-4" />
+                                      <PencilIcon className="h-6 w-6" />
                                     )}
                                   </Button>
                                 )}
@@ -608,7 +633,16 @@ export const EnvelopeEditorUploadPage = () => {
                                     onClick={() => onFileDelete(localFile.envelopeItemId!)}
                                     disabled={localFile.isReplacing || localFile.isUploading}
                                   >
-                                    <XIcon className="h-4 w-4" />
+                                    {nexisChrome ? (
+                                      <img
+                                        src={nexisEnvelopeActionIconSrc.close}
+                                        alt=""
+                                        className="h-6 w-6"
+                                        aria-hidden
+                                      />
+                                    ) : (
+                                      <XIcon className="h-6 w-6" />
+                                    )}
                                   </Button>
                                 ) : (
                                   <EnvelopeItemDeleteDialog
@@ -624,7 +658,16 @@ export const EnvelopeEditorUploadPage = () => {
                                         data-testid={`envelope-item-remove-button-${localFile.id}`}
                                         disabled={localFile.isReplacing || localFile.isUploading}
                                       >
-                                        <XIcon className="h-4 w-4" />
+                                        {nexisChrome ? (
+                                          <img
+                                            src={nexisEnvelopeActionIconSrc.close}
+                                            alt=""
+                                            className="h-6 w-6"
+                                            aria-hidden
+                                          />
+                                        ) : (
+                                          <XIcon className="h-6 w-6" />
+                                        )}
                                       </Button>
                                     }
                                   />
@@ -648,7 +691,12 @@ export const EnvelopeEditorUploadPage = () => {
 
       {editorConfig.general.allowAddFieldsStep && (
         <div className="flex justify-end">
-          <Button type="button" onClick={() => void navigateToStep('addFields')}>
+          <Button
+            type="button"
+            variant={nexisChrome ? 'none' : 'default'}
+            className={cn(nexisChrome && nexisPrimaryButtonClassName)}
+            onClick={() => void navigateToStep('addFields')}
+          >
             <Trans>Add Fields</Trans>
           </Button>
         </div>

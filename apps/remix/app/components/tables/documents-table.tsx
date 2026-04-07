@@ -164,7 +164,7 @@ export const DocumentsTable = ({
 
   const nexisTableWrap =
     variant === 'nexis'
-      ? 'rounded-xl border border-white/10 bg-[#050505] [&_thead]:bg-[#0a0a0a] [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-slate-500 [&_tbody_tr:nth-child(even)]:bg-white/[0.03] [&_tbody_tr]:border-white/[0.06]'
+      ? 'rounded-xl border border-white/10 bg-[#050505] [&_thead]:bg-[#000000] [&_th]:text-[10px] [&_th]:font-medium [&_th]:uppercase [&_th]:tracking-wider [&_th]:text-slate-500 [&_tbody_tr:nth-child(even)]:bg-white/[0.03] [&_tbody_tr]:border-white/[0.06]'
       : undefined;
 
   return (

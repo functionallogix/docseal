@@ -11,6 +11,7 @@ import {
   type TRadioFieldMeta as RadioFieldMeta,
   ZRadioFieldMeta,
 } from '@documenso/lib/types/field-meta';
+import { cn } from '@documenso/ui/lib/utils';
 import { Checkbox } from '@documenso/ui/primitives/checkbox';
 import {
   Form,
@@ -29,6 +30,9 @@ import {
   SelectValue,
 } from '@documenso/ui/primitives/select';
 import { Separator } from '@documenso/ui/primitives/separator';
+
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import { nexisCheckboxCheckClassName, nexisCheckboxClassName } from '~/utils/nexis-ui';
 
 import {
   EditorGenericFontSizeField,
@@ -73,6 +77,7 @@ export const EditorFieldRadioForm = ({
   onValueChange,
 }: EditorFieldRadioFormProps) => {
   const { t } = useLingui();
+  const nexisChrome = useEnvelopeEditorNexisChrome();
 
   const form = useForm<TRadioFieldFormSchema>({
     resolver: zodResolver(ZRadioFieldFormSchema),
@@ -191,7 +196,11 @@ export const EditorFieldRadioForm = ({
                         <FormControl>
                           <Checkbox
                             data-testid={`field-form-values-${index}-checked`}
-                            className="h-5 w-5 border-foreground/30 data-[state=checked]:bg-primary"
+                            className={cn(
+                              'h-5 w-5 border-foreground/30 data-[state=checked]:bg-primary',
+                              nexisChrome && nexisCheckboxClassName,
+                            )}
+                            checkClassName={nexisChrome ? nexisCheckboxCheckClassName : undefined}
                             checked={field.value}
                             onCheckedChange={(value) => {
                               // Uncheck all other values.

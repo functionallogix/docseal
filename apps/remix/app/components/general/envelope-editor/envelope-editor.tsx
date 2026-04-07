@@ -40,6 +40,7 @@ import { EnvelopeEditorSettingsDialog } from '~/components/general/envelope-edit
 
 import { EnvelopeEditorFieldsPage } from './envelope-editor-fields-page';
 import EnvelopeEditorHeader from './envelope-editor-header';
+import { EnvelopeEditorNexisChromeProvider } from './envelope-editor-nexis-chrome-context';
 import { EnvelopeEditorPreviewPage } from './envelope-editor-preview-page';
 import { EnvelopeEditorUploadPage } from './envelope-editor-upload-page';
 
@@ -71,7 +72,12 @@ const PREVIEW_STEP = {
   description: msg`Preview the document before sending`,
 };
 
-export const EnvelopeEditor = () => {
+export type EnvelopeEditorProps = {
+  /** Team dashboard (MOS Nexis) — dark chrome; embed / other hosts omit this. */
+  nexisChrome?: boolean;
+};
+
+export const EnvelopeEditor = ({ nexisChrome = false }: EnvelopeEditorProps) => {
   const { t } = useLingui();
 
   const navigate = useNavigate();
@@ -182,407 +188,481 @@ export const EnvelopeEditor = () => {
   const currentStepData =
     envelopeEditorSteps.find((step) => step.id === searchParamsStep) || envelopeEditorSteps[0];
 
+  const nexisGhostRowClass =
+    nexisChrome && 'text-slate-200 hover:bg-white/10 hover:text-white focus-visible:ring-[#48EAE5]';
+
   return (
-    <div className="h-screen w-screen bg-envelope-editor-background">
-      <EnvelopeEditorHeader />
+    <EnvelopeEditorNexisChromeProvider value={nexisChrome}>
+      <div
+        className={cn(
+          'h-screen w-screen',
+          nexisChrome ? 'bg-black text-white' : 'bg-envelope-editor-background',
+        )}
+      >
+        <EnvelopeEditorHeader />
 
-      {/* Main Content Area */}
-      <div className="flex h-[calc(100vh-4rem)] w-screen">
-        {/* Left Section - Step Navigation */}
-        <div
-          className={cn(
-            'flex w-80 flex-shrink-0 flex-col overflow-y-auto border-r border-border bg-background py-4',
-            {
-              'w-14': minimizeLeftSidebar,
-            },
-          )}
-        >
-          {/* Left section step selector. */}
-          {minimizeLeftSidebar ? (
-            <div className="flex justify-center px-4">
-              <div className="relative flex h-10 w-10 items-center justify-center">
-                <svg className="size-10 -rotate-90" viewBox="0 0 40 40" aria-hidden>
-                  {/* Track circle */}
-                  <circle
-                    cx="20"
-                    cy="20"
-                    r="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="text-muted"
-                  />
-                  {/* Progress arc */}
-                  <motion.circle
-                    cx="20"
-                    cy="20"
-                    r="16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    className="text-primary"
-                    strokeDasharray={2 * Math.PI * 16}
-                    initial={false}
-                    animate={{
-                      strokeDashoffset:
-                        2 *
-                        Math.PI *
-                        16 *
-                        (1 - (currentStepData.order ?? 0) / envelopeEditorSteps.length),
-                    }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-foreground">
-                  <Trans context="The step counter">
-                    {currentStepData.order}/{envelopeEditorSteps.length}
-                  </Trans>
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="px-4">
-              <h3 className="flex items-end justify-between text-sm font-semibold text-foreground">
-                {isDocument ? <Trans>Document Editor</Trans> : <Trans>Template Editor</Trans>}
-
-                <span className="ml-2 rounded border bg-muted/50 px-2 py-0.5 text-xs text-muted-foreground">
-                  <Trans context="The step counter">
-                    Step {currentStepData.order}/{envelopeEditorSteps.length}
-                  </Trans>
-                </span>
-              </h3>
-
-              <div className="relative my-4 h-[4px] rounded-md bg-muted">
-                <motion.div
-                  layout="size"
-                  layoutId="document-flow-container-step"
-                  className="absolute inset-y-0 left-0 bg-primary"
-                  style={{
-                    width: `${(100 / envelopeEditorSteps.length) * (currentStepData.order ?? 0)}%`,
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
+        {/* Main Content Area */}
+        <div className="flex h-[calc(100vh-4rem)] w-screen">
+          {/* Left Section - Step Navigation */}
           <div
-            className={cn('space-y-3', {
-              'px-4': !minimizeLeftSidebar,
-              'mt-4 flex flex-col items-center': minimizeLeftSidebar,
-            })}
+            className={cn(
+              'flex w-80 flex-shrink-0 flex-col overflow-y-auto border-r py-4',
+              nexisChrome ? 'border-white/10 bg-[#000000]' : 'border-border bg-background',
+              {
+                'w-14': minimizeLeftSidebar,
+              },
+            )}
           >
-            {envelopeEditorSteps.map((step) => {
-              const Icon = step.icon;
-              const isActive = searchParamsStep === step.id;
-
-              return (
-                <button
-                  key={step.id}
-                  data-testid={`envelope-editor-step-${step.id}`}
-                  type="button"
+            {/* Left section step selector. */}
+            {minimizeLeftSidebar ? (
+              <div className="flex justify-center px-4">
+                <div className="relative flex h-10 w-10 items-center justify-center">
+                  <svg className="size-10 -rotate-90" viewBox="0 0 40 40" aria-hidden>
+                    {/* Track circle */}
+                    <circle
+                      cx="20"
+                      cy="20"
+                      r="16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className={nexisChrome ? 'text-white/15' : 'text-muted'}
+                    />
+                    {/* Progress arc */}
+                    <motion.circle
+                      cx="20"
+                      cy="20"
+                      r="16"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      className={nexisChrome ? 'text-[#48EAE5]' : 'text-primary'}
+                      strokeDasharray={2 * Math.PI * 16}
+                      initial={false}
+                      animate={{
+                        strokeDashoffset:
+                          2 *
+                          Math.PI *
+                          16 *
+                          (1 - (currentStepData.order ?? 0) / envelopeEditorSteps.length),
+                      }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  </svg>
+                  <span
+                    className={cn(
+                      'absolute inset-0 flex items-center justify-center text-[10px] font-semibold',
+                      nexisChrome ? 'text-white' : 'text-foreground',
+                    )}
+                  >
+                    <Trans context="The step counter">
+                      {currentStepData.order}/{envelopeEditorSteps.length}
+                    </Trans>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="px-4">
+                <h3
                   className={cn(
-                    `cursor-pointer rounded-lg text-left transition-colors ${
-                      isActive
-                        ? 'border border-green-200 bg-green-50 dark:border-green-500/20 dark:bg-green-500/10'
-                        : 'border border-gray-200 hover:bg-gray-50 dark:border-gray-400/20 dark:hover:bg-gray-400/10'
-                    }`,
-                    {
-                      'p-3': !minimizeLeftSidebar,
-                    },
+                    'flex items-end justify-between text-sm font-semibold',
+                    nexisChrome ? 'text-[#48EAE5]' : 'text-foreground',
                   )}
-                  onClick={() => void navigateToStep(step.id as EnvelopeEditorStep)}
                 >
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`rounded border p-2 ${
-                        isActive
-                          ? 'border-green-200 bg-green-50 dark:border-green-500/20 dark:bg-green-500/10'
-                          : 'border-gray-100 bg-gray-100 dark:border-gray-400/20 dark:bg-gray-400/10'
-                      }`}
-                    >
-                      <Icon
-                        className={`h-4 w-4 ${isActive ? 'text-green-600' : 'text-gray-600'}`}
-                      />
-                    </div>
+                  {isDocument ? <Trans>Document Editor</Trans> : <Trans>Template Editor</Trans>}
 
-                    {!minimizeLeftSidebar && (
-                      <div>
-                        <div
-                          className={`text-sm font-medium ${
-                            isActive
-                              ? 'text-green-900 dark:text-green-400'
-                              : 'text-foreground dark:text-muted-foreground'
-                          }`}
-                        >
-                          {t(step.title)}
-                        </div>
-                        <div className="text-xs text-muted-foreground">{t(step.description)}</div>
-                      </div>
+                  <span
+                    className={cn(
+                      'ml-2 rounded border px-2 py-0.5 text-xs',
+                      nexisChrome
+                        ? 'border-white/10 bg-white/5 text-slate-400'
+                        : 'border-border bg-muted/50 text-muted-foreground',
                     )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <Separator
-            className={cn('my-6', {
-              'mx-auto mb-4 w-4/5': minimizeLeftSidebar,
-            })}
-          />
-
-          {/* Quick Actions. */}
-          <div
-            className={cn('space-y-3 px-4 [&_.lucide]:text-muted-foreground', {
-              'px-2': minimizeLeftSidebar,
-            })}
-          >
-            {!minimizeLeftSidebar && (
-              <h4 className="text-sm font-semibold text-foreground">
-                <Trans>Quick Actions</Trans>
-              </h4>
-            )}
-
-            {editorConfig.settings && (
-              <EnvelopeEditorSettingsDialog
-                trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    title={t(msg`Settings`)}
                   >
-                    <SettingsIcon className="h-4 w-4" />
+                    <Trans context="The step counter">
+                      Step {currentStepData.order}/{envelopeEditorSteps.length}
+                    </Trans>
+                  </span>
+                </h3>
 
-                    {!minimizeLeftSidebar && (
-                      <span className="ml-2">
-                        {isDocument ? (
-                          <Trans>Document Settings</Trans>
-                        ) : (
-                          <Trans>Template Settings</Trans>
-                        )}
-                      </span>
+                <div
+                  className={cn(
+                    'relative my-4 h-[4px] rounded-md',
+                    nexisChrome ? 'bg-white/10' : 'bg-muted',
+                  )}
+                >
+                  <motion.div
+                    layout="size"
+                    layoutId="document-flow-container-step"
+                    className={cn(
+                      'absolute inset-y-0 left-0',
+                      nexisChrome ? 'bg-[#48EAE5]' : 'bg-primary',
                     )}
-                  </Button>
-                }
-              />
+                    style={{
+                      width: `${(100 / envelopeEditorSteps.length) * (currentStepData.order ?? 0)}%`,
+                    }}
+                  />
+                </div>
+              </div>
             )}
 
-            {isDocument && allowDistributing && (
-              <>
-                <EnvelopeDistributeDialog
-                  documentRootPath={relativePath.documentRootPath}
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      title={t(msg`Send Envelope`)}
-                    >
-                      <SendIcon className="h-4 w-4" />
-
-                      {!minimizeLeftSidebar && (
-                        <span className="ml-2">
-                          <Trans>Send Document</Trans>
-                        </span>
-                      )}
-                    </Button>
-                  }
-                />
-
-                <EnvelopeRedistributeDialog
-                  envelope={envelope}
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full justify-start"
-                      title={t(msg`Resend Envelope`)}
-                    >
-                      <SendIcon className="h-4 w-4" />
-
-                      {!minimizeLeftSidebar && (
-                        <span className="ml-2">
-                          <Trans>Resend Document</Trans>
-                        </span>
-                      )}
-                    </Button>
-                  }
-                />
-              </>
-            )}
-
-            {isTemplate && allowDirectLink && (
-              <TemplateDirectLinkDialog
-                templateId={mapSecondaryIdToTemplateId(envelope.secondaryId)}
-                directLink={envelope.directLink}
-                recipients={envelope.recipients}
-                onCreateSuccess={async () => await syncEnvelope()}
-                onDeleteSuccess={async () => await syncEnvelope()}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    title={t(msg`Direct Link`)}
-                  >
-                    <LinkIcon className="h-4 w-4" />
-
-                    {!minimizeLeftSidebar && (
-                      <span className="ml-2">
-                        <Trans>Direct Link</Trans>
-                      </span>
-                    )}
-                  </Button>
-                }
-              />
-            )}
-
-            {allowDuplication && (
-              <EnvelopeDuplicateDialog
-                envelopeId={envelope.id}
-                envelopeType={envelope.type}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    title={t(msg`Duplicate Envelope`)}
-                  >
-                    <CopyPlusIcon className="h-4 w-4" />
-
-                    {!minimizeLeftSidebar && (
-                      <span className="ml-2">
-                        {isDocument ? (
-                          <Trans>Duplicate Document</Trans>
-                        ) : (
-                          <Trans>Duplicate Template</Trans>
-                        )}
-                      </span>
-                    )}
-                  </Button>
-                }
-              />
-            )}
-
-            {allowDownloadPDF && (
-              <EnvelopeDownloadDialog
-                envelopeId={envelope.id}
-                envelopeStatus={envelope.status}
-                envelopeItems={envelope.envelopeItems}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    title={t(msg`Download PDF`)}
-                  >
-                    <DownloadCloudIcon className="h-4 w-4" />
-
-                    {!minimizeLeftSidebar && (
-                      <span className="ml-2">
-                        <Trans>Download PDF</Trans>
-                      </span>
-                    )}
-                  </Button>
-                }
-              />
-            )}
-
-            {/* Check envelope ID since it can be in embedded create mode. */}
-            {allowDeletion && envelope.id && (
-              <EnvelopeDeleteDialog
-                id={envelope.id}
-                type={envelope.type}
-                status={envelope.status}
-                title={envelope.title}
-                canManageDocument={true}
-                trigger={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    title={t(msg`Delete Envelope`)}
-                  >
-                    <Trash2Icon className="h-4 w-4" />
-
-                    {!minimizeLeftSidebar && (
-                      <span className="ml-2">
-                        {isDocument ? (
-                          <Trans>Delete Document</Trans>
-                        ) : (
-                          <Trans>Delete Template</Trans>
-                        )}
-                      </span>
-                    )}
-                  </Button>
-                }
-                onDelete={async () => {
-                  await navigate(
-                    envelope.type === EnvelopeType.DOCUMENT
-                      ? relativePath.documentRootPath
-                      : relativePath.templateRootPath,
-                  );
-                }}
-              />
-            )}
-          </div>
-
-          {/* Footer of left sidebar. */}
-          {!editorConfig.embedded && (
             <div
-              className={cn('mt-auto px-4', {
-                'px-2': minimizeLeftSidebar,
+              className={cn('space-y-3', {
+                'px-4': !minimizeLeftSidebar,
+                'mt-4 flex flex-col items-center': minimizeLeftSidebar,
               })}
             >
-              <Button
-                variant="ghost"
-                className={cn('w-full justify-start', {
-                  'flex items-center justify-center': minimizeLeftSidebar,
-                })}
-                asChild
-              >
-                <Link to={relativePath.basePath}>
-                  <ArrowLeftIcon className="h-4 w-4 flex-shrink-0" />
+              {envelopeEditorSteps.map((step) => {
+                const Icon = step.icon;
+                const isActive = searchParamsStep === step.id;
 
-                  {!minimizeLeftSidebar && (
-                    <span className="ml-2">
-                      {isDocument ? (
-                        <Trans>Return to documents</Trans>
-                      ) : (
-                        <Trans>Return to templates</Trans>
+                return (
+                  <button
+                    key={step.id}
+                    data-testid={`envelope-editor-step-${step.id}`}
+                    type="button"
+                    className={cn(
+                      'cursor-pointer rounded-lg border text-left transition-colors',
+                      nexisChrome
+                        ? isActive
+                          ? 'border-[#48EAE5]/50 bg-[#48EAE5]/10 shadow-[0_0_20px_-8px_rgba(72,234,229,0.35)]'
+                          : 'border-white/10 hover:bg-white/5'
+                        : isActive
+                          ? 'border border-green-200 bg-green-50 dark:border-green-500/20 dark:bg-green-500/10'
+                          : 'border border-gray-200 hover:bg-gray-50 dark:border-gray-400/20 dark:hover:bg-gray-400/10',
+                      {
+                        'p-3': !minimizeLeftSidebar,
+                      },
+                    )}
+                    onClick={() => void navigateToStep(step.id as EnvelopeEditorStep)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={cn(
+                          'rounded border p-2',
+                          nexisChrome
+                            ? isActive
+                              ? 'border-[#48EAE5]/40 bg-[#48EAE5]/15'
+                              : 'border-white/10 bg-white/5'
+                            : isActive
+                              ? 'border-green-200 bg-green-50 dark:border-green-500/20 dark:bg-green-500/10'
+                              : 'border-gray-100 bg-gray-100 dark:border-gray-400/20 dark:bg-gray-400/10',
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            'h-4 w-4',
+                            nexisChrome
+                              ? isActive
+                                ? 'text-[#48EAE5]'
+                                : 'text-slate-400'
+                              : isActive
+                                ? 'text-green-600'
+                                : 'text-gray-600',
+                          )}
+                        />
+                      </div>
+
+                      {!minimizeLeftSidebar && (
+                        <div>
+                          <div
+                            className={cn(
+                              'text-sm font-medium',
+                              nexisChrome
+                                ? isActive
+                                  ? 'text-white'
+                                  : 'text-slate-300'
+                                : isActive
+                                  ? 'text-green-900 dark:text-green-400'
+                                  : 'text-foreground dark:text-muted-foreground',
+                            )}
+                          >
+                            {t(step.title)}
+                          </div>
+                          <div
+                            className={cn(
+                              'text-xs',
+                              nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                            )}
+                          >
+                            {t(step.description)}
+                          </div>
+                        </div>
                       )}
-                    </span>
-                  )}
-                </Link>
-              </Button>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          )}
-        </div>
 
-        {/* Main Content - Changes based on current step */}
-        <div className="flex-1 overflow-y-auto">
-          {match({
-            pageToRender,
-            allowUploadAndRecipientStep,
-            allowAddFieldsStep,
-            allowPreviewStep,
-          })
-            .with({ pageToRender: 'loading' }, () => <SpinnerBox className="py-32" />)
-            .with({ pageToRender: 'upload', allowUploadAndRecipientStep: true }, () => (
-              <EnvelopeEditorUploadPage />
-            ))
-            .with({ pageToRender: 'addFields', allowAddFieldsStep: true }, () => (
-              <EnvelopeEditorFieldsPage />
-            ))
-            .with({ pageToRender: 'preview', allowPreviewStep: true }, () => (
-              <EnvelopeEditorPreviewPage />
-            ))
-            .otherwise(() => null)}
+            <Separator
+              className={cn('my-6', nexisChrome && 'bg-white/10', {
+                'mx-auto mb-4 w-4/5': minimizeLeftSidebar,
+              })}
+            />
+
+            {/* Quick Actions. */}
+            <div
+              className={cn(
+                'space-y-3 px-4',
+                nexisChrome ? '[&_.lucide]:text-[#48EAE5]/80' : '[&_.lucide]:text-muted-foreground',
+                {
+                  'px-2': minimizeLeftSidebar,
+                },
+              )}
+            >
+              {!minimizeLeftSidebar && (
+                <h4
+                  className={cn(
+                    'text-sm font-semibold',
+                    nexisChrome ? 'text-slate-200' : 'text-foreground',
+                  )}
+                >
+                  <Trans>Quick Actions</Trans>
+                </h4>
+              )}
+
+              {editorConfig.settings && (
+                <EnvelopeEditorSettingsDialog
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn('w-full justify-start', nexisGhostRowClass)}
+                      title={t(msg`Settings`)}
+                    >
+                      <SettingsIcon className="h-4 w-4" />
+
+                      {!minimizeLeftSidebar && (
+                        <span className="ml-2">
+                          {isDocument ? (
+                            <Trans>Document Settings</Trans>
+                          ) : (
+                            <Trans>Template Settings</Trans>
+                          )}
+                        </span>
+                      )}
+                    </Button>
+                  }
+                />
+              )}
+
+              {isDocument && allowDistributing && (
+                <>
+                  <EnvelopeDistributeDialog
+                    documentRootPath={relativePath.documentRootPath}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn('w-full justify-start', nexisGhostRowClass)}
+                        title={t(msg`Send Envelope`)}
+                      >
+                        <SendIcon className="h-4 w-4" />
+
+                        {!minimizeLeftSidebar && (
+                          <span className="ml-2">
+                            <Trans>Send Document</Trans>
+                          </span>
+                        )}
+                      </Button>
+                    }
+                  />
+
+                  <EnvelopeRedistributeDialog
+                    envelope={envelope}
+                    trigger={
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn('w-full justify-start', nexisGhostRowClass)}
+                        title={t(msg`Resend Envelope`)}
+                      >
+                        <SendIcon className="h-4 w-4" />
+
+                        {!minimizeLeftSidebar && (
+                          <span className="ml-2">
+                            <Trans>Resend Document</Trans>
+                          </span>
+                        )}
+                      </Button>
+                    }
+                  />
+                </>
+              )}
+
+              {isTemplate && allowDirectLink && (
+                <TemplateDirectLinkDialog
+                  templateId={mapSecondaryIdToTemplateId(envelope.secondaryId)}
+                  directLink={envelope.directLink}
+                  recipients={envelope.recipients}
+                  onCreateSuccess={async () => await syncEnvelope()}
+                  onDeleteSuccess={async () => await syncEnvelope()}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn('w-full justify-start', nexisGhostRowClass)}
+                      title={t(msg`Direct Link`)}
+                    >
+                      <LinkIcon className="h-4 w-4" />
+
+                      {!minimizeLeftSidebar && (
+                        <span className="ml-2">
+                          <Trans>Direct Link</Trans>
+                        </span>
+                      )}
+                    </Button>
+                  }
+                />
+              )}
+
+              {allowDuplication && (
+                <EnvelopeDuplicateDialog
+                  envelopeId={envelope.id}
+                  envelopeType={envelope.type}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn('w-full justify-start', nexisGhostRowClass)}
+                      title={t(msg`Duplicate Envelope`)}
+                    >
+                      <CopyPlusIcon className="h-4 w-4" />
+
+                      {!minimizeLeftSidebar && (
+                        <span className="ml-2">
+                          {isDocument ? (
+                            <Trans>Duplicate Document</Trans>
+                          ) : (
+                            <Trans>Duplicate Template</Trans>
+                          )}
+                        </span>
+                      )}
+                    </Button>
+                  }
+                />
+              )}
+
+              {allowDownloadPDF && (
+                <EnvelopeDownloadDialog
+                  envelopeId={envelope.id}
+                  envelopeStatus={envelope.status}
+                  envelopeItems={envelope.envelopeItems}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn('w-full justify-start', nexisGhostRowClass)}
+                      title={t(msg`Download PDF`)}
+                    >
+                      <DownloadCloudIcon className="h-4 w-4" />
+
+                      {!minimizeLeftSidebar && (
+                        <span className="ml-2">
+                          <Trans>Download PDF</Trans>
+                        </span>
+                      )}
+                    </Button>
+                  }
+                />
+              )}
+
+              {/* Check envelope ID since it can be in embedded create mode. */}
+              {allowDeletion && envelope.id && (
+                <EnvelopeDeleteDialog
+                  id={envelope.id}
+                  type={envelope.type}
+                  status={envelope.status}
+                  title={envelope.title}
+                  canManageDocument={true}
+                  trigger={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className={cn('w-full justify-start', nexisGhostRowClass)}
+                      title={t(msg`Delete Envelope`)}
+                    >
+                      <Trash2Icon className="h-4 w-4" />
+
+                      {!minimizeLeftSidebar && (
+                        <span className="ml-2">
+                          {isDocument ? (
+                            <Trans>Delete Document</Trans>
+                          ) : (
+                            <Trans>Delete Template</Trans>
+                          )}
+                        </span>
+                      )}
+                    </Button>
+                  }
+                  onDelete={async () => {
+                    await navigate(
+                      envelope.type === EnvelopeType.DOCUMENT
+                        ? relativePath.documentRootPath
+                        : relativePath.templateRootPath,
+                    );
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Footer of left sidebar. */}
+            {!editorConfig.embedded && (
+              <div
+                className={cn('mt-auto px-4', {
+                  'px-2': minimizeLeftSidebar,
+                })}
+              >
+                <Button
+                  variant="ghost"
+                  className={cn('w-full justify-start', nexisGhostRowClass, {
+                    'flex items-center justify-center': minimizeLeftSidebar,
+                  })}
+                  asChild
+                >
+                  <Link to={relativePath.basePath}>
+                    <ArrowLeftIcon className="h-4 w-4 flex-shrink-0" />
+
+                    {!minimizeLeftSidebar && (
+                      <span className="ml-2">
+                        {isDocument ? (
+                          <Trans>Return to documents</Trans>
+                        ) : (
+                          <Trans>Return to templates</Trans>
+                        )}
+                      </span>
+                    )}
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Main Content - Changes based on current step */}
+          <div className={cn('flex-1 overflow-y-auto', nexisChrome && 'bg-black')}>
+            {match({
+              pageToRender,
+              allowUploadAndRecipientStep,
+              allowAddFieldsStep,
+              allowPreviewStep,
+            })
+              .with({ pageToRender: 'loading' }, () => <SpinnerBox className="py-32" />)
+              .with({ pageToRender: 'upload', allowUploadAndRecipientStep: true }, () => (
+                <EnvelopeEditorUploadPage />
+              ))
+              .with({ pageToRender: 'addFields', allowAddFieldsStep: true }, () => (
+                <EnvelopeEditorFieldsPage />
+              ))
+              .with({ pageToRender: 'preview', allowPreviewStep: true }, () => (
+                <EnvelopeEditorPreviewPage />
+              ))
+              .otherwise(() => null)}
+          </div>
         </div>
       </div>
-    </div>
+    </EnvelopeEditorNexisChromeProvider>
   );
 };

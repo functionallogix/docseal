@@ -67,6 +67,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--widget))',
           foreground: 'hsl(var(--widget-foreground))',
         },
+        /** Radix Dialog / AlertDialog / Sheet — uses `--dialog` HSL (MN Grey 900 in dark). */
+        'dialog-panel': {
+          DEFAULT: 'hsl(var(--dialog))',
+        },
         documenso: {
           DEFAULT: '#A2E771',
           50: '#FFFFFF',
@@ -121,6 +125,9 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
+      ringOffsetColor: {
+        'dialog-panel': 'hsl(var(--dialog))',
       },
       borderRadius: {
         DEFAULT: 'calc(var(--radius) - 3px)',

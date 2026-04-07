@@ -26,6 +26,7 @@ import { canRecipientFieldsBeModified } from '@documenso/lib/utils/recipients';
 import { CommandDialog } from '@documenso/ui/primitives/command';
 
 import { fieldButtonList } from './envelope-editor-fields-drag-drop';
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 import { EnvelopeRecipientSelectorCommand } from './envelope-recipient-selector';
 
 export const EnvelopeEditorFieldsPageRenderer = ({ pageData }: { pageData: PageRenderData }) => {
@@ -648,6 +649,7 @@ const FieldActionButtons = ({
   ...props
 }: FieldActionButtonsProps) => {
   const { t } = useLingui();
+  const nexisChrome = useEnvelopeEditorNexisChrome();
 
   const [showRecipientSelector, setShowRecipientSelector] = useState(false);
 
@@ -745,6 +747,7 @@ const FieldActionButtons = ({
           }}
           recipients={envelope.recipients}
           fields={envelope.fields}
+          nexisChrome={nexisChrome}
         />
       </CommandDialog>
     </div>

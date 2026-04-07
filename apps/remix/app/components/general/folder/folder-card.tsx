@@ -195,7 +195,7 @@ export const FolderCardEmpty = ({
       className={cn(
         'h-full border transition-all',
         nexisChrome
-          ? 'border-dashed border-white/15 bg-[#0a0a0a] hover:border-[#48EAE5]/40 hover:bg-[#101010]'
+          ? 'border-dashed border-white/15 bg-[#000000] hover:border-[#48EAE5]/40 hover:bg-[#101010]'
           : 'border-border hover:bg-muted/50',
       )}
     >

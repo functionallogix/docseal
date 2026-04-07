@@ -81,7 +81,7 @@ export const EnvelopeItemDeleteDialog = ({
           </DialogHeader>
 
           <Alert variant="neutral">
-            <AlertDescription className="text-center font-semibold">
+            <AlertDescription className="text-start font-semibold">
               {envelopeItemTitle}
             </AlertDescription>
           </Alert>

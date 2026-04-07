@@ -8,15 +8,18 @@ import { DateTime } from 'luxon';
 import { useIsMounted } from '@documenso/lib/client-only/hooks/use-is-mounted';
 import type { TEnvelope } from '@documenso/lib/types/envelope';
 import { mapSecondaryIdToDocumentId } from '@documenso/lib/utils/envelope';
+import { cn } from '@documenso/ui/lib/utils';
 
 export type DocumentPageViewInformationProps = {
   userId: number;
   envelope: TEnvelope;
+  className?: string;
 };
 
 export const DocumentPageViewInformation = ({
   envelope,
   userId,
+  className,
 }: DocumentPageViewInformationProps) => {
   const isMounted = useIsMounted();
 
@@ -50,7 +53,12 @@ export const DocumentPageViewInformation = ({
   }, [isMounted, envelope, userId]);
 
   return (
-    <section className="dark:bg-background text-foreground border-border bg-widget flex flex-col rounded-xl border">
+    <section
+      className={cn(
+        'flex flex-col rounded-xl border border-border bg-widget text-foreground dark:bg-background',
+        className,
+      )}
+    >
       <h1 className="px-4 py-3 font-medium">
         <Trans>Information</Trans>
       </h1>

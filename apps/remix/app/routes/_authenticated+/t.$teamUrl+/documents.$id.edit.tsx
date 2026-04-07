@@ -102,7 +102,7 @@ export default function EnvelopeEditorPage({ params }: Route.ComponentProps) {
   return (
     <EnvelopeEditorProvider initialEnvelope={envelope}>
       <EnvelopeEditorRenderProviderWrapper>
-        <EnvelopeEditor />
+        <EnvelopeEditor nexisChrome />
       </EnvelopeEditorRenderProviderWrapper>
     </EnvelopeEditorProvider>
   );

@@ -19,8 +19,9 @@
     --card-border-tint: 112 205 159;
     --card-foreground: 222.2 47.4% 11.2%;
 
-    --field-card: 95 74% 90%;
-    --field-card-border: 95.08 71.08% 67.45%;
+    /* Field chrome — aligned to MOS Nexis cyan (was lime / Documenso green). */
+    --field-card: 178 45% 93%;
+    --field-card-border: 178 65% 58%;
     --field-card-foreground: 222.2 47.4% 11.2%;
 
     --widget: 0 0% 97%;
@@ -29,8 +30,8 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
 
-    --primary: 95.08 71.08% 67.45%;
-    --primary-foreground: 95.08 71.08% 10%;
+    --primary: 178 79% 60%;
+    --primary-foreground: 220 15% 8%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -41,7 +42,7 @@
     --destructive: 0 100% 50%;
     --destructive-foreground: 210 40% 98%;
 
-    --ring: 95.08 71.08% 67.45%;
+    --ring: 178 79% 60%;
 
     --radius: 0.5rem;
 
@@ -49,7 +50,8 @@
 
     --gold: 47.9 95.8% 53.1%;
 
-    --recipient-green: 100 48% 55%;
+    /* First recipient slot — same hue as brand primary #48EAE5 (was lime green). */
+    --recipient-green: 178 79% 60%;
     --recipient-blue: 212 56% 50%;
     --recipient-purple: 266 100% 64%;
     --recipient-orange: 36 92% 54%;
@@ -139,44 +141,49 @@
     --new-surface-white: 0, 0%, 91%;
 
     --envelope-editor-background: 210 40% 98.04%;
+
+    /* MOS Greyscale — modal/dialog panel (#212529). Light: same as page. */
+    --Greyscale-MN-Grey-900: #212529;
+    --dialog: 0 0% 100%;
   }
 
   .dark:not(.dark-mode-disabled) {
-    --background: 0 0% 14.9%;
+    /* Pure black surfaces (popover, dialog, cards) — MOS Nexis. */
+    --background: 0 0% 0%;
     --foreground: 0 0% 97%;
 
-    --muted: 0 0% 23.4%;
-    --muted-foreground: 0 0% 85%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 65%;
 
-    --popover: 0 0% 14.9%;
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 90%;
 
-    --card: 0 0% 14.9%;
-    --card-border: 0 0% 27.9%;
+    --card: 0 0% 0%;
+    --card-border: 0 0% 20%;
     --card-border-tint: 112 205 159;
     --card-foreground: 0 0% 95%;
 
-    --widget: 0 0% 14.9%;
-    --widget-foreground: 0 0% 18%;
+    --widget: 0 0% 0%;
+    --widget-foreground: 0 0% 95%;
 
-    --border: 0 0% 27.9%;
-    --input: 0 0% 27.9%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
 
     --field-border: 214.3 31.8% 91.4%;
 
-    --primary: 95.08 71.08% 67.45%;
-    --primary-foreground: 95.08 71.08% 10%;
+    --primary: 178 79% 60%;
+    --primary-foreground: 220 15% 8%;
 
-    --secondary: 0 0% 23.4%;
-    --secondary-foreground: 95.08 71.08% 67.45%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 178 79% 60%;
 
-    --accent: 0 0% 27.9%;
-    --accent-foreground: 95.08 71.08% 67.45%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 178 79% 60%;
 
     --destructive: 0 87% 62%;
     --destructive-foreground: 0 87% 19%;
 
-    --ring: 95.08 71.08% 67.45%;
+    --ring: 178 79% 60%;
 
     --radius: 0.5rem;
 
@@ -184,7 +191,17 @@
 
     --gold: 47.9 95.8% 53.1%;
 
-    --envelope-editor-background: 0 0% 14.9%;
+    --envelope-editor-background: 0 0% 0%;
+
+    /* Dialog/sheet content — MN Grey 900 (not pure black). */
+    --dialog: 210 11% 15%;
+  }
+}
+
+/* Global modal/sheet scrim — black @ 80% opacity (not derived from --background). */
+@layer utilities {
+  .bg-background\/80 {
+    background-color: hsl(0deg 0% 0% / 80%);
   }
 }
 
@@ -264,4 +281,11 @@
 
 .swagger-dark-theme .swagger-ui .microlight {
   filter: invert(100%) hue-rotate(180deg);
+}
+
+/* Modal shells: lock `enter` opacity + solid fill (`--dialog`); skip translucent Nexis signature dialog. */
+[role='dialog']:not(.nexis-signature-dialog),
+[role='alertdialog'] {
+  --tw-enter-opacity: 1 !important;
+  background-color: hsl(var(--dialog)) !important;
 }

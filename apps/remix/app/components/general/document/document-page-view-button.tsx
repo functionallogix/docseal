@@ -8,15 +8,19 @@ import { useSession } from '@documenso/lib/client-only/providers/session';
 import type { TEnvelope } from '@documenso/lib/types/envelope';
 import { isDocumentCompleted } from '@documenso/lib/utils/document';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 
 import { EnvelopeDownloadDialog } from '~/components/dialogs/envelope-download-dialog';
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import { nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
 
 export type DocumentPageViewButtonProps = {
   envelope: TEnvelope;
 };
 
 export const DocumentPageViewButton = ({ envelope }: DocumentPageViewButtonProps) => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
   const { user } = useSession();
 
   const recipient = envelope.recipients.find((recipient) => recipient.email === user.email);
@@ -38,7 +42,11 @@ export const DocumentPageViewButton = ({ envelope }: DocumentPageViewButtonProps
     internalVersion: envelope.internalVersion,
   })
     .with({ isRecipient: true, isPending: true, isSigned: false }, () => (
-      <Button className="w-full" asChild>
+      <Button
+        className={cn('w-full', nexisChrome && nexisPrimaryButtonClassName)}
+        variant={nexisChrome ? 'none' : 'default'}
+        asChild
+      >
         <Link to={`/sign/${recipient?.token}`}>
           {match(role)
             .with(RecipientRole.SIGNER, () => (
@@ -63,7 +71,11 @@ export const DocumentPageViewButton = ({ envelope }: DocumentPageViewButtonProps
       </Button>
     ))
     .with({ isComplete: false }, () => (
-      <Button className="w-full" asChild>
+      <Button
+        className={cn('w-full', nexisChrome && nexisPrimaryButtonClassName)}
+        variant={nexisChrome ? 'none' : 'default'}
+        asChild
+      >
         <Link to={formatPath}>
           <Trans>Edit</Trans>
         </Link>
@@ -76,7 +88,10 @@ export const DocumentPageViewButton = ({ envelope }: DocumentPageViewButtonProps
         envelopeItems={envelope.envelopeItems}
         token={recipient?.token}
         trigger={
-          <Button className="w-full">
+          <Button
+            className={cn('w-full', nexisChrome && nexisPrimaryButtonClassName)}
+            variant={nexisChrome ? 'none' : 'default'}
+          >
             <Download className="-ml-1 mr-2 inline h-4 w-4" />
             <Trans>Download</Trans>
           </Button>

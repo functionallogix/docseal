@@ -18,6 +18,10 @@ export type RecipientColorStyles = {
 
 export const DEFAULT_RECT_BACKGROUND = 'rgba(255, 255, 255, 0.95)';
 
+/** Combobox / recipient selector ring — MOS Nexis cyan (#48EAE5), same layered glow as per-recipient greens. */
+const COMBO_BOX_TRIGGER_CYAN =
+  'ring-2 ring-[#48EAE5] shadow-[0_0_0_5px_rgba(72,234,229,0.1),0_0_0_2px_rgba(72,234,229,0.6),0_0_0_0.5px_rgb(72,234,229)]';
+
 // !: values of the declared variable to do all the background, border and shadow styles.
 const RECIPIENT_COLOR_STYLES: Record<TRecipientColor, () => RecipientColorStyles> = {
   readOnly: (): RecipientColorStyles => ({
@@ -29,8 +33,7 @@ const RECIPIENT_COLOR_STYLES: Record<TRecipientColor, () => RecipientColorStyles
     fieldButtonText: '',
     fieldItem: 'group/field-item rounded-[2px]',
     fieldItemInitials: '',
-    comboBoxTrigger:
-      'ring-2 ring-recipient-green shadow-[0_0_0_5px_hsl(var(--recipient-green)/10%),0_0_0_2px_hsl(var(--recipient-green)/60%),0_0_0_0.5px_hsl(var(--recipient-green))]',
+    comboBoxTrigger: COMBO_BOX_TRIGGER_CYAN,
     comboBoxItem: '',
   }),
   green: once(() => generateStyles('green')),

@@ -271,7 +271,7 @@ export default function TemplatePage({ params }: Route.ComponentProps) {
                 )}
               </p>
 
-              <div className="mt-4 border-t px-4 pt-4">
+              <div className="border-t px-4 pt-4">
                 <TemplateUseDialog
                   envelopeId={envelope.id}
                   templateId={mapSecondaryIdToTemplateId(envelope.secondaryId)}

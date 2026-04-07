@@ -13,6 +13,7 @@ import {
   DEFAULT_FIELD_FONT_SIZE,
   ZCheckboxFieldMeta,
 } from '@documenso/lib/types/field-meta';
+import { cn } from '@documenso/ui/lib/utils';
 import { Alert, AlertDescription } from '@documenso/ui/primitives/alert';
 import { Checkbox } from '@documenso/ui/primitives/checkbox';
 import {
@@ -37,6 +38,9 @@ import {
   SelectValue,
 } from '@documenso/ui/primitives/select';
 import { Separator } from '@documenso/ui/primitives/separator';
+
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import { nexisCheckboxCheckClassName, nexisCheckboxClassName } from '~/utils/nexis-ui';
 
 import {
   EditorGenericFontSizeField,
@@ -88,6 +92,8 @@ export const EditorFieldCheckboxForm = ({
   },
   onValueChange,
 }: EditorFieldCheckboxFormProps) => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
+
   const form = useForm<TCheckboxFieldFormSchema>({
     resolver: zodResolver(ZCheckboxFieldFormSchema),
     mode: 'onChange',
@@ -320,7 +326,11 @@ export const EditorFieldCheckboxForm = ({
                         <FormControl>
                           <Checkbox
                             data-testid={`field-form-values-${index}-checked`}
-                            className="h-5 w-5 border-foreground/30 data-[state=checked]:bg-primary"
+                            className={cn(
+                              'h-5 w-5 border-foreground/30 data-[state=checked]:bg-primary',
+                              nexisChrome && nexisCheckboxClassName,
+                            )}
+                            checkClassName={nexisChrome ? nexisCheckboxCheckClassName : undefined}
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />

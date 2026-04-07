@@ -138,7 +138,7 @@ export default function DocumentsPage() {
 
         <div className="mt-6 border-t border-white/10 pt-6">
           <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between md:gap-4">
-            <div className="flex h-11 w-max max-w-full items-center overflow-x-auto rounded-xl border border-white/10 bg-[#0a0a0a] px-2 md:px-3">
+            <div className="flex h-11 w-max max-w-full items-center overflow-x-auto rounded-xl border border-white/10 bg-[#000000] px-2 md:px-3">
               <Tabs value={findDocumentSearchParams.status || 'ALL'} className="w-max">
                 <TabsList className="inline-flex h-full w-max flex-nowrap items-center justify-start gap-1 bg-transparent p-0">
                   {[

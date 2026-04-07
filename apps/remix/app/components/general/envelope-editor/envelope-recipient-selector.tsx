@@ -24,6 +24,14 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@documenso/ui/primitives/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitives/tooltip';
 
+import {
+  nexisEnvelopeRecipientSelectorItemClassName,
+  nexisEnvelopeRecipientSelectorPopoverClassName,
+  nexisEnvelopeRecipientSelectorTriggerClassName,
+} from '~/utils/nexis-ui';
+
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
+
 export interface EnvelopeRecipientSelectorProps {
   className?: string;
   selectedRecipient: Recipient | null;
@@ -42,6 +50,7 @@ export const EnvelopeRecipientSelector = ({
   align = 'start',
 }: EnvelopeRecipientSelectorProps) => {
   const { i18n } = useLingui();
+  const nexisChrome = useEnvelopeEditorNexisChrome();
 
   const [showRecipientsSelector, setShowRecipientsSelector] = useState(false);
 
@@ -59,8 +68,10 @@ export const EnvelopeRecipientSelector = ({
           role="combobox"
           className={cn(
             'justify-between bg-background font-normal text-muted-foreground hover:text-foreground',
-            getRecipientColorStyles(recipients.findIndex((r) => r.id === selectedRecipient?.id))
-              .comboBoxTrigger,
+            !nexisChrome &&
+              getRecipientColorStyles(recipients.findIndex((r) => r.id === selectedRecipient?.id))
+                .comboBoxTrigger,
+            nexisChrome && nexisEnvelopeRecipientSelectorTriggerClassName,
             className,
           )}
         >
@@ -70,11 +81,17 @@ export const EnvelopeRecipientSelector = ({
             </span>
           )}
 
-          <ChevronsUpDown className="ml-2 h-4 w-4" />
+          <ChevronsUpDown
+            className={cn('ml-2 h-4 w-4 shrink-0', nexisChrome && 'text-slate-400')}
+          />
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="p-0" align={align}>
+      <PopoverContent
+        className={cn('p-0', nexisChrome && nexisEnvelopeRecipientSelectorPopoverClassName)}
+        align={align}
+        data-envelope-recipient-selector-popover=""
+      >
         <EnvelopeRecipientSelectorCommand
           fields={fields}
           selectedRecipient={selectedRecipient}
@@ -83,6 +100,7 @@ export const EnvelopeRecipientSelector = ({
             setShowRecipientsSelector(false);
           }}
           recipients={recipients}
+          nexisChrome={nexisChrome}
         />
       </PopoverContent>
     </Popover>
@@ -96,6 +114,8 @@ interface EnvelopeRecipientSelectorCommandProps {
   recipients: Recipient[];
   fields: Field[];
   placeholder?: string;
+  /** Nexis dashboard envelope editor — dark list + no recipient-color hovers on items. */
+  nexisChrome?: boolean;
 }
 
 export const EnvelopeRecipientSelectorCommand = ({
@@ -105,6 +125,7 @@ export const EnvelopeRecipientSelectorCommand = ({
   recipients,
   fields,
   placeholder,
+  nexisChrome = false,
 }: EnvelopeRecipientSelectorCommandProps) => {
   const { t, i18n } = useLingui();
 
@@ -168,21 +189,34 @@ export const EnvelopeRecipientSelectorCommand = ({
       <CommandInput placeholder={placeholder} />
 
       <CommandEmpty>
-        <span className="inline-block px-4 text-muted-foreground">
+        <span
+          className={cn(
+            'inline-block px-4',
+            nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+          )}
+        >
           <Trans>No recipient matching this description was found.</Trans>
         </span>
       </CommandEmpty>
 
       {recipientsByRoleToDisplay().map(([role, roleRecipients], roleIndex) => (
         <CommandGroup key={roleIndex}>
-          <div className="mb-1 ml-2 mt-2 text-xs font-medium text-muted-foreground">
+          <div
+            className={cn(
+              'mb-1 ml-2 mt-2 text-xs font-medium',
+              nexisChrome ? 'text-slate-400' : 'text-muted-foreground',
+            )}
+          >
             {t(RECIPIENT_ROLES_DESCRIPTION[role].roleNamePlural)}
           </div>
 
           {roleRecipients.length === 0 && (
             <div
               key={`${role}-empty`}
-              className="px-4 pb-4 pt-2.5 text-center text-xs text-muted-foreground/80"
+              className={cn(
+                'px-4 pb-4 pt-2.5 text-center text-xs',
+                nexisChrome ? 'text-slate-500' : 'text-muted-foreground/80',
+              )}
             >
               <Trans>No recipients with this role</Trans>
             </div>
@@ -193,10 +227,13 @@ export const EnvelopeRecipientSelectorCommand = ({
               key={recipient.id}
               className={cn(
                 'px-2 last:mb-1 [&:not(:first-child)]:mt-1',
-                getRecipientColorStyles(recipients.findIndex((r) => r.id === recipient.id))
-                  .comboBoxItem,
+                !nexisChrome &&
+                  getRecipientColorStyles(recipients.findIndex((r) => r.id === recipient.id))
+                    .comboBoxItem,
+                nexisChrome && nexisEnvelopeRecipientSelectorItemClassName,
                 {
-                  'text-muted-foreground': recipient.sendStatus === SendStatus.SENT,
+                  'text-muted-foreground': !nexisChrome && recipient.sendStatus === SendStatus.SENT,
+                  'text-slate-500': nexisChrome && recipient.sendStatus === SendStatus.SENT,
                   'cursor-not-allowed': isRecipientDisabled(recipient.id),
                 },
               )}
@@ -207,8 +244,11 @@ export const EnvelopeRecipientSelectorCommand = ({
               }}
             >
               <span
-                className={cn('truncate text-foreground/70', {
-                  'text-foreground/80': recipient.id === selectedRecipient?.id,
+                className={cn('truncate', {
+                  'text-foreground/70': !nexisChrome,
+                  'text-slate-300': nexisChrome,
+                  'text-foreground/80': !nexisChrome && recipient.id === selectedRecipient?.id,
+                  'text-white': nexisChrome && recipient.id === selectedRecipient?.id,
                   'opacity-50': isRecipientDisabled(recipient.id),
                 })}
               >
@@ -219,10 +259,12 @@ export const EnvelopeRecipientSelectorCommand = ({
                 {!isRecipientDisabled(recipient.id) ? (
                   <Check
                     aria-hidden={recipient.id !== selectedRecipient?.id}
-                    className={cn('h-4 w-4 flex-shrink-0', {
-                      'opacity-0': recipient.id !== selectedRecipient?.id,
-                      'opacity-100': recipient.id === selectedRecipient?.id,
-                    })}
+                    className={cn(
+                      'h-4 w-4 flex-shrink-0',
+                      recipient.id !== selectedRecipient?.id && 'opacity-0',
+                      recipient.id === selectedRecipient?.id && 'opacity-100',
+                      nexisChrome && recipient.id === selectedRecipient?.id && 'text-[#48EAE5]',
+                    )}
                   />
                 ) : (
                   <Tooltip>

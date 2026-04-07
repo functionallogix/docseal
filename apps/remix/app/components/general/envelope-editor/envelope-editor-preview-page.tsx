@@ -17,16 +17,20 @@ import { extractFieldInsertionValues } from '@documenso/lib/utils/envelope-signi
 import { toCheckboxCustomText } from '@documenso/lib/utils/fields';
 import { extractInitials } from '@documenso/lib/utils/recipient-formatter';
 import { AnimateGenericFadeInOut } from '@documenso/ui/components/animate/animate-generic-fade-in-out';
+import { cn } from '@documenso/ui/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@documenso/ui/primitives/alert';
 import { RecipientSelector } from '@documenso/ui/primitives/recipient-selector';
 import { Separator } from '@documenso/ui/primitives/separator';
 
 import { EnvelopeGenericPageRenderer } from '~/components/general/envelope-editor/envelope-generic-page-renderer';
 import { EnvelopePdfViewer } from '~/components/general/pdf-viewer/envelope-pdf-viewer';
+import { nexisPreviewModeAlertClassName } from '~/utils/nexis-ui';
 
+import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 import { EnvelopeRendererFileSelector } from './envelope-file-selector';
 
 export const EnvelopeEditorPreviewPage = () => {
+  const nexisChrome = useEnvelopeEditorNexisChrome();
   const { envelope, editorFields, editorConfig } = useCurrentEnvelopeEditor();
 
   const { currentEnvelopeItem, fields } = useCurrentEnvelopeRender();
@@ -229,13 +233,19 @@ export const EnvelopeEditorPreviewPage = () => {
     >
       <div className="relative flex h-full">
         <div
-          className="flex h-full w-full flex-col overflow-y-auto px-2"
+          className={cn(
+            'flex h-full w-full flex-col overflow-y-auto px-2',
+            nexisChrome && 'bg-black',
+          )}
           ref={scrollableContainerRef}
         >
           {/* Horizontal envelope item selector */}
           <EnvelopeRendererFileSelector className="px-0" fields={editorFields.localFields} />
 
-          <Alert variant="warning" className="mx-auto max-w-[800px]">
+          <Alert
+            variant={nexisChrome ? 'neutral' : 'warning'}
+            className={cn('mx-auto max-w-[800px]', nexisChrome && nexisPreviewModeAlertClassName)}
+          >
             <AlertTitle>
               <Trans>Preview Mode</Trans>
             </AlertTitle>
@@ -254,11 +264,23 @@ export const EnvelopeEditorPreviewPage = () => {
               />
             ) : (
               <div className="flex flex-col items-center justify-center py-32">
-                <FileTextIcon className="h-10 w-10 text-muted-foreground" />
-                <p className="mt-1 text-sm text-foreground">
+                <FileTextIcon
+                  className={cn(
+                    'h-10 w-10',
+                    nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                  )}
+                />
+                <p
+                  className={cn('mt-1 text-sm', nexisChrome ? 'text-slate-200' : 'text-foreground')}
+                >
                   <Trans>No documents found</Trans>
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p
+                  className={cn(
+                    'mt-1 text-sm',
+                    nexisChrome ? 'text-slate-500' : 'text-muted-foreground',
+                  )}
+                >
                   <Trans>Please upload a document to continue</Trans>
                 </p>
               </div>

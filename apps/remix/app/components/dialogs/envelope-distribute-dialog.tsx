@@ -53,6 +53,16 @@ import { Textarea } from '@documenso/ui/primitives/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitives/tooltip';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import {
+  nexisDialogCancelButtonClassName,
+  nexisDistributeDialogContentClassName,
+  nexisDistributeDialogFieldShellClassName,
+  nexisDistributeDialogTabsClassName,
+  nexisPrimaryButtonClassName,
+  nexisRecipientRoleSelectContentClassName,
+} from '~/utils/nexis-ui';
+
 export type EnvelopeDistributeDialogProps = {
   onDistribute?: () => Promise<void>;
   documentRootPath: string;
@@ -85,6 +95,7 @@ export const EnvelopeDistributeDialog = ({
   const organisation = useCurrentOrganisation();
 
   const { envelope, syncEnvelope, isAutosaving, autosaveError } = useCurrentEnvelopeEditor();
+  const nexisChrome = useEnvelopeEditorNexisChrome();
 
   const { toast } = useToast();
   const { t } = useLingui();
@@ -239,13 +250,16 @@ export const EnvelopeDistributeDialog = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="max-w-md" hideClose>
+      <DialogContent
+        className={cn('max-w-md', nexisChrome && nexisDistributeDialogContentClassName)}
+        hideClose
+      >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className={cn(nexisChrome && 'text-white')}>
             <Trans>Send Document</Trans>
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className={cn(nexisChrome && 'text-slate-500')}>
             <Trans>Recipients will be able to sign the document once sent</Trans>
           </DialogDescription>
         </DialogHeader>
@@ -262,7 +276,9 @@ export const EnvelopeDistributeDialog = ({
                   value={distributionMethod}
                   className="mb-2"
                 >
-                  <TabsList className="w-full">
+                  <TabsList
+                    className={cn('w-full', nexisChrome && nexisDistributeDialogTabsClassName)}
+                  >
                     <TabsTrigger className="w-full" value={DocumentDistributionMethod.EMAIL}>
                       <Trans>Email</Trans>
                     </TabsTrigger>
@@ -296,7 +312,10 @@ export const EnvelopeDistributeDialog = ({
                       >
                         <Form {...form}>
                           <fieldset
-                            className="mt-2 flex flex-col gap-y-4 rounded-lg"
+                            className={cn(
+                              'mt-2 flex flex-col gap-y-4 rounded-lg',
+                              nexisChrome && nexisDistributeDialogFieldShellClassName,
+                            )}
                             disabled={form.formState.isSubmitting}
                           >
                             {organisation.organisationClaim.flags.emailDomains && (
@@ -323,7 +342,11 @@ export const EnvelopeDistributeDialog = ({
                                           <SelectValue />
                                         </SelectTrigger>
 
-                                        <SelectContent>
+                                        <SelectContent
+                                          className={cn(
+                                            nexisChrome && nexisRecipientRoleSelectContentClassName,
+                                          )}
+                                        >
                                           {emails.map((email) => (
                                             <SelectItem key={email.id} value={email.id}>
                                               {email.email}
@@ -404,7 +427,11 @@ export const EnvelopeDistributeDialog = ({
 
                                   <FormControl>
                                     <Textarea
-                                      className="mt-2 h-16 resize-none bg-background"
+                                      className={cn(
+                                        'mt-2 h-16 resize-none bg-background',
+                                        nexisChrome &&
+                                          '!border-white/15 !bg-[#141414] text-white placeholder:text-slate-500',
+                                      )}
                                       {...field}
                                       maxLength={5000}
                                     />
@@ -422,9 +449,17 @@ export const EnvelopeDistributeDialog = ({
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
                         exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                        className="min-h-60 rounded-lg border"
+                        className={cn(
+                          'min-h-60 rounded-lg border',
+                          nexisChrome && 'border-white/10 bg-white/[0.03]',
+                        )}
                       >
-                        <div className="py-24 text-center text-sm text-muted-foreground">
+                        <div
+                          className={cn(
+                            'py-24 text-center text-sm text-muted-foreground',
+                            nexisChrome && 'text-slate-400',
+                          )}
+                        >
                           <p>
                             <Trans>We won't send anything to notify recipients.</Trans>
                           </p>
@@ -441,14 +476,25 @@ export const EnvelopeDistributeDialog = ({
                   </AnimatePresence>
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className={cn(nexisChrome && 'border-t border-white/10 pt-4')}>
                   <DialogClose asChild>
-                    <Button type="button" variant="secondary" disabled={isSubmitting}>
+                    <Button
+                      type="button"
+                      variant={nexisChrome ? 'outline' : 'secondary'}
+                      disabled={isSubmitting}
+                      className={cn(nexisChrome && nexisDialogCancelButtonClassName)}
+                    >
                       <Trans>Cancel</Trans>
                     </Button>
                   </DialogClose>
 
-                  <Button loading={isSubmitting} disabled={isSyncing} type="submit">
+                  <Button
+                    loading={isSubmitting}
+                    disabled={isSyncing}
+                    type="submit"
+                    variant={nexisChrome ? 'none' : 'default'}
+                    className={cn(nexisChrome && nexisPrimaryButtonClassName)}
+                  >
                     {distributionMethod === DocumentDistributionMethod.EMAIL ? (
                       <Trans>Send</Trans>
                     ) : (
@@ -461,7 +507,13 @@ export const EnvelopeDistributeDialog = ({
           </Form>
         ) : (
           <>
-            <Alert variant="warning">
+            <Alert
+              variant="warning"
+              className={cn(
+                nexisChrome &&
+                  'border-amber-500/30 bg-amber-500/10 text-amber-100 [&_.alert-title]:text-white',
+              )}
+            >
               {match(invalidEnvelopeCode)
                 .with('MISSING_RECIPIENTS', () => (
                   <AlertDescription>
@@ -497,9 +549,13 @@ export const EnvelopeDistributeDialog = ({
                 .exhaustive()}
             </Alert>
 
-            <DialogFooter>
+            <DialogFooter className={cn(nexisChrome && 'border-t border-white/10 pt-4')}>
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button
+                  type="button"
+                  variant={nexisChrome ? 'outline' : 'secondary'}
+                  className={cn(nexisChrome && nexisDialogCancelButtonClassName)}
+                >
                   <Trans>Close</Trans>
                 </Button>
               </DialogClose>

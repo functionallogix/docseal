@@ -16,11 +16,13 @@ import { cn } from '@documenso/ui/lib/utils';
 export type DocumentPageViewRecentActivityProps = {
   documentId: number;
   userId: number;
+  className?: string;
 };
 
 export const DocumentPageViewRecentActivity = ({
   documentId,
   userId,
+  className,
 }: DocumentPageViewRecentActivityProps) => {
   const { _, i18n } = useLingui();
 
@@ -48,7 +50,12 @@ export const DocumentPageViewRecentActivity = ({
   const documentAuditLogs = useMemo(() => (data?.pages ?? []).flatMap((page) => page.data), [data]);
 
   return (
-    <section className="flex flex-col rounded-xl border border-border bg-widget dark:bg-background">
+    <section
+      className={cn(
+        'flex flex-col rounded-xl border border-border bg-widget dark:bg-background',
+        className,
+      )}
+    >
       <div className="flex flex-row items-center justify-between border-b px-4 py-3">
         <h1 className="font-medium text-foreground">
           <Trans>Recent activity</Trans>
