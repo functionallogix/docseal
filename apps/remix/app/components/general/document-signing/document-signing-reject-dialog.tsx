@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router';
 import { z } from 'zod';
 
 import { trpc } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -29,6 +30,12 @@ import {
 import { Textarea } from '@documenso/ui/primitives/textarea';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import {
+  nexisDestructiveDialogButtonClassName,
+  nexisDialogCancelButtonClassName,
+} from '~/utils/nexis-ui';
+
 const ZRejectDocumentFormSchema = z.object({
   reason: z.string().max(500, msg`Reason must be less than 500 characters`),
 });
@@ -40,6 +47,8 @@ export interface DocumentSigningRejectDialogProps {
   token: string;
   onRejected?: (reason: string) => void | Promise<void>;
   trigger?: React.ReactNode;
+  /** When set, overrides `useEnvelopeEditorNexisChrome()`. */
+  nexisChrome?: boolean;
 }
 
 export function DocumentSigningRejectDialog({
@@ -47,8 +56,12 @@ export function DocumentSigningRejectDialog({
   token,
   onRejected,
   trigger,
+  nexisChrome: nexisChromeProp,
 }: DocumentSigningRejectDialogProps) {
   const { t } = useLingui();
+
+  const nexisChromeFromContext = useEnvelopeEditorNexisChrome();
+  const nexisChrome = nexisChromeProp ?? nexisChromeFromContext;
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -151,21 +164,28 @@ export function DocumentSigningRejectDialog({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter
+              className={cn(
+                nexisChrome &&
+                  'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+              )}
+            >
               <Button
                 type="button"
-                variant="ghost"
+                variant={nexisChrome ? 'outline' : 'ghost'}
                 onClick={() => setIsOpen(false)}
                 disabled={form.formState.isSubmitting}
+                className={cn(nexisChrome && nexisDialogCancelButtonClassName)}
               >
                 <Trans>Cancel</Trans>
               </Button>
 
               <Button
                 type="submit"
-                variant="destructive"
+                variant={nexisChrome ? 'none' : 'destructive'}
                 loading={form.formState.isSubmitting}
                 disabled={!form.formState.isValid}
+                className={cn(nexisChrome && nexisDestructiveDialogButtonClassName)}
               >
                 <Trans>Reject Document</Trans>
               </Button>

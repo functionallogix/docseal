@@ -8,6 +8,7 @@ import { P, match } from 'ts-pattern';
 
 import { useLimits } from '@documenso/ee/server-only/limits/provider/client';
 import { trpc as trpcReact } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Alert, AlertDescription } from '@documenso/ui/primitives/alert';
 import { Button } from '@documenso/ui/primitives/button';
 import {
@@ -20,6 +21,13 @@ import {
 } from '@documenso/ui/primitives/dialog';
 import { Input } from '@documenso/ui/primitives/input';
 import { useToast } from '@documenso/ui/primitives/use-toast';
+
+import {
+  nexisDeleteDialogContentClassName,
+  nexisDeleteDialogWarningClassName,
+  nexisDistributeDialogPillInputClassName,
+} from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 type DocumentDeleteDialogProps = {
   id: number;
@@ -43,6 +51,8 @@ export const DocumentDeleteDialog = ({
   const { toast } = useToast();
   const { refreshLimits } = useLimits();
   const { _ } = useLingui();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const deleteMessage = msg`delete`;
 
@@ -87,13 +97,20 @@ export const DocumentDeleteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={(value) => !isPending && onOpenChange(value)}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
             <Trans>Are you sure?</Trans>
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription
+            className={cn(
+              nexisBtns.active && 'text-slate-400 [&_strong]:font-semibold [&_strong]:text-white',
+            )}
+          >
             {canManageDocument ? (
               <Trans>
                 You are about to delete <strong>"{documentTitle}"</strong>
@@ -107,7 +124,10 @@ export const DocumentDeleteDialog = ({
         </DialogHeader>
 
         {canManageDocument ? (
-          <Alert variant="warning" className="-mt-1">
+          <Alert
+            variant="warning"
+            className={cn('-mt-1', nexisBtns.active && nexisDeleteDialogWarningClassName)}
+          >
             {match(status)
               .with(DocumentStatus.DRAFT, () => (
                 <AlertDescription>
@@ -164,7 +184,10 @@ export const DocumentDeleteDialog = ({
               .exhaustive()}
           </Alert>
         ) : (
-          <Alert variant="warning" className="-mt-1">
+          <Alert
+            variant="warning"
+            className={cn('-mt-1', nexisBtns.active && nexisDeleteDialogWarningClassName)}
+          >
             <AlertDescription>
               <Trans>Please contact support if you would like to revert this action.</Trans>
             </AlertDescription>
@@ -177,11 +200,25 @@ export const DocumentDeleteDialog = ({
             value={inputValue}
             onChange={onInputChange}
             placeholder={_(msg`Please type ${`'${_(deleteMessage)}'`} to confirm`)}
+            className={cn(
+              nexisBtns.active && nexisDistributeDialogPillInputClassName,
+              nexisBtns.active && 'w-full',
+            )}
           />
         )}
 
-        <DialogFooter>
-          <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+        <DialogFooter
+          className={cn(
+            nexisBtns.active &&
+              'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+          )}
+        >
+          <Button
+            type="button"
+            variant={nexisBtns.cancelVariant}
+            className={nexisBtns.cancelClassName}
+            onClick={() => onOpenChange(false)}
+          >
             <Trans>Cancel</Trans>
           </Button>
 
@@ -190,7 +227,8 @@ export const DocumentDeleteDialog = ({
             loading={isPending}
             onClick={() => void deleteDocument({ documentId: id })}
             disabled={!isDeleteEnabled && canManageDocument}
-            variant="destructive"
+            variant={nexisBtns.destructiveVariant}
+            className={nexisBtns.destructiveClassName}
           >
             {canManageDocument ? _(msg`Delete`) : _(msg`Hide`)}
           </Button>

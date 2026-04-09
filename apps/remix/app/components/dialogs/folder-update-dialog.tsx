@@ -11,6 +11,7 @@ import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { DocumentVisibility } from '@documenso/lib/types/document-visibility';
 import { trpc } from '@documenso/trpc/react';
 import type { TFolderWithSubfolders } from '@documenso/trpc/server/folder-router/schema';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -39,7 +40,14 @@ import {
 } from '@documenso/ui/primitives/select';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
-import { useOptionalCurrentTeam } from '~/providers/team';
+import {
+  nexisDeleteDialogContentClassName,
+  nexisDistributeDialogFieldShellClassName,
+  nexisDistributeDialogPillInputClassName,
+  nexisDistributeDialogSelectTriggerClassName,
+  nexisRecipientRoleSelectContentClassName,
+} from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 export type FolderUpdateDialogProps = {
   folder: TFolderWithSubfolders | null;
@@ -56,7 +64,8 @@ export type TUpdateFolderFormSchema = z.infer<typeof ZUpdateFolderFormSchema>;
 
 export const FolderUpdateDialog = ({ folder, isOpen, onOpenChange }: FolderUpdateDialogProps) => {
   const { t } = useLingui();
-  const team = useOptionalCurrentTeam();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const { toast } = useToast();
   const { mutateAsync: updateFolder } = trpc.folder.updateFolder.useMutation();
@@ -110,18 +119,27 @@ export const FolderUpdateDialog = ({ folder, isOpen, onOpenChange }: FolderUpdat
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
             <Trans>Folder Settings</Trans>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={cn(nexisBtns.active && 'text-slate-400')}>
             <Trans>Manage the settings for this folder.</Trans>
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onFormSubmit)}
+            className={cn(
+              'space-y-4',
+              nexisBtns.active && nexisDistributeDialogFieldShellClassName,
+            )}
+          >
             <FormField
               control={form.control}
               name="name"
@@ -131,7 +149,13 @@ export const FolderUpdateDialog = ({ folder, isOpen, onOpenChange }: FolderUpdat
                     <Trans>Name</Trans>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      className={cn(
+                        nexisBtns.active && nexisDistributeDialogPillInputClassName,
+                        nexisBtns.active && 'w-full',
+                      )}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,11 +172,17 @@ export const FolderUpdateDialog = ({ folder, isOpen, onOpenChange }: FolderUpdat
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={cn(
+                          nexisBtns.active && nexisDistributeDialogSelectTriggerClassName,
+                        )}
+                      >
                         <SelectValue placeholder={t`Select visibility`} />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent
+                      className={cn(nexisBtns.active && nexisRecipientRoleSelectContentClassName)}
+                    >
                       <SelectItem value={DocumentVisibility.EVERYONE}>
                         <Trans>Everyone</Trans>
                       </SelectItem>
@@ -169,14 +199,24 @@ export const FolderUpdateDialog = ({ folder, isOpen, onOpenChange }: FolderUpdat
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter
+              className={cn(
+                nexisBtns.active &&
+                  'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+              )}
+            >
               <DialogClose asChild>
-                <Button variant="secondary">
+                <Button variant={nexisBtns.cancelVariant} className={nexisBtns.cancelClassName}>
                   <Trans>Cancel</Trans>
                 </Button>
               </DialogClose>
 
-              <Button type="submit" loading={form.formState.isSubmitting}>
+              <Button
+                type="submit"
+                loading={form.formState.isSubmitting}
+                variant={nexisBtns.primaryVariant}
+                className={nexisBtns.primaryClassName}
+              >
                 <Trans>Update</Trans>
               </Button>
             </DialogFooter>

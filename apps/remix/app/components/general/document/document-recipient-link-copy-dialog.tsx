@@ -13,6 +13,7 @@ import { NEXT_PUBLIC_WEBAPP_URL } from '@documenso/lib/constants/app';
 import { RECIPIENT_ROLES_DESCRIPTION } from '@documenso/lib/constants/recipient-roles';
 import { formatSigningLink } from '@documenso/lib/utils/recipients';
 import { CopyTextButton } from '@documenso/ui/components/common/copy-text-button';
+import { cn } from '@documenso/ui/lib/utils';
 import { AvatarWithText } from '@documenso/ui/primitives/avatar';
 import { Button } from '@documenso/ui/primitives/button';
 import {
@@ -27,6 +28,9 @@ import {
 } from '@documenso/ui/primitives/dialog';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import { nexisDeleteDialogContentClassName } from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
+
 export type DocumentRecipientLinkCopyDialogProps = {
   trigger?: React.ReactNode;
   recipients: Recipient[];
@@ -38,6 +42,8 @@ export const DocumentRecipientLinkCopyDialog = ({
 }: DocumentRecipientLinkCopyDialogProps) => {
   const { _ } = useLingui();
   const { toast } = useToast();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const [, copy] = useCopyToClipboard();
 
@@ -75,20 +81,29 @@ export const DocumentRecipientLinkCopyDialog = ({
         {trigger}
       </DialogTrigger>
 
-      <DialogContent position="center">
-        <DialogHeader>
-          <DialogTitle className="pb-0.5">
+      <DialogContent
+        position="center"
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn('pb-0.5', nexisBtns.active && 'text-white')}>
             <Trans>Copy Signing Links</Trans>
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className={cn(nexisBtns.active && 'text-slate-400')}>
             <Trans>
               You can copy and share these links to recipients so they can action the document.
             </Trans>
           </DialogDescription>
         </DialogHeader>
 
-        <ul className="text-muted-foreground divide-y rounded-lg border">
+        <ul
+          className={cn(
+            'divide-y rounded-lg border text-muted-foreground',
+            nexisBtns.active && 'divide-white/10 border-white/10 text-slate-300',
+          )}
+        >
           {recipients.length === 0 && (
             <li className="flex flex-col items-center justify-center py-6 text-sm">
               <Trans>No recipients</Trans>
@@ -99,9 +114,9 @@ export const DocumentRecipientLinkCopyDialog = ({
             <li key={recipient.id} className="flex items-center justify-between px-4 py-3 text-sm">
               <AvatarWithText
                 avatarFallback={recipient.email.slice(0, 1).toUpperCase()}
-                primaryText={<p className="text-muted-foreground text-sm">{recipient.email}</p>}
+                primaryText={<p className="text-sm text-muted-foreground">{recipient.email}</p>}
                 secondaryText={
-                  <p className="text-muted-foreground/70 text-xs">
+                  <p className="text-xs text-muted-foreground/70">
                     {_(RECIPIENT_ROLES_DESCRIPTION[recipient.role].roleName)}
                   </p>
                 }
@@ -132,14 +147,28 @@ export const DocumentRecipientLinkCopyDialog = ({
           ))}
         </ul>
 
-        <DialogFooter>
+        <DialogFooter
+          className={cn(
+            nexisBtns.active &&
+              'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+          )}
+        >
           <DialogClose asChild>
-            <Button type="button" variant="secondary">
+            <Button
+              type="button"
+              variant={nexisBtns.cancelVariant}
+              className={nexisBtns.cancelClassName}
+            >
               <Trans>Close</Trans>
             </Button>
           </DialogClose>
 
-          <Button type="button" onClick={onBulkCopy}>
+          <Button
+            type="button"
+            variant={nexisBtns.primaryVariant}
+            className={nexisBtns.primaryClassName}
+            onClick={onBulkCopy}
+          >
             <Trans>Bulk Copy</Trans>
           </Button>
         </DialogFooter>

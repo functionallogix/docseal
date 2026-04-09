@@ -106,7 +106,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitive
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
-import { nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
+import { nexisDialogCancelButtonClassName, nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
 
 import { useEnvelopeEditorNexisChrome } from './envelope-editor-nexis-chrome-context';
 
@@ -991,12 +991,9 @@ export const EnvelopeEditorSettingsDialog = ({
               >
                 <DialogClose asChild>
                   <Button
-                    variant="secondary"
+                    variant={nexisChrome ? 'none' : 'secondary'}
                     disabled={form.formState.isSubmitting}
-                    className={cn(
-                      nexisChrome &&
-                        'border-white/15 bg-black/40 text-white hover:bg-white/10 hover:text-white',
-                    )}
+                    className={cn(nexisChrome && nexisDialogCancelButtonClassName)}
                   >
                     <Trans>Cancel</Trans>
                   </Button>

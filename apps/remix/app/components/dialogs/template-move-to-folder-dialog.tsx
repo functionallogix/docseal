@@ -35,6 +35,7 @@ import { Input } from '@documenso/ui/primitives/input';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 export type TemplateMoveToFolderDialogProps = {
   templateId: number;
@@ -63,6 +64,8 @@ export function TemplateMoveToFolderDialog({
 
   const navigate = useNavigate();
   const team = useCurrentTeam();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -157,7 +160,7 @@ export function TemplateMoveToFolderDialog({
         </DialogHeader>
 
         <div className="relative">
-          <Search className="text-muted-foreground absolute left-2 top-3 h-4 w-4" />
+          <Search className="absolute left-2 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={_(msg`Search folders...`)}
             value={searchTerm}
@@ -211,7 +214,7 @@ export function TemplateMoveToFolderDialog({
                           ))}
 
                           {searchTerm && filteredFolders?.length === 0 && (
-                            <div className="text-muted-foreground px-2 py-2 text-center text-sm">
+                            <div className="px-2 py-2 text-center text-sm text-muted-foreground">
                               <Trans>No folders found</Trans>
                             </div>
                           )}
@@ -225,11 +228,21 @@ export function TemplateMoveToFolderDialog({
             />
 
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant={nexisBtns.cancelVariant}
+                className={nexisBtns.cancelClassName}
+                onClick={() => onOpenChange(false)}
+              >
                 <Trans>Cancel</Trans>
               </Button>
 
-              <Button type="submit" disabled={isFoldersLoading || form.formState.isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isFoldersLoading || form.formState.isSubmitting}
+                variant={nexisBtns.primaryVariant}
+                className={nexisBtns.primaryClassName}
+              >
                 <Trans>Move</Trans>
               </Button>
             </DialogFooter>

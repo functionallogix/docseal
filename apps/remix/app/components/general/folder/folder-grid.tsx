@@ -242,6 +242,7 @@ export const FolderGrid = ({ type, parentId, nexisChrome }: FolderGridProps) => 
 
           <FolderCreateDialog
             type={type}
+            nexisChrome={nexisChrome}
             triggerButtonClassName={
               nexisChrome
                 ? 'rounded-lg border border-[#495057] bg-transparent text-slate-200 hover:bg-white/5 hover:text-white'
@@ -304,6 +305,7 @@ export const FolderGrid = ({ type, parentId, nexisChrome }: FolderGridProps) => 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           <FolderCreateDialog
             type={type}
+            nexisChrome={nexisChrome}
             trigger={
               <button type="button">
                 <FolderCardEmpty nexisChrome={nexisChrome} type={type} />

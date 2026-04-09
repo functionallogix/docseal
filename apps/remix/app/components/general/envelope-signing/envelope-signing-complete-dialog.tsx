@@ -258,6 +258,7 @@ export const EnvelopeSignerCompleteDialog = () => {
       }
       buttonSize="sm"
       position="center"
+      nexisChrome
     />
   );
 };

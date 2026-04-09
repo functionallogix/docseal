@@ -148,14 +148,13 @@
   }
 
   .dark:not(.dark-mode-disabled) {
-    /* Pure black surfaces (popover, dialog, cards) — MOS Nexis. */
+    /* Page background pure black; floating popovers/menus match dialog panel (MN Grey 900 #212529). */
     --background: 0 0% 0%;
     --foreground: 0 0% 97%;
 
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 65%;
 
-    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 90%;
 
     --card: 0 0% 0%;
@@ -193,8 +192,9 @@
 
     --envelope-editor-background: 0 0% 0%;
 
-    /* Dialog/sheet content — MN Grey 900 (not pure black). */
+    /* Dialog/sheet + floating overlays — MN Grey 900 (#212529), not pure black. */
     --dialog: 210 11% 15%;
+    --popover: var(--dialog);
   }
 }
 

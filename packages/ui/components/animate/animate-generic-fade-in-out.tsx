@@ -14,15 +14,10 @@ export const AnimateGenericFadeInOut = ({
   return (
     <motion.section
       key={motionKey}
-      initial={{
-        opacity: 0,
-      }}
-      animate={{
-        opacity: 1,
-      }}
-      exit={{
-        opacity: 0,
-      }}
+      /* Skip opacity-0 initial state — used in Select triggers & document flow; stuck opacity hid inputs in dark UI. */
+      initial={false}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className={className}
     >
       {children}

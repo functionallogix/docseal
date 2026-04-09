@@ -7,9 +7,9 @@ export const nexisEnvelopeActionIconSrc = {
   close: '/static/X.svg',
 } as const;
 
-/** Primary CTA: bg cyan, border Grey-600 (MOS Nexis spec). `!` so it wins over default `Button` variant. */
+/** Primary CTA: bg cyan, 1px Grey-600 border (MOS Nexis spec). `!` so it wins over default `Button` variant. */
 export const nexisPrimaryButtonClassName =
-  'rounded-lg !border-[#495057] !bg-[#48EAE5] font-semibold !text-[#0B0C0E] shadow-none hover:!bg-[#3dd8d3] hover:!text-[#0B0C0E]';
+  'rounded-lg !border !border-solid !border-[#495057] !bg-[#48EAE5] font-semibold !text-[#0B0C0E] shadow-none hover:!bg-[#3dd8d3] hover:!text-[#0B0C0E]';
 
 /** Table Edit / Sign / Download & upload row — cyan text + icon (no filled button). */
 export const nexisTextActionClassName = cn(
@@ -22,9 +22,9 @@ export const nexisTextActionClassName = cn(
 /** @deprecated Prefer nexisTextActionClassName for dashboard actions. */
 export const nexisTableActionButtonClassName = nexisPrimaryButtonClassName;
 
-/** ⋮ dropdown panels on dark dashboard — bg pure black, grey border. */
+/** ⋮ dropdown panels on dark dashboard — MN Grey 900 (`bg-dialog-panel`), grey border. */
 export const nexisDropdownMenuContentClassName = cn(
-  'border border-[#495057] bg-black text-white shadow-lg',
+  'border border-[#495057] bg-dialog-panel text-white shadow-lg',
   '[&_[role=menuitem]]:text-white',
   '[&_[role=menuitem]:focus]:bg-white/10 [&_[role=menuitem]:focus]:text-white',
   '[&_[role=menuitem][data-highlighted]]:!bg-white/10 [&_[role=menuitem][data-highlighted]]:!text-white',
@@ -42,7 +42,7 @@ export const nexisEnvelopeRecipientInputClassName = cn(
 
 /** Suggestion list under recipient autocomplete (Popover + cmdk). */
 export const nexisRecipientAutocompletePopoverClassName = cn(
-  'z-[1100] border border-[#495057] bg-black p-0 text-slate-200 shadow-lg',
+  'z-[1100] border border-[#495057] bg-dialog-panel p-0 text-slate-200 shadow-lg',
   '[&_[cmdk-group]]:border-white/10',
   '[&_[cmdk-item]]:text-slate-200',
   '[&_[cmdk-item][data-selected=true]]:bg-white/10 [&_[cmdk-item][data-selected=true]]:text-white',
@@ -51,7 +51,7 @@ export const nexisRecipientAutocompletePopoverClassName = cn(
 
 /** Radix Select panel for recipient role (envelope editor). */
 export const nexisRecipientRoleSelectContentClassName = cn(
-  'z-[1100] border border-[#495057] bg-black text-white shadow-lg',
+  'z-[1100] border border-[#495057] bg-dialog-panel text-white shadow-lg',
   '[&_[data-radix-select-viewport]]:!min-w-[280px] [&_[data-radix-select-viewport]]:!h-auto [&_[data-radix-select-viewport]]:max-h-[min(20rem,60vh)]',
 );
 
@@ -66,7 +66,7 @@ export const nexisRecipientRoleSelectItemClassName = cn(
 
 /** Tooltips inside role dropdown (info icons). */
 export const nexisRecipientRoleTooltipContentClassName = cn(
-  'z-[1200] max-w-md border border-[#495057] bg-black p-4 text-slate-200 shadow-lg',
+  'z-[1200] max-w-md border border-[#495057] bg-dialog-panel p-4 text-slate-200 shadow-lg',
   '[&_p]:text-slate-200',
 );
 
@@ -86,23 +86,55 @@ export const nexisDistributeDialogContentClassName = cn(
   '[&_[data-radix-dialog-close]]:text-slate-400',
 );
 
-export const nexisDistributeDialogFieldShellClassName = cn(
-  '[&_label]:text-slate-400 [&_input]:border-white/15 [&_input]:bg-[#141414] [&_input]:text-white',
-  '[&_input]:placeholder:text-slate-500 [&_input]:focus-visible:border-[#48EAE5]/40 [&_input]:focus-visible:ring-1 [&_input]:focus-visible:ring-[#48EAE5]',
-  '[&_textarea]:border-white/15 [&_textarea]:bg-[#141414] [&_textarea]:text-white [&_textarea]:placeholder:text-slate-500',
-  '[&_textarea]:focus-visible:border-[#48EAE5]/40 [&_textarea]:focus-visible:ring-1 [&_textarea]:focus-visible:ring-[#48EAE5]',
-  '[&_button[role=combobox]]:border-white/15 [&_button[role=combobox]]:!bg-[#141414] [&_button[role=combobox]]:!text-white',
+/** Send Document — pill inputs (Reply / Subject): MN Grey 900 fill, Grey-600 border, cyan on focus. */
+export const nexisDistributeDialogPillInputClassName = cn(
+  'h-11 rounded-full border border-[#495057] !bg-[#212529] px-4 text-white shadow-none',
+  'placeholder:text-slate-500',
+  'focus-visible:border-[#48EAE5] focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+  'md:text-sm',
 );
 
+/** Send Document — message box: softer corners than pills, same fill + border rules. */
+export const nexisDistributeDialogMessageTextareaClassName = cn(
+  'mt-2 min-h-[120px] w-full resize-none rounded-xl border border-[#495057] !bg-[#212529] px-4 py-3 text-white shadow-none',
+  'placeholder:text-slate-500',
+  'focus-visible:border-[#48EAE5] focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+);
+
+/** Email Sender select — same pill chrome as text inputs. */
+export const nexisDistributeDialogSelectTriggerClassName = cn(
+  'h-11 w-full justify-between rounded-full border border-[#495057] !bg-[#212529] !text-white shadow-none',
+  'focus-visible:border-[#48EAE5] focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+);
+
+export const nexisDistributeDialogFieldShellClassName = '[&_label]:text-slate-400';
+
+/** Cancel on dark Nexis dialogs — MN Grey 900 + double box-shadow only (no extra border). */
 export const nexisDialogCancelButtonClassName = cn(
-  'border-white/15 bg-black/40 text-[#48EAE5] shadow-none hover:bg-white/10 hover:text-[#5eead4]',
+  'border-0 bg-[var(--Greyscale-MN-Grey-900,#212529)] text-white',
+  'shadow-[0px_0px_0px_3px_#00000040,0px_1px_1px_0px_#FFFFFF1F_inset]',
+  'hover:bg-[#2a2e33] hover:text-white',
 );
 
-/** Tabs like Email | None — dark track, cyan active pill. */
-export const nexisDistributeDialogTabsClassName = cn(
-  'bg-white/5 p-1',
-  '[&_button]:text-slate-400 [&_button:hover]:text-slate-200',
-  '[&_button[data-state=active]]:!bg-[#48EAE5] [&_button[data-state=active]]:!text-[#0B0C0E]',
+/** Delete confirmation — coral fill + white label + Grey-600 border (matches Nexis delete modal). */
+export const nexisDestructiveDialogButtonClassName = cn(
+  'rounded-lg !border !border-solid !border-[#495057] shadow-none',
+  '!bg-[#D9534F] font-semibold !text-white',
+  'hover:!bg-[#c9302c] hover:!text-white',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9534F]/40 focus-visible:ring-offset-0',
+);
+
+/** Dark delete / hide document dialog shell (#212529, rounded). */
+export const nexisDeleteDialogContentClassName = cn(
+  'max-w-md rounded-2xl border border-white/10 !bg-[#212529] text-slate-200',
+  '[&_[data-radix-dialog-close]]:text-slate-400 [&_[data-radix-dialog-close]]:hover:text-white',
+);
+
+/** Inset warning copy block inside delete dialogs (overrides default amber Alert on dark). */
+export const nexisDeleteDialogWarningClassName = cn(
+  '!border !border-[#495057]/60 !bg-black/40 !text-slate-300',
+  '[&_strong]:font-semibold [&_strong]:text-slate-100',
+  '[&_li]:text-slate-300',
 );
 
 /** Team document view (`/t/.../documents/:id`) — matches editor chrome. */
@@ -143,7 +175,7 @@ export const nexisEnvelopeRecipientSelectorTriggerClassName = cn(
 
 /** Recipient selector popover (cmdk). */
 export const nexisEnvelopeRecipientSelectorPopoverClassName = cn(
-  'z-[1100] w-[var(--radix-popover-trigger-width)] border border-[#495057] bg-black p-0 text-slate-200 shadow-lg',
+  'z-[1100] w-[var(--radix-popover-trigger-width)] border border-[#495057] bg-dialog-panel p-0 text-slate-200 shadow-lg',
   '[&_[cmdk-input-wrapper]]:border-white/10 [&_[cmdk-input]]:border-0 [&_[cmdk-input]]:bg-[#141414] [&_[cmdk-input]]:text-white [&_[cmdk-input]]:placeholder:text-slate-500',
   '[&_[cmdk-item]]:text-slate-200',
   '[&_[cmdk-item][data-selected=true]]:bg-white/10 [&_[cmdk-item][data-selected=true]]:text-white',

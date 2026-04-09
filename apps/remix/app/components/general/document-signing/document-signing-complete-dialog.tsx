@@ -14,6 +14,7 @@ import {
   ZDocumentAccessAuthSchema,
 } from '@documenso/lib/types/document-auth';
 import { fieldsContainUnsignedRequiredField } from '@documenso/lib/utils/advanced-fields-helpers';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -37,6 +38,8 @@ import { Input } from '@documenso/ui/primitives/input';
 import { useEmbedSigningContext } from '~/components/embed/embed-signing-context';
 import { AccessAuth2FAForm } from '~/components/general/document-signing/access-auth-2fa-form';
 import { DocumentSigningDisclosure } from '~/components/general/document-signing/document-signing-disclosure';
+import { useEnvelopeEditorNexisChrome } from '~/components/general/envelope-editor/envelope-editor-nexis-chrome-context';
+import { nexisDialogCancelButtonClassName, nexisPrimaryButtonClassName } from '~/utils/nexis-ui';
 
 import { useRequiredDocumentSigningAuthContext } from './document-signing-auth-provider';
 
@@ -64,6 +67,8 @@ export type DocumentSigningCompleteDialogProps = {
   buttonSize?: 'sm' | 'lg';
   position?: 'start' | 'end' | 'center';
   disableNameInput?: boolean;
+  /** When set, overrides `useEnvelopeEditorNexisChrome()` (e.g. envelope signing wraps with the provider). */
+  nexisChrome?: boolean;
 };
 
 const ZNextSignerFormSchema = z.object({
@@ -95,8 +100,12 @@ export const DocumentSigningCompleteDialog = ({
   buttonSize = 'lg',
   position,
   disableNameInput = false,
+  nexisChrome: nexisChromeProp,
 }: DocumentSigningCompleteDialogProps) => {
   const { t } = useLingui();
+
+  const nexisChromeFromContext = useEnvelopeEditorNexisChrome();
+  const nexisChrome = nexisChromeProp ?? nexisChromeFromContext;
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -367,12 +376,19 @@ export const DocumentSigningCompleteDialog = ({
 
                   <DocumentSigningDisclosure />
 
-                  <DialogFooter className="mt-4">
+                  <DialogFooter
+                    className={cn(
+                      'mt-4',
+                      nexisChrome &&
+                        'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+                    )}
+                  >
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant={nexisChrome ? 'outline' : 'secondary'}
                       onClick={() => setShowDialog(false)}
                       disabled={form.formState.isSubmitting}
+                      className={cn(nexisChrome && nexisDialogCancelButtonClassName)}
                     >
                       <Trans>Cancel</Trans>
                     </Button>
@@ -381,6 +397,8 @@ export const DocumentSigningCompleteDialog = ({
                       type="submit"
                       disabled={!isComplete}
                       loading={form.formState.isSubmitting}
+                      variant={nexisChrome ? 'none' : 'default'}
+                      className={cn(nexisChrome && nexisPrimaryButtonClassName)}
                     >
                       {match(recipient.role)
                         .with(RecipientRole.VIEWER, () => <Trans>Mark as Viewed</Trans>)

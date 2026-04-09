@@ -204,6 +204,7 @@ export const DocumentSigningPageViewV2 = () => {
                   <DocumentSigningRejectDialog
                     documentId={mapSecondaryIdToDocumentId(envelope.secondaryId)}
                     token={recipient.token}
+                    nexisChrome
                     onRejected={
                       onDocumentRejected &&
                       ((reason) =>

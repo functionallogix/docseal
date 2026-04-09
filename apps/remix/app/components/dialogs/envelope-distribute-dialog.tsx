@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Trans } from '@lingui/react/macro';
 import { DocumentDistributionMethod, DocumentStatus, EnvelopeType } from '@prisma/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon, Link2, Send } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { match } from 'ts-pattern';
@@ -48,7 +48,6 @@ import {
   SelectValue,
 } from '@documenso/ui/primitives/select';
 import { SpinnerBox } from '@documenso/ui/primitives/spinner';
-import { Tabs, TabsList, TabsTrigger } from '@documenso/ui/primitives/tabs';
 import { Textarea } from '@documenso/ui/primitives/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@documenso/ui/primitives/tooltip';
 import { useToast } from '@documenso/ui/primitives/use-toast';
@@ -58,7 +57,9 @@ import {
   nexisDialogCancelButtonClassName,
   nexisDistributeDialogContentClassName,
   nexisDistributeDialogFieldShellClassName,
-  nexisDistributeDialogTabsClassName,
+  nexisDistributeDialogMessageTextareaClassName,
+  nexisDistributeDialogPillInputClassName,
+  nexisDistributeDialogSelectTriggerClassName,
   nexisPrimaryButtonClassName,
   nexisRecipientRoleSelectContentClassName,
 } from '~/utils/nexis-ui';
@@ -251,16 +252,67 @@ export const EnvelopeDistributeDialog = ({
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       <DialogContent
-        className={cn('max-w-md', nexisChrome && nexisDistributeDialogContentClassName)}
-        hideClose
+        className={cn(
+          'max-w-[28rem]',
+          nexisChrome && cn(nexisDistributeDialogContentClassName, 'rounded-xl'),
+        )}
+        hideClose={!nexisChrome}
       >
-        <DialogHeader>
+        <DialogHeader className={cn(nexisChrome && 'pr-8 text-left')}>
           <DialogTitle className={cn(nexisChrome && 'text-white')}>
             <Trans>Send Document</Trans>
           </DialogTitle>
 
-          <DialogDescription className={cn(nexisChrome && 'text-slate-500')}>
-            <Trans>Recipients will be able to sign the document once sent</Trans>
+          <DialogDescription
+            className={cn(
+              'space-y-2',
+              nexisChrome ? 'text-slate-500' : undefined,
+              '[&_button]:font-medium',
+            )}
+          >
+            <span className="block">
+              <Trans>Recipients will be able to sign the document once sent</Trans>
+            </span>
+            <span className={cn('block text-sm', !nexisChrome && 'text-muted-foreground')}>
+              {distributionMethod === DocumentDistributionMethod.EMAIL ? (
+                <>
+                  <span className={cn(nexisChrome && 'text-slate-400')}>
+                    <Trans>Send via email or</Trans>{' '}
+                  </span>
+                  <button
+                    type="button"
+                    className={cn(
+                      'underline-offset-2 hover:underline focus:underline focus:outline-none',
+                      nexisChrome ? 'text-[#48EAE5]' : 'text-primary',
+                    )}
+                    onClick={() =>
+                      setValue('meta.distributionMethod', DocumentDistributionMethod.NONE)
+                    }
+                  >
+                    <Trans>Generate Link</Trans>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className={cn(
+                      'underline-offset-2 hover:underline focus:underline focus:outline-none',
+                      nexisChrome ? 'text-[#48EAE5]' : 'text-primary',
+                    )}
+                    onClick={() =>
+                      setValue('meta.distributionMethod', DocumentDistributionMethod.EMAIL)
+                    }
+                  >
+                    <Trans>Send via email</Trans>
+                  </button>
+                  <span className={cn(nexisChrome && 'text-slate-400')}>
+                    {' '}
+                    <Trans>or Generate Link</Trans>
+                  </span>
+                </>
+              )}
+            </span>
           </DialogDescription>
         </DialogHeader>
 
@@ -268,26 +320,6 @@ export const EnvelopeDistributeDialog = ({
           <Form {...form}>
             <form onSubmit={handleSubmit(onFormSubmit)}>
               <fieldset disabled={isSubmitting}>
-                <Tabs
-                  onValueChange={(value) =>
-                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                    setValue('meta.distributionMethod', value as DocumentDistributionMethod)
-                  }
-                  value={distributionMethod}
-                  className="mb-2"
-                >
-                  <TabsList
-                    className={cn('w-full', nexisChrome && nexisDistributeDialogTabsClassName)}
-                  >
-                    <TabsTrigger className="w-full" value={DocumentDistributionMethod.EMAIL}>
-                      <Trans>Email</Trans>
-                    </TabsTrigger>
-                    <TabsTrigger className="w-full" value={DocumentDistributionMethod.NONE}>
-                      <Trans>None</Trans>
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-
                 <div
                   className={cn('min-h-72', {
                     'min-h-[23rem]': organisation.organisationClaim.flags.emailDomains,
@@ -337,7 +369,11 @@ export const EnvelopeDistributeDialog = ({
                                       >
                                         <SelectTrigger
                                           loading={isLoadingEmails}
-                                          className="bg-background"
+                                          className={cn(
+                                            'bg-background',
+                                            nexisChrome &&
+                                              nexisDistributeDialogSelectTriggerClassName,
+                                          )}
                                         >
                                           <SelectValue />
                                         </SelectTrigger>
@@ -369,7 +405,7 @@ export const EnvelopeDistributeDialog = ({
                               name="meta.emailReplyTo"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>
+                                  <FormLabel className={cn(nexisChrome && 'sr-only')}>
                                     <Trans>
                                       Reply To Email{' '}
                                       <span className="text-muted-foreground">(Optional)</span>
@@ -377,7 +413,14 @@ export const EnvelopeDistributeDialog = ({
                                   </FormLabel>
 
                                   <FormControl>
-                                    <Input {...field} maxLength={254} />
+                                    <Input
+                                      {...field}
+                                      maxLength={254}
+                                      placeholder={nexisChrome ? t`Reply to Email..` : undefined}
+                                      className={cn(
+                                        nexisChrome && nexisDistributeDialogPillInputClassName,
+                                      )}
+                                    />
                                   </FormControl>
 
                                   <FormMessage />
@@ -390,7 +433,7 @@ export const EnvelopeDistributeDialog = ({
                               name="meta.subject"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>
+                                  <FormLabel className={cn(nexisChrome && 'sr-only')}>
                                     <Trans>
                                       Subject{' '}
                                       <span className="text-muted-foreground">(Optional)</span>
@@ -398,7 +441,14 @@ export const EnvelopeDistributeDialog = ({
                                   </FormLabel>
 
                                   <FormControl>
-                                    <Input {...field} maxLength={255} />
+                                    <Input
+                                      {...field}
+                                      maxLength={255}
+                                      placeholder={nexisChrome ? t`Subject...` : undefined}
+                                      className={cn(
+                                        nexisChrome && nexisDistributeDialogPillInputClassName,
+                                      )}
+                                    />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -410,28 +460,37 @@ export const EnvelopeDistributeDialog = ({
                               name="meta.message"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel className="flex flex-row items-center">
+                                  <FormLabel
+                                    className={cn(
+                                      'flex flex-row items-center',
+                                      nexisChrome && 'sr-only',
+                                    )}
+                                  >
                                     <Trans>
                                       Message{' '}
                                       <span className="text-muted-foreground">(Optional)</span>
                                     </Trans>
-                                    <Tooltip>
-                                      <TooltipTrigger type="button">
-                                        <InfoIcon className="mx-2 h-4 w-4" />
-                                      </TooltipTrigger>
-                                      <TooltipContent className="p-4 text-muted-foreground">
-                                        <DocumentSendEmailMessageHelper />
-                                      </TooltipContent>
-                                    </Tooltip>
+                                    {!nexisChrome && (
+                                      <Tooltip>
+                                        <TooltipTrigger type="button">
+                                          <InfoIcon className="mx-2 h-4 w-4" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="p-4 text-muted-foreground">
+                                          <DocumentSendEmailMessageHelper />
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    )}
                                   </FormLabel>
 
                                   <FormControl>
                                     <Textarea
                                       className={cn(
-                                        'mt-2 h-16 resize-none bg-background',
+                                        'mt-2 h-24 resize-none',
+                                        !nexisChrome && 'bg-background',
                                         nexisChrome &&
-                                          '!border-white/15 !bg-[#141414] text-white placeholder:text-slate-500',
+                                          nexisDistributeDialogMessageTextareaClassName,
                                       )}
+                                      placeholder={nexisChrome ? t`Message...` : undefined}
                                       {...field}
                                       maxLength={5000}
                                     />
@@ -450,14 +509,14 @@ export const EnvelopeDistributeDialog = ({
                         animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
                         exit={{ opacity: 0, transition: { duration: 0.15 } }}
                         className={cn(
-                          'min-h-60 rounded-lg border',
-                          nexisChrome && 'border-white/10 bg-white/[0.03]',
+                          'rounded-lg border',
+                          nexisChrome ? 'min-h-0 border-white/10 bg-white/[0.03] py-6' : 'min-h-60',
                         )}
                       >
                         <div
                           className={cn(
-                            'py-24 text-center text-sm text-muted-foreground',
-                            nexisChrome && 'text-slate-400',
+                            'text-center text-sm text-muted-foreground',
+                            nexisChrome ? 'px-2 py-2 text-slate-400' : 'py-24',
                           )}
                         >
                           <p>
@@ -476,7 +535,12 @@ export const EnvelopeDistributeDialog = ({
                   </AnimatePresence>
                 </div>
 
-                <DialogFooter className={cn(nexisChrome && 'border-t border-white/10 pt-4')}>
+                <DialogFooter
+                  className={cn(
+                    nexisChrome &&
+                      'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+                  )}
+                >
                   <DialogClose asChild>
                     <Button
                       type="button"
@@ -496,9 +560,15 @@ export const EnvelopeDistributeDialog = ({
                     className={cn(nexisChrome && nexisPrimaryButtonClassName)}
                   >
                     {distributionMethod === DocumentDistributionMethod.EMAIL ? (
-                      <Trans>Send</Trans>
+                      <>
+                        <Send className="mr-2 h-4 w-4 shrink-0" aria-hidden />
+                        <Trans>Send Document</Trans>
+                      </>
                     ) : (
-                      <Trans>Generate Links</Trans>
+                      <>
+                        <Link2 className="mr-2 h-4 w-4 shrink-0" aria-hidden />
+                        <Trans>Generate Links</Trans>
+                      </>
                     )}
                   </Button>
                 </DialogFooter>

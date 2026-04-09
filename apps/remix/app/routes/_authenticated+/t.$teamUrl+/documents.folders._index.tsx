@@ -88,7 +88,7 @@ export default function DocumentsFoldersPage() {
         </div>
 
         <div className="flex flex-col gap-y-4 sm:flex-row sm:justify-end sm:gap-x-4">
-          <FolderCreateDialog type={FolderType.DOCUMENT} parentFolderId={parentId} />
+          <FolderCreateDialog nexisChrome type={FolderType.DOCUMENT} parentFolderId={parentId} />
         </div>
       </div>
 

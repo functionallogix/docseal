@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { trpc } from '@documenso/trpc/react';
 import type { TFolderWithSubfolders } from '@documenso/trpc/server/folder-router/schema';
+import { cn } from '@documenso/ui/lib/utils';
 import { Alert, AlertDescription } from '@documenso/ui/primitives/alert';
 import { Button } from '@documenso/ui/primitives/button';
 import {
@@ -31,6 +32,13 @@ import {
 import { Input } from '@documenso/ui/primitives/input';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import {
+  nexisDeleteDialogContentClassName,
+  nexisDeleteDialogWarningClassName,
+  nexisDistributeDialogPillInputClassName,
+} from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
+
 export type FolderDeleteDialogProps = {
   folder: TFolderWithSubfolders;
   isOpen: boolean;
@@ -39,6 +47,8 @@ export type FolderDeleteDialogProps = {
 
 export const FolderDeleteDialog = ({ folder, isOpen, onOpenChange }: FolderDeleteDialogProps) => {
   const { t } = useLingui();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const { toast } = useToast();
   const { mutateAsync: deleteFolder } = trpc.folder.deleteFolder.useMutation();
@@ -100,12 +110,15 @@ export const FolderDeleteDialog = ({ folder, isOpen, onOpenChange }: FolderDelet
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
             <Trans>Delete Folder</Trans>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={cn(nexisBtns.active && 'text-slate-400')}>
             <Trans>Are you sure you want to delete this folder?</Trans>
           </DialogDescription>
         </DialogHeader>
@@ -113,7 +126,10 @@ export const FolderDeleteDialog = ({ folder, isOpen, onOpenChange }: FolderDelet
         {(folder._count.documents > 0 ||
           folder._count.templates > 0 ||
           folder._count.subfolders > 0) && (
-          <Alert variant="destructive">
+          <Alert
+            variant="destructive"
+            className={cn(nexisBtns.active && nexisDeleteDialogWarningClassName)}
+          >
             <AlertDescription>
               <Trans>
                 This folder contains multiple items. Deleting it will remove all subfolders and move
@@ -131,28 +147,51 @@ export const FolderDeleteDialog = ({ folder, isOpen, onOpenChange }: FolderDelet
                 name="confirmText"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className={cn(nexisBtns.active && 'text-slate-400')}>
                       <Trans>
                         Confirm by typing:{' '}
-                        <span className="font-sm text-destructive font-semibold">
+                        <span
+                          className={cn(
+                            'font-sm font-semibold text-destructive',
+                            nexisBtns.active && '!text-[#f87171]',
+                          )}
+                        >
                           {deleteMessage}
                         </span>
                       </Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={deleteMessage} {...field} />
+                      <Input
+                        placeholder={deleteMessage}
+                        {...field}
+                        className={cn(
+                          nexisBtns.active && nexisDistributeDialogPillInputClassName,
+                          nexisBtns.active && 'w-full',
+                        )}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <DialogFooter>
-                <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+              <DialogFooter
+                className={cn(
+                  nexisBtns.active &&
+                    'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+                )}
+              >
+                <Button
+                  type="button"
+                  variant={nexisBtns.cancelVariant}
+                  className={nexisBtns.cancelClassName}
+                  onClick={() => onOpenChange(false)}
+                >
                   <Trans>Cancel</Trans>
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant={nexisBtns.destructiveVariant}
+                  className={nexisBtns.destructiveClassName}
                   type="submit"
                   disabled={!form.formState.isValid}
                   loading={form.formState.isSubmitting}

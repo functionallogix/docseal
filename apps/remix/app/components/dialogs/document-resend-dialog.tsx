@@ -37,6 +37,8 @@ import {
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisCheckboxClassName, nexisDeleteDialogContentClassName } from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 import { StackAvatar } from '../general/stack-avatar';
 
@@ -65,6 +67,8 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
 
   const { toast } = useToast();
   const { _ } = useLingui();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const [isOpen, setIsOpen] = useState(false);
   const isOwner = document.userId === user.id;
@@ -124,10 +128,13 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
         </DropdownMenuItem>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-sm" hideClose>
-        <DialogHeader>
+      <DialogContent
+        className={cn('sm:max-w-sm', nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
           <DialogTitle asChild>
-            <h1 className="text-center text-xl">
+            <h1 className={cn('text-center text-xl', nexisBtns.active && 'text-left text-white')}>
               <Trans>Who do you want to remind?</Trans>
             </h1>
           </DialogTitle>
@@ -146,9 +153,13 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
                       className="flex flex-row items-center justify-between gap-x-3"
                     >
                       <FormLabel
-                        className={cn('my-2 flex items-center gap-2 font-normal', {
-                          'opacity-50': !value.includes(recipient.id),
-                        })}
+                        className={cn(
+                          'my-2 flex items-center gap-2 font-normal',
+                          nexisBtns.active && 'text-white',
+                          {
+                            'opacity-50': !value.includes(recipient.id),
+                          },
+                        )}
                       >
                         <StackAvatar
                           key={recipient.id}
@@ -160,7 +171,11 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
 
                       <FormControl>
                         <Checkbox
-                          className="h-5 w-5 rounded-full border border-neutral-400"
+                          className={cn(
+                            'h-5 w-5 rounded-full border border-neutral-400',
+                            nexisBtns.active &&
+                              cn(nexisCheckboxClassName, 'rounded-full [&_svg]:!text-[#0B0C0E]'),
+                          )}
                           value={recipient.id}
                           checked={value.includes(recipient.id)}
                           onCheckedChange={(checked: boolean) =>
@@ -178,13 +193,25 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
           </form>
         </Form>
 
-        <DialogFooter>
-          <div className="flex w-full flex-1 flex-nowrap gap-4">
+        <DialogFooter
+          className={cn(nexisBtns.active && 'border-t border-white/10 pt-4 sm:justify-stretch')}
+        >
+          <div
+            className={cn(
+              'flex w-full flex-nowrap gap-4 sm:flex-row',
+              nexisBtns.active && 'gap-3 [&_button]:min-h-11 [&_button]:flex-1',
+            )}
+          >
             <DialogClose asChild>
               <Button
                 type="button"
-                className="dark:bg-muted dark:hover:bg-muted/80 flex-1 bg-black/5 hover:bg-black/10"
-                variant="secondary"
+                variant={nexisBtns.cancelVariant}
+                className={cn(
+                  'flex-1',
+                  !nexisBtns.active &&
+                    'bg-black/5 hover:bg-black/10 dark:bg-muted dark:hover:bg-muted/80',
+                  nexisBtns.cancelClassName,
+                )}
                 disabled={isSubmitting}
               >
                 <Trans>Cancel</Trans>
@@ -192,7 +219,8 @@ export const DocumentResendDialog = ({ document, recipients }: DocumentResendDia
             </DialogClose>
 
             <Button
-              className="flex-1"
+              className={cn('flex-1', nexisBtns.primaryClassName)}
+              variant={nexisBtns.primaryVariant}
               loading={isSubmitting}
               type="submit"
               form={FORM_ID}

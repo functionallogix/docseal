@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
 import { trpc as trpcReact } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -16,6 +17,8 @@ import {
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisDeleteDialogContentClassName } from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 type DocumentDuplicateDialogProps = {
   id: string;
@@ -34,6 +37,8 @@ export const DocumentDuplicateDialog = ({
 
   const { toast } = useToast();
   const { _ } = useLingui();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const team = useCurrentTeam();
 
@@ -68,20 +73,38 @@ export const DocumentDuplicateDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={(value) => !isDuplicating && onOpenChange(value)}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
             <Trans>Duplicate</Trans>
           </DialogTitle>
         </DialogHeader>
 
-        <DialogFooter>
-          <div className="flex w-full flex-1 flex-nowrap gap-4">
+        <DialogFooter
+          className={cn(
+            nexisBtns.active &&
+              'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+          )}
+        >
+          <div
+            className={cn(
+              'flex w-full flex-1 flex-nowrap gap-4',
+              nexisBtns.active && 'gap-3 [&_button]:min-h-11 [&_button]:flex-1',
+            )}
+          >
             <Button
               type="button"
-              variant="secondary"
+              variant={nexisBtns.cancelVariant}
+              className={cn(
+                'flex-1',
+                !nexisBtns.active &&
+                  'bg-black/5 hover:bg-black/10 dark:bg-muted dark:hover:bg-muted/80',
+                nexisBtns.cancelClassName,
+              )}
               onClick={() => onOpenChange(false)}
-              className="flex-1"
             >
               <Trans>Cancel</Trans>
             </Button>
@@ -90,8 +113,9 @@ export const DocumentDuplicateDialog = ({
               type="button"
               disabled={isDuplicating}
               loading={isDuplicating}
+              variant={nexisBtns.primaryVariant}
+              className={cn('flex-1', nexisBtns.primaryClassName)}
               onClick={onDuplicate}
-              className="flex-1"
             >
               <Trans>Duplicate</Trans>
             </Button>

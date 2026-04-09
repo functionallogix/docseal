@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 
 import { formatDocumentsPath, formatTemplatesPath } from '@documenso/lib/utils/teams';
 import { trpc } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -20,6 +21,8 @@ import {
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import { nexisDeleteDialogContentClassName } from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
 
 type EnvelopeDuplicateDialogProps = {
   envelopeId: string;
@@ -40,6 +43,8 @@ export const EnvelopeDuplicateDialog = ({
   const { t } = useLingui();
 
   const team = useCurrentTeam();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const { mutateAsync: duplicateEnvelope, isPending: isDuplicating } =
     trpc.envelope.duplicate.useMutation({
@@ -77,40 +82,67 @@ export const EnvelopeDuplicateDialog = ({
     <Dialog open={open} onOpenChange={(value) => !isDuplicating && setOpen(value)}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
 
-      <DialogContent>
+      <DialogContent
+        className={cn(nexisBtns.active && nexisDeleteDialogContentClassName)}
+        hideClose={!nexisBtns.active}
+      >
         {envelopeType === EnvelopeType.DOCUMENT ? (
-          <DialogHeader>
-            <DialogTitle>
+          <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+            <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
               <Trans>Duplicate Document</Trans>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className={cn(nexisBtns.active && 'text-slate-400')}>
               <Trans>This document will be duplicated.</Trans>
             </DialogDescription>
           </DialogHeader>
         ) : (
-          <DialogHeader>
-            <DialogTitle>
+          <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+            <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
               <Trans>Duplicate Template</Trans>
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className={cn(nexisBtns.active && 'text-slate-400')}>
               <Trans>This template will be duplicated.</Trans>
             </DialogDescription>
           </DialogHeader>
         )}
 
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="secondary"
-            disabled={isDuplicating}
-            onClick={() => setOpen(false)}
+        <DialogFooter
+          className={cn(
+            nexisBtns.active &&
+              'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+          )}
+        >
+          <div
+            className={cn(
+              'flex w-full flex-nowrap gap-4 sm:flex-row',
+              nexisBtns.active && 'gap-3 [&_button]:min-h-11 [&_button]:flex-1',
+            )}
           >
-            <Trans>Cancel</Trans>
-          </Button>
+            <Button
+              type="button"
+              variant={nexisBtns.cancelVariant}
+              className={cn(
+                'flex-1',
+                !nexisBtns.active &&
+                  'bg-black/5 hover:bg-black/10 dark:bg-muted dark:hover:bg-muted/80',
+                nexisBtns.cancelClassName,
+              )}
+              disabled={isDuplicating}
+              onClick={() => setOpen(false)}
+            >
+              <Trans>Cancel</Trans>
+            </Button>
 
-          <Button type="button" loading={isDuplicating} onClick={onDuplicate}>
-            <Trans>Duplicate</Trans>
-          </Button>
+            <Button
+              type="button"
+              loading={isDuplicating}
+              variant={nexisBtns.primaryVariant}
+              className={cn('flex-1', nexisBtns.primaryClassName)}
+              onClick={onDuplicate}
+            >
+              <Trans>Duplicate</Trans>
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

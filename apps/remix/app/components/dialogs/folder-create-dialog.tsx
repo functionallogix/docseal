@@ -16,7 +16,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -32,6 +31,12 @@ import {
 import { Input } from '@documenso/ui/primitives/input';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
+import {
+  nexisDistributeDialogContentClassName,
+  nexisDistributeDialogPillInputClassName,
+  nexisPrimaryButtonClassName,
+} from '~/utils/nexis-ui';
+
 const ZCreateFolderFormSchema = z.object({
   name: z.string().min(1, { message: 'Folder name is required' }),
 });
@@ -44,6 +49,8 @@ export type FolderCreateDialogProps = {
   /** Merged onto the default trigger button when `trigger` is omitted. */
   triggerButtonClassName?: string;
   parentFolderId?: string | null;
+  /** Dark Nexis dashboard — pill field + full-width Create (no Cancel). */
+  nexisChrome?: boolean;
 } & Omit<DialogPrimitive.DialogProps, 'children'>;
 
 export const FolderCreateDialog = ({
@@ -51,6 +58,7 @@ export const FolderCreateDialog = ({
   trigger,
   triggerButtonClassName,
   parentFolderId,
+  nexisChrome = false,
   ...props
 }: FolderCreateDialogProps) => {
   const { t } = useLingui();
@@ -113,12 +121,19 @@ export const FolderCreateDialog = ({
         )}
       </DialogTrigger>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(
+          nexisChrome && 'max-w-[28rem]',
+          nexisChrome && nexisDistributeDialogContentClassName,
+          nexisChrome && 'rounded-xl',
+        )}
+        hideClose={nexisChrome}
+      >
+        <DialogHeader className={cn(nexisChrome && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisChrome && 'text-white')}>
             <Trans>Create New Folder</Trans>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className={cn(nexisChrome ? 'text-slate-500' : undefined)}>
             <Trans>Enter a name for your new folder. Folders help you organise your items.</Trans>
           </DialogDescription>
         </DialogHeader>
@@ -131,30 +146,38 @@ export const FolderCreateDialog = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel className={cn(nexisChrome && 'sr-only')}>
                       <Trans>Folder Name</Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={t`My Folder`} {...field} />
+                      <Input
+                        placeholder={nexisChrome ? t`Folder Name` : t`My Folder`}
+                        className={cn(
+                          nexisChrome && nexisDistributeDialogPillInputClassName,
+                          nexisChrome && 'w-full',
+                        )}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <DialogFooter>
+              <div className={cn(nexisChrome ? 'mt-6 w-full' : 'mt-2')}>
                 <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setIsCreateFolderOpen(false)}
+                  type="submit"
+                  variant={nexisChrome ? 'none' : 'default'}
+                  loading={form.formState.isSubmitting}
+                  className={cn(
+                    nexisChrome
+                      ? cn(nexisPrimaryButtonClassName, 'h-11 min-h-11 w-full rounded-lg')
+                      : 'w-full',
+                  )}
                 >
-                  <Trans>Cancel</Trans>
-                </Button>
-
-                <Button type="submit" loading={form.formState.isSubmitting}>
                   <Trans>Create</Trans>
                 </Button>
-              </DialogFooter>
+              </div>
             </fieldset>
           </form>
         </Form>

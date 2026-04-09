@@ -14,6 +14,7 @@ import { AppError, AppErrorCode } from '@documenso/lib/errors/app-error';
 import { FolderType } from '@documenso/lib/types/folder-type';
 import { formatDocumentsPath } from '@documenso/lib/utils/teams';
 import { trpc } from '@documenso/trpc/react';
+import { cn } from '@documenso/ui/lib/utils';
 import { Button } from '@documenso/ui/primitives/button';
 import {
   Dialog,
@@ -35,6 +36,17 @@ import { Input } from '@documenso/ui/primitives/input';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { useCurrentTeam } from '~/providers/team';
+import {
+  nexisDeleteDialogContentClassName,
+  nexisDistributeDialogPillInputClassName,
+  nexisPrimaryButtonClassName,
+} from '~/utils/nexis-ui';
+import { useNexisDarkDialogButtons } from '~/utils/use-nexis-dark-dialog-buttons';
+
+const nexisMoveDocumentFolderListButtonInactiveClassName = cn(
+  'min-h-11 w-full justify-start rounded-lg border border-[#495057] !bg-[#212529] font-normal !text-white shadow-none',
+  'hover:!bg-white/5 hover:!text-white',
+);
 
 export type DocumentMoveToFolderDialogProps = {
   documentId: number;
@@ -61,6 +73,8 @@ export const DocumentMoveToFolderDialog = ({
 
   const navigate = useNavigate();
   const team = useCurrentTeam();
+
+  const nexisBtns = useNexisDarkDialogButtons();
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -153,24 +167,40 @@ export const DocumentMoveToFolderDialog = ({
 
   return (
     <Dialog {...props} open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent
+        className={cn(
+          nexisBtns.active && nexisDeleteDialogContentClassName,
+          nexisBtns.active && 'max-w-lg',
+        )}
+      >
+        <DialogHeader className={cn(nexisBtns.active && 'pr-8 text-left')}>
+          <DialogTitle className={cn(nexisBtns.active && 'text-white')}>
             <Trans>Move Document to Folder</Trans>
           </DialogTitle>
 
-          <DialogDescription>
+          <DialogDescription className={cn(nexisBtns.active && 'text-slate-500')}>
             <Trans>Select a folder to move this document to.</Trans>
           </DialogDescription>
         </DialogHeader>
 
         <div className="relative">
-          <Search className="text-muted-foreground absolute left-2 top-3 h-4 w-4" />
+          <Search
+            className={cn(
+              'absolute h-4 w-4',
+              nexisBtns.active
+                ? 'pointer-events-none left-4 top-1/2 -translate-y-1/2 text-slate-500'
+                : 'left-2 top-3 text-muted-foreground',
+            )}
+          />
           <Input
             placeholder={_(msg`Search folders...`)}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
+            className={cn(
+              'pl-8',
+              nexisBtns.active && nexisDistributeDialogPillInputClassName,
+              nexisBtns.active && 'w-full !pl-10',
+            )}
           />
         </div>
 
@@ -181,7 +211,7 @@ export const DocumentMoveToFolderDialog = ({
               name="folderId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className={cn(nexisBtns.active && 'text-slate-400')}>
                     <Trans>Folder</Trans>
                   </FormLabel>
 
@@ -195,12 +225,24 @@ export const DocumentMoveToFolderDialog = ({
                         <>
                           <Button
                             type="button"
-                            variant={field.value === null ? 'default' : 'outline'}
-                            className="w-full justify-start"
+                            variant={
+                              nexisBtns.active
+                                ? 'none'
+                                : field.value === null
+                                  ? 'default'
+                                  : 'outline'
+                            }
+                            className={cn(
+                              'w-full justify-start',
+                              nexisBtns.active &&
+                                (field.value === null
+                                  ? nexisPrimaryButtonClassName
+                                  : nexisMoveDocumentFolderListButtonInactiveClassName),
+                            )}
                             onClick={() => field.onChange(null)}
                             disabled={currentFolderId === null}
                           >
-                            <HomeIcon className="mr-2 h-4 w-4" />
+                            <HomeIcon className="mr-2 h-4 w-4 shrink-0" />
                             <Trans>Home (No Folder)</Trans>
                           </Button>
 
@@ -208,18 +250,30 @@ export const DocumentMoveToFolderDialog = ({
                             <Button
                               key={folder.id}
                               type="button"
-                              variant={field.value === folder.id ? 'default' : 'outline'}
-                              className="w-full justify-start"
+                              variant={
+                                nexisBtns.active
+                                  ? 'none'
+                                  : field.value === folder.id
+                                    ? 'default'
+                                    : 'outline'
+                              }
+                              className={cn(
+                                'w-full justify-start',
+                                nexisBtns.active &&
+                                  (field.value === folder.id
+                                    ? nexisPrimaryButtonClassName
+                                    : nexisMoveDocumentFolderListButtonInactiveClassName),
+                              )}
                               onClick={() => field.onChange(folder.id)}
                               disabled={currentFolderId === folder.id}
                             >
-                              <FolderIcon className="mr-2 h-4 w-4" />
+                              <FolderIcon className="mr-2 h-4 w-4 shrink-0" />
                               {folder.name}
                             </Button>
                           ))}
 
                           {searchTerm && filteredFolders?.length === 0 && (
-                            <div className="text-muted-foreground px-2 py-2 text-center text-sm">
+                            <div className="px-2 py-2 text-center text-sm text-muted-foreground">
                               <Trans>No folders found</Trans>
                             </div>
                           )}
@@ -232,8 +286,18 @@ export const DocumentMoveToFolderDialog = ({
               )}
             />
 
-            <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
+            <DialogFooter
+              className={cn(
+                nexisBtns.active &&
+                  'w-full gap-3 !space-y-0 border-t border-white/10 pt-4 sm:flex-row sm:justify-stretch sm:!space-x-0 [&>button]:min-h-11 [&>button]:flex-1',
+              )}
+            >
+              <Button
+                type="button"
+                variant={nexisBtns.cancelVariant}
+                className={nexisBtns.cancelClassName}
+                onClick={() => onOpenChange(false)}
+              >
                 <Trans>Cancel</Trans>
               </Button>
 
@@ -242,6 +306,8 @@ export const DocumentMoveToFolderDialog = ({
                 disabled={
                   isFoldersLoading || form.formState.isSubmitting || currentFolderId === null
                 }
+                variant={nexisBtns.primaryVariant}
+                className={nexisBtns.primaryClassName}
               >
                 <Trans>Move</Trans>
               </Button>

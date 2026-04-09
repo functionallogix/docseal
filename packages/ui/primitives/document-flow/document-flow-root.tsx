@@ -24,12 +24,12 @@ export const DocumentFlowFormContainer = ({
     <form
       id={id}
       className={cn(
-        'sticky top-20 flex h-full max-h-[64rem] flex-col overflow-auto rounded-xl border border-border bg-widget px-4 py-6 dark:bg-background',
+        'sticky top-20 flex h-full max-h-[64rem] min-h-0 flex-col overflow-hidden rounded-xl border border-border bg-widget px-4 py-6 text-foreground dark:bg-background',
         className,
       )}
       {...props}
     >
-      <div className={cn('-mx-2 flex flex-1 flex-col px-2')}>{children}</div>
+      <div className={cn('-mx-2 flex min-h-0 flex-1 flex-col px-2')}>{children}</div>
     </form>
   );
 };
@@ -66,8 +66,14 @@ export const DocumentFlowFormContainerContent = ({
   ...props
 }: DocumentFlowFormContainerContentProps) => {
   return (
-    <div className={cn('custom-scrollbar -mx-2 flex flex-1 flex-col px-2', className)} {...props}>
-      <div className="flex flex-1 flex-col">{children}</div>
+    <div
+      className={cn(
+        'custom-scrollbar -mx-2 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-2',
+        className,
+      )}
+      {...props}
+    >
+      <div className="flex flex-col">{children}</div>
     </div>
   );
 };
