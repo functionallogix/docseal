@@ -14,6 +14,15 @@ import { Button } from '../button';
 import { SignaturePad } from './signature-pad';
 import { SignatureRender } from './signature-render';
 
+/** Shared shell for Nexis-style sign modals (draw / type / upload + cyan actions). */
+export const SIGNATURE_NEXIS_DIALOG_OVERLAY_CLASS = 'bg-[#000000CC]';
+
+/** Cyan wash: see `theme.css` `.nexis-signature-dialog` (reliable vs `bg-dialog-panel` / merge). */
+/** `flex flex-col` overrides default DialogContent `grid` so glow/close don’t create stray rows. */
+export const SIGNATURE_NEXIS_DIALOG_CONTENT_CLASS = cn(
+  'nexis-signature-dialog relative flex w-[min(880px,calc(100vw-1.5rem))] max-w-none flex-col gap-3 overflow-hidden rounded-[14px] p-5 shadow-[0_40px_120px_rgba(0,0,0,0.65)] sm:p-6',
+);
+
 export type SignaturePadDialogProps = Omit<HTMLAttributes<HTMLCanvasElement>, 'onChange'> & {
   disabled?: boolean;
   fullName?: string;
@@ -124,76 +133,57 @@ export const SignaturePadDialog = ({
         <DialogContent
           position="center"
           hideClose={true}
-          overlayClassName="bg-black/75 backdrop-blur-[2px]"
-          className={cn(
-            'nexis-signature-dialog relative w-[min(880px,calc(100vw-1.5rem))] gap-4 overflow-hidden rounded-[22px] border border-white/10 bg-[#06110f]/70 p-5 shadow-[0_40px_160px_rgba(0,0,0,0.8)] backdrop-blur-xl',
-            'sm:rounded-[26px] sm:p-6',
-            // Tabs look
-            '[&_[role=tabslist]]:gap-2 [&_[role=tabslist]]:border-white/10',
-            '[&_[role=tab]]:px-3 [&_[role=tab]]:py-3 [&_[role=tab]]:text-white/55',
-            '[&_[role=tab][data-state=active]]:text-white',
-            '[&_[role=tab]_.bg-foreground\\/40]:bg-[#48EAE5]/60',
-            // Signature panel look (transparent so dialog bg continues)
-            '[&_.aspect-signature-pad]:rounded-[18px] [&_.aspect-signature-pad]:border [&_.aspect-signature-pad]:border-white/10',
-            '[&_.aspect-signature-pad]:bg-transparent [&_.aspect-signature-pad]:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)]',
-            '[&_.aspect-signature-pad]:backdrop-blur-0',
-            '[&_[role=tabpanel]]:!bg-transparent dark:[&_[role=tabpanel]]:!bg-transparent',
-          )}
+          overlayClassName={SIGNATURE_NEXIS_DIALOG_OVERLAY_CLASS}
+          className={SIGNATURE_NEXIS_DIALOG_CONTENT_CLASS}
         >
-          <img
-            src="/static/signature-dialog-glow.svg"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute -left-24 -top-24 h-[420px] w-[520px] select-none opacity-90"
-          />
-
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-black/20" />
-
           <DialogClose asChild>
             <button
               type="button"
-              className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/70 transition hover:bg-white/[0.08] hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-300/40"
+              className="absolute right-3 top-3 z-[2] inline-flex h-9 w-9 items-center justify-center rounded-md text-white opacity-90 transition hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#48EAE5]/35 sm:right-4 sm:top-4"
               aria-label="Close"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" strokeWidth={2} />
             </button>
           </DialogClose>
 
-          <SignaturePad
-            id="signature"
-            fullName={fullName}
-            value={value}
-            className={className}
-            disabled={disabled}
-            onChange={({ value }) => setSignature(value)}
-            typedSignatureEnabled={typedSignatureEnabled}
-            uploadSignatureEnabled={uploadSignatureEnabled}
-            drawSignatureEnabled={drawSignatureEnabled}
-          />
+          <div className="relative z-[1] flex min-h-0 w-full min-w-0 flex-col gap-3">
+            <SignaturePad
+              id="signature"
+              fullName={fullName}
+              value={value}
+              className={className}
+              disabled={disabled}
+              appearance="nexis"
+              onChange={({ value }) => setSignature(value)}
+              typedSignatureEnabled={typedSignatureEnabled}
+              uploadSignatureEnabled={uploadSignatureEnabled}
+              drawSignatureEnabled={drawSignatureEnabled}
+            />
 
-          <DialogFooter className="mt-1 gap-3 sm:flex-col sm:items-stretch sm:justify-start sm:space-x-0">
-            <Button
-              type="button"
-              size="lg"
-              disabled={!signature}
-              className="h-11 w-full rounded-[14px] border border-[#48EAE5] bg-[#48EAE5] px-6 font-semibold text-[#0B0C0E] shadow-[0_10px_40px_rgba(72,234,229,0.15)] hover:bg-[#38d4cf]"
-              onClick={() => {
-                onChange(signature);
-                setShowSignatureModal(false);
-              }}
-            >
-              {confirmLabel ?? <Trans>Next</Trans>}
-            </Button>
-
-            <DialogClose asChild>
-              <button
+            <DialogFooter className="mt-0 gap-3 sm:flex-col sm:items-stretch sm:justify-start sm:space-x-0">
+              <Button
                 type="button"
-                className="h-10 w-full text-center text-sm text-cyan-300/90 transition hover:text-cyan-200"
+                size="lg"
+                disabled={!signature}
+                className="h-11 w-full rounded-lg border border-[#48EAE5] bg-[#48EAE5] px-6 font-semibold text-[#0B0C0E] shadow-[0_10px_36px_rgba(72,234,229,0.22)] hover:bg-[#3bd8d2]"
+                onClick={() => {
+                  onChange(signature);
+                  setShowSignatureModal(false);
+                }}
               >
-                <Trans>Cancel</Trans>
-              </button>
-            </DialogClose>
-          </DialogFooter>
+                {confirmLabel ?? <Trans>Next</Trans>}
+              </Button>
+
+              <DialogClose asChild>
+                <button
+                  type="button"
+                  className="h-10 w-full text-center text-sm font-medium text-[#48EAE5] transition hover:text-[#7ef4ee]"
+                >
+                  <Trans>Cancel</Trans>
+                </button>
+              </DialogClose>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

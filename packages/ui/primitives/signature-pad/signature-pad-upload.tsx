@@ -69,12 +69,14 @@ export type SignaturePadUploadProps = {
   className?: string;
   value: string;
   onChange: (_signatureDataUrl: string) => void;
+  appearance?: 'default' | 'nexis';
 };
 
 export const SignaturePadUpload = ({
   className,
   value,
   onChange,
+  appearance = 'default',
   ...props
 }: SignaturePadUploadProps) => {
   const $el = useRef<HTMLCanvasElement>(null);
@@ -128,7 +130,10 @@ export const SignaturePadUpload = ({
       <canvas
         data-testid="signature-pad-upload"
         ref={$el}
-        className="h-full w-full dark:hue-rotate-180 dark:invert"
+        className={cn(
+          'h-full w-full',
+          appearance === 'default' && 'dark:hue-rotate-180 dark:invert',
+        )}
         style={{ touchAction: 'none' }}
         {...props}
       />
@@ -150,7 +155,12 @@ export const SignaturePadUpload = ({
       >
         {!value && (
           <motion.div>
-            <div className="text-muted-foreground flex flex-col items-center justify-center">
+            <div
+              className={cn(
+                'flex flex-col items-center justify-center',
+                appearance === 'nexis' ? 'text-[#8E8E8E]' : 'text-muted-foreground',
+              )}
+            >
               <div className="flex flex-col items-center">
                 <UploadCloudIcon className="h-8 w-8" />
                 <span className="text-lg font-semibold">

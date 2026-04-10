@@ -32,6 +32,9 @@ export type SignaturePadProps = Omit<HTMLAttributes<HTMLCanvasElement>, 'onChang
   drawSignatureEnabled?: boolean;
 
   onValidityChange?: (isValid: boolean) => void;
+
+  /** Nexis sign dialog: text-only tabs; drawing area uses modal bg (transparent panel + border). */
+  appearance?: 'default' | 'nexis';
 };
 
 export const SignaturePad = ({
@@ -42,6 +45,7 @@ export const SignaturePad = ({
   typedSignatureEnabled = true,
   uploadSignatureEnabled = true,
   drawSignatureEnabled = true,
+  appearance = 'default',
 }: SignaturePadProps) => {
   const [imageSignature, setImageSignature] = useState(isBase64Image(value) ? value : '');
   const [drawSignature, setDrawSignature] = useState(isBase64Image(value) ? value : '');
@@ -136,54 +140,75 @@ export const SignaturePad = ({
     return null;
   }
 
+  const isNexis = appearance === 'nexis';
+
+  const tabPanelShell = cn(
+    'relative text-center',
+    isNexis
+      ? 'nexis-signature-pad-panel mt-3 aspect-[16/11] min-h-[280px] w-full rounded-lg sm:min-h-[340px]'
+      : 'aspect-signature-pad mt-4 rounded-md border border-border bg-neutral-50 dark:bg-background',
+  );
+
   return (
     <Tabs
       defaultValue={tab}
-      className={cn({
-        'pointer-events-none': disabled,
-      })}
+      className={cn(
+        {
+          'pointer-events-none': disabled,
+        },
+        isNexis &&
+          '[&_[role=tab][data-state=active]]:font-semibold [&_[role=tab][data-state=active]]:!text-white [&_[role=tab][data-state=inactive]]:!text-[#8E8E8E]',
+      )}
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       onValueChange={(value) => onTabChange(value as 'draw' | 'text' | 'image')}
     >
-      <TabsList>
+      <TabsList className={cn(isNexis && 'gap-7 border-0 pb-0 pr-12 sm:gap-8 sm:pr-14')}>
         {drawSignatureEnabled && (
-          <TabsTrigger value="draw">
-            <SignatureIcon className="mr-2 size-4" />
+          <TabsTrigger
+            value="draw"
+            showIndicator={!isNexis}
+            className={cn(isNexis && 'px-0 py-1.5')}
+          >
+            {!isNexis && <SignatureIcon className="mr-2 size-4" />}
             <Trans context="Draw signature">Draw</Trans>
           </TabsTrigger>
         )}
 
         {typedSignatureEnabled && (
-          <TabsTrigger value="text">
-            <KeyboardIcon className="mr-2 size-4" />
+          <TabsTrigger
+            value="text"
+            showIndicator={!isNexis}
+            className={cn(isNexis && 'px-0 py-1.5')}
+          >
+            {!isNexis && <KeyboardIcon className="mr-2 size-4" />}
             <Trans context="Type signature">Type</Trans>
           </TabsTrigger>
         )}
 
         {uploadSignatureEnabled && (
-          <TabsTrigger value="image">
-            <UploadCloudIcon className="mr-2 size-4" />
+          <TabsTrigger
+            value="image"
+            showIndicator={!isNexis}
+            className={cn(isNexis && 'px-0 py-1.5')}
+          >
+            {!isNexis && <UploadCloudIcon className="mr-2 size-4" />}
             <Trans context="Upload signature">Upload</Trans>
           </TabsTrigger>
         )}
       </TabsList>
 
-      <TabsContent
-        value="draw"
-        className="relative flex aspect-signature-pad items-center justify-center rounded-md border border-border bg-neutral-50 text-center dark:bg-background"
-      >
+      <TabsContent value="draw" className={cn(tabPanelShell, 'flex items-center justify-center')}>
         <SignaturePadDraw
           className="h-full w-full"
+          appearance={appearance}
           onChange={onDrawSignatureChange}
           value={drawSignature}
         />
       </TabsContent>
 
-      <TabsContent
-        value="text"
-        className="relative flex aspect-signature-pad items-center justify-center rounded-md border border-border bg-neutral-50 text-center dark:bg-background"
-      >
+      <TabsContent value="text" className={cn(tabPanelShell, 'flex items-center justify-center')}>
         <SignaturePadType
+          appearance={appearance}
           value={typedSignature}
           defaultValue={fullName}
           onChange={onTypedSignatureChange}
@@ -193,13 +218,17 @@ export const SignaturePad = ({
       <TabsContent
         value="image"
         className={cn(
-          'relative aspect-signature-pad rounded-md border border-border bg-neutral-50 dark:bg-background',
-          {
+          tabPanelShell,
+          !isNexis && {
             'bg-white': imageSignature,
           },
         )}
       >
-        <SignaturePadUpload value={imageSignature} onChange={onImageSignatureChange} />
+        <SignaturePadUpload
+          appearance={appearance}
+          value={imageSignature}
+          onChange={onImageSignatureChange}
+        />
       </TabsContent>
     </Tabs>
   );

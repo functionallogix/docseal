@@ -47,12 +47,81 @@ export type SignaturePadDrawProps = {
   className?: string;
   value: string;
   onChange: (_signatureDataUrl: string) => void;
+  appearance?: 'default' | 'nexis';
+};
+
+/**
+ * Ink on the live Nexis pad. The panel uses a solid dark fill (`theme.css`); we still map
+ * black/white so both stay legible and clearly different from each other while drawing.
+ * PNG placement colors are applied separately via `resolveNexisPlacementFill`.
+ */
+const resolveDisplayStrokeColor = (selectedColor: string, appearance: 'default' | 'nexis') => {
+  if (appearance !== 'nexis') {
+    return selectedColor;
+  }
+
+  const map: Record<string, string> = {
+    // Dark ink on doc → lighter gray on pad (visible on charcoal; distinct from “white”).
+    black: '#B8C0CC',
+    // Light ink on doc → brighter stroke on pad (visible; distinct from “black”).
+    white: '#EEF1F5',
+    red: '#ef4444',
+    blue: '#3b82f6',
+    green: '#22c55e',
+  };
+
+  return map[selectedColor] ?? selectedColor;
+};
+
+/** Final RGB for Nexis PNG (may differ from on-screen preview for black/white). */
+const resolveNexisPlacementFill = (selectedColor: string) => {
+  const map: Record<string, string> = {
+    black: '#0a0a0a',
+    white: '#ffffff',
+    red: '#ef4444',
+    blue: '#3b82f6',
+    green: '#22c55e',
+  };
+
+  return map[selectedColor] ?? selectedColor;
+};
+
+const renderLinesToDataUrl = (
+  lineData: Point[][],
+  width: number,
+  height: number,
+  fillStyle: string,
+  options: StrokeOptions,
+) => {
+  if (typeof document === 'undefined') {
+    return '';
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    return '';
+  }
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.fillStyle = fillStyle;
+
+  lineData.forEach((line) => {
+    const pathData = new Path2D(getSvgPathFromStroke(getStroke(line, options)));
+    ctx.fill(pathData);
+  });
+
+  return canvas.toDataURL();
 };
 
 export const SignaturePadDraw = ({
   className,
   value,
   onChange,
+  appearance = 'default',
   ...props
 }: SignaturePadDrawProps) => {
   const $el = useRef<HTMLCanvasElement>(null);
@@ -67,6 +136,8 @@ export const SignaturePadDraw = ({
 
   const [selectedColor, setSelectedColor] = useState('black');
 
+  const displayStrokeColor = resolveDisplayStrokeColor(selectedColor, appearance);
+
   const perfectFreehandOptions = useMemo(() => {
     const size = $el.current ? Math.min($el.current.height, $el.current.width) * 0.03 : 10;
 
@@ -80,6 +151,26 @@ export const SignaturePadDraw = ({
       },
     } satisfies StrokeOptions;
   }, []);
+
+  const getSignatureDataUrlForExport = (lineData: Point[][]) => {
+    if (!$el.current || lineData.length === 0) {
+      return '';
+    }
+
+    const { width, height } = $el.current;
+
+    if (appearance === 'nexis') {
+      return renderLinesToDataUrl(
+        lineData,
+        width,
+        height,
+        resolveNexisPlacementFill(selectedColor),
+        perfectFreehandOptions,
+      );
+    }
+
+    return $el.current.toDataURL();
+  };
 
   const onMouseDown = (event: MouseEvent | PointerEvent | TouchEvent) => {
     if (event.cancelable) {
@@ -116,7 +207,7 @@ export const SignaturePadDraw = ({
           ctx.restore();
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          ctx.fillStyle = selectedColor;
+          ctx.fillStyle = displayStrokeColor;
 
           lines.forEach((line) => {
             const pathData = new Path2D(
@@ -160,7 +251,7 @@ export const SignaturePadDraw = ({
         ctx.restore();
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        ctx.fillStyle = selectedColor;
+        ctx.fillStyle = displayStrokeColor;
 
         newLines.forEach((line) => {
           const pathData = new Path2D(
@@ -174,7 +265,7 @@ export const SignaturePadDraw = ({
         setIsSignatureValid(isValidSignature);
 
         if (isValidSignature) {
-          onChange?.($el.current.toDataURL());
+          onChange?.(getSignatureDataUrlForExport(newLines));
         }
         ctx.save();
       }
@@ -239,12 +330,16 @@ export const SignaturePadDraw = ({
       ctx?.putImageData($imageData.current, 0, 0);
     }
 
+    if (ctx) {
+      ctx.fillStyle = displayStrokeColor;
+    }
+
     newLines.forEach((line) => {
       const pathData = new Path2D(getSvgPathFromStroke(getStroke(line, perfectFreehandOptions)));
       ctx?.fill(pathData);
     });
 
-    onChange?.($el.current.toDataURL());
+    onChange?.(getSignatureDataUrlForExport(newLines));
   };
 
   unsafe_useEffectOnce(() => {
@@ -278,7 +373,7 @@ export const SignaturePadDraw = ({
         data-testid="signature-pad-draw"
         ref={$el}
         className={cn('h-full w-full', {
-          'dark:hue-rotate-180 dark:invert': selectedColor === 'black',
+          'dark:hue-rotate-180 dark:invert': selectedColor === 'black' && appearance === 'default',
         })}
         style={{ touchAction: 'none' }}
         onPointerMove={(event) => onMouseMove(event)}
@@ -289,40 +384,84 @@ export const SignaturePadDraw = ({
         {...props}
       />
 
-      <SignaturePadColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+      <SignaturePadColorPicker
+        selectedColor={selectedColor}
+        setSelectedColor={setSelectedColor}
+        appearance={appearance}
+      />
 
-      <div className="absolute bottom-3 right-3 flex gap-2">
-        <button
-          type="button"
-          className="rounded-full p-0 text-[0.688rem] text-muted-foreground/60 ring-offset-background hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => onClearClick()}
-        >
-          <Trans>Clear Signature</Trans>
-        </button>
-      </div>
+      {appearance === 'nexis' ? (
+        <>
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+            <button
+              type="button"
+              title="undo"
+              disabled={lines.length === 0}
+              className={cn(
+                'rounded-full p-0 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#48EAE5]/40',
+                lines.length === 0 ? 'text-white/25' : 'text-white hover:text-white/90',
+              )}
+              onClick={onUndoClick}
+            >
+              <Undo2 className="h-5 w-5" />
+              <span className="sr-only">
+                <Trans>Undo</Trans>
+              </span>
+            </button>
 
-      {isSignatureValid === false && (
-        <div className="absolute bottom-4 left-4 flex gap-2">
-          <span className="text-xs text-destructive">
-            <Trans>Signature is too small</Trans>
-          </span>
-        </div>
-      )}
+            <button
+              type="button"
+              className="text-[0.688rem] text-[#8E8E8E] transition hover:text-[#b5b5b5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#48EAE5]/40"
+              onClick={() => onClearClick()}
+            >
+              <Trans>Clear Signature</Trans>
+            </button>
+          </div>
 
-      {isSignatureValid && lines.length > 0 && (
-        <div className="absolute bottom-4 left-4 flex gap-2">
-          <button
-            type="button"
-            title="undo"
-            className="rounded-full p-0 text-[0.688rem] text-muted-foreground/60 ring-offset-background hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            onClick={onUndoClick}
-          >
-            <Undo2 className="h-4 w-4" />
-            <span className="sr-only">
-              <Trans>Undo</Trans>
-            </span>
-          </button>
-        </div>
+          {isSignatureValid === false && (
+            <div className="absolute bottom-12 left-3 right-3 flex justify-center">
+              <span className="text-xs text-red-400">
+                <Trans>Signature is too small</Trans>
+              </span>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="absolute bottom-3 right-3 flex gap-2">
+            <button
+              type="button"
+              className="rounded-full p-0 text-[0.688rem] text-muted-foreground/60 ring-offset-background hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => onClearClick()}
+            >
+              <Trans>Clear Signature</Trans>
+            </button>
+          </div>
+
+          {isSignatureValid === false && (
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              <span className="text-xs text-destructive">
+                <Trans>Signature is too small</Trans>
+              </span>
+            </div>
+          )}
+
+          {isSignatureValid && lines.length > 0 && (
+            <div className="absolute bottom-4 left-4 flex gap-2">
+              <button
+                type="button"
+                title="undo"
+                className="rounded-full p-0 text-[0.688rem] text-muted-foreground/60 ring-offset-background hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                onClick={onUndoClick}
+              >
+                <Undo2 className="h-4 w-4" />
+                <span className="sr-only">
+                  <Trans>Undo</Trans>
+                </span>
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -3,7 +3,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
-import { Loader } from 'lucide-react';
+import { Loader, X } from 'lucide-react';
 import { useRevalidator } from 'react-router';
 
 import { DO_NOT_INVALIDATE_QUERY_ON_MUTATION } from '@documenso/lib/constants/trpc';
@@ -16,8 +16,12 @@ import type {
   TSignFieldWithTokenMutationSchema,
 } from '@documenso/trpc/server/field-router/schema';
 import { Button } from '@documenso/ui/primitives/button';
-import { Dialog, DialogContent, DialogFooter, DialogTitle } from '@documenso/ui/primitives/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter } from '@documenso/ui/primitives/dialog';
 import { SignaturePad } from '@documenso/ui/primitives/signature-pad';
+import {
+  SIGNATURE_NEXIS_DIALOG_CONTENT_CLASS,
+  SIGNATURE_NEXIS_DIALOG_OVERLAY_CLASS,
+} from '@documenso/ui/primitives/signature-pad/signature-pad-dialog';
 import { useToast } from '@documenso/ui/primitives/use-toast';
 
 import { DocumentSigningDisclosure } from '~/components/general/document-signing/document-signing-disclosure';
@@ -271,49 +275,58 @@ export const DocumentSigningSignatureField = ({
       )}
 
       <Dialog open={showSignatureModal} onOpenChange={setShowSignatureModal}>
-        <DialogContent>
-          <DialogTitle>
-            <Trans>
-              Sign as {recipient.name}{' '}
-              <div className="h-5 text-muted-foreground">({recipient.email})</div>
-            </Trans>
-          </DialogTitle>
+        <DialogContent
+          position="center"
+          hideClose
+          overlayClassName={SIGNATURE_NEXIS_DIALOG_OVERLAY_CLASS}
+          className={SIGNATURE_NEXIS_DIALOG_CONTENT_CLASS}
+        >
+          <DialogClose asChild>
+            <button
+              type="button"
+              className="absolute right-3 top-3 z-[2] inline-flex h-9 w-9 items-center justify-center rounded-md text-white opacity-90 transition hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#48EAE5]/35 sm:right-4 sm:top-4"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" strokeWidth={2} />
+            </button>
+          </DialogClose>
 
-          <SignaturePad
-            className="mt-2"
-            fullName={fullName}
-            value={localSignature ?? ''}
-            onChange={({ value }) => setLocalSignature(value)}
-            typedSignatureEnabled={typedSignatureEnabled}
-            uploadSignatureEnabled={uploadSignatureEnabled}
-            drawSignatureEnabled={drawSignatureEnabled}
-          />
+          <div className="relative z-[1] flex min-h-0 w-full min-w-0 flex-col gap-3">
+            <SignaturePad
+              fullName={fullName}
+              value={localSignature ?? ''}
+              appearance="nexis"
+              onChange={({ value }) => setLocalSignature(value)}
+              typedSignatureEnabled={typedSignatureEnabled}
+              uploadSignatureEnabled={uploadSignatureEnabled}
+              drawSignatureEnabled={drawSignatureEnabled}
+            />
 
-          <DocumentSigningDisclosure />
+            <DocumentSigningDisclosure className="text-[#8E8E8E]/95 [&_a]:text-[#48EAE5] [&_a]:hover:text-[#7ef4ee]" />
 
-          <DialogFooter>
-            <div className="flex w-full flex-1 flex-nowrap gap-4">
+            <DialogFooter className="mt-0 gap-3 sm:flex-col sm:items-stretch sm:justify-start sm:space-x-0">
               <Button
                 type="button"
-                className="flex-1"
-                variant="secondary"
+                size="lg"
+                disabled={!localSignature}
+                className="h-11 w-full rounded-lg border border-[#7EE7E1] bg-[#7EE7E1] px-6 font-semibold text-[#0B0C0E] shadow-[0_10px_36px_rgba(126,231,225,0.18)] hover:bg-[#6dd9d3]"
+                onClick={() => onDialogSignClick()}
+              >
+                <Trans>Sign</Trans>
+              </Button>
+
+              <button
+                type="button"
+                className="h-10 w-full text-center text-sm font-medium text-[#48EAE5] transition hover:text-[#7ef4ee]"
                 onClick={() => {
                   setShowSignatureModal(false);
                   setLocalSignature(null);
                 }}
               >
                 <Trans>Cancel</Trans>
-              </Button>
-              <Button
-                type="button"
-                className="flex-1"
-                disabled={!localSignature}
-                onClick={() => onDialogSignClick()}
-              >
-                <Trans>Sign</Trans>
-              </Button>
-            </div>
-          </DialogFooter>
+              </button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </DocumentSigningFieldContainer>

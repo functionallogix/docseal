@@ -9,6 +9,7 @@ export type SignaturePadTypeProps = {
   value?: string;
   defaultValue?: string;
   onChange: (_value: string) => void;
+  appearance?: 'default' | 'nexis';
 };
 
 export const SignaturePadType = ({
@@ -16,6 +17,7 @@ export const SignaturePadType = ({
   value,
   defaultValue,
   onChange,
+  appearance = 'default',
 }: SignaturePadTypeProps) => {
   const { t } = useLingui();
 
@@ -34,7 +36,12 @@ export const SignaturePadType = ({
       <input
         data-testid="signature-pad-type-input"
         placeholder={t`Type your signature`}
-        className="w-full bg-transparent px-4 text-center font-signature text-7xl text-black placeholder:text-4xl focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-white"
+        className={cn(
+          'w-full bg-transparent px-4 text-center font-signature text-7xl focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+          appearance === 'nexis'
+            ? 'text-white placeholder:text-4xl placeholder:text-[#8E8E8E]'
+            : 'text-black placeholder:text-4xl dark:text-white',
+        )}
         // style={{ color: selectedColor }}
         value={value}
         onChange={(event) => {

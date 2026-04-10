@@ -289,3 +289,27 @@
   --tw-enter-opacity: 1 !important;
   background-color: hsl(var(--dialog)) !important;
 }
+
+/* Nexis sign modal: soft cyan wash top-left (reference: subtle glow, not harsh bands). */
+.nexis-signature-dialog {
+  border: 1px solid var(--Greyscale-MN-Grey-900, #212529) !important;
+  background-color: #0b0d0e !important;
+  background-image: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(72, 234, 229, 0.35) 0%,
+    rgba(72, 234, 229, 0.09) 38%,
+    transparent 62%
+  ) !important;
+}
+
+/* Inner draw / type / upload panel — match modal shell background (same base + cyan wash as `.nexis-signature-dialog`). */
+.nexis-signature-pad-panel {
+  border: 1px solid var(--Greyscale-MN-Grey-900, #212529) !important;
+  background-color: #0b0d0e !important;
+  background-image: radial-gradient(
+    ellipse 90% 70% at 0% 0%,
+    rgba(72, 234, 229, 0.35) 0%,
+    rgba(72, 234, 229, 0.09) 38%,
+    transparent 62%
+  ) !important;
+}
