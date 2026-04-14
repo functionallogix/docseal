@@ -144,7 +144,7 @@ export default function SettingsSecurity({ loaderData }: Route.ComponentProps) {
           </AlertDescription>
         </div>
 
-        <Button asChild variant="outline" className="bg-background">
+        <Button asChild variant="outline">
           <Link to="/settings/security/passkeys">
             <Trans>Manage passkeys</Trans>
           </Link>
@@ -165,7 +165,7 @@ export default function SettingsSecurity({ loaderData }: Route.ComponentProps) {
           </AlertDescription>
         </div>
 
-        <Button asChild variant="outline" className="bg-background">
+        <Button asChild variant="outline">
           <Link to="/settings/security/activity">
             <Trans>View activity</Trans>
           </Link>
@@ -186,7 +186,7 @@ export default function SettingsSecurity({ loaderData }: Route.ComponentProps) {
           </AlertDescription>
         </div>
 
-        <Button asChild variant="outline" className="bg-background">
+        <Button asChild variant="outline">
           <Link to="/settings/security/sessions">
             <Trans>Manage sessions</Trans>
           </Link>
@@ -207,7 +207,7 @@ export default function SettingsSecurity({ loaderData }: Route.ComponentProps) {
           </AlertDescription>
         </div>
 
-        <Button asChild variant="outline" className="bg-background">
+        <Button asChild variant="outline">
           <Link to="/settings/security/linked-accounts">
             <Trans>Manage linked accounts</Trans>
           </Link>

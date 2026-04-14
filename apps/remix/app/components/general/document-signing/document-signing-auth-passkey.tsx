@@ -299,7 +299,7 @@ export const DocumentSigningAuthPasskey = ({
 
                   <FormControl>
                     <Select {...field} onValueChange={field.onChange}>
-                      <SelectTrigger className="bg-background text-muted-foreground">
+                      <SelectTrigger className="text-muted-foreground">
                         <SelectValue
                           data-testid="documentAccessSelectValue"
                           placeholder={_(msg`Select passkey`)}

@@ -141,7 +141,7 @@ export const OrganisationDeleteDialog = ({ trigger }: OrganisationDeleteDialogPr
                       </Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

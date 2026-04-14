@@ -59,6 +59,9 @@ import { useOptionalCurrentTeam } from '~/providers/team';
 
 import { DefaultRecipientsMultiSelectCombobox } from '../general/default-recipients-multiselect-combobox';
 
+/** Team/org settings: match `Select` chrome (`bg-dialog-panel`), full width — never `bg-background` (pure black in dark). */
+const settingsSelectTriggerClassName = 'w-full text-muted-foreground';
+
 /**
  * Can't infer this from the schema since we need to keep the schema inside the component to allow
  * it to be dynamic.
@@ -183,7 +186,7 @@ export const DocumentPreferencesForm = ({
                       onValueChange={(value) => field.onChange(value === '-1' ? null : value)}
                     >
                       <SelectTrigger
-                        className="bg-background text-muted-foreground"
+                        className={settingsSelectTriggerClassName}
                         data-testid="document-visibility-trigger"
                       >
                         <SelectValue />
@@ -233,7 +236,7 @@ export const DocumentPreferencesForm = ({
                     onValueChange={(value) => field.onChange(value === '-1' ? null : value)}
                   >
                     <SelectTrigger
-                      className="bg-background text-muted-foreground"
+                      className={settingsSelectTriggerClassName}
                       data-testid="document-language-trigger"
                     >
                       <SelectValue />
@@ -277,7 +280,10 @@ export const DocumentPreferencesForm = ({
                     value={field.value === null ? '-1' : field.value}
                     onValueChange={(value) => field.onChange(value === '-1' ? null : value)}
                   >
-                    <SelectTrigger data-testid="document-date-format-trigger">
+                    <SelectTrigger
+                      className={settingsSelectTriggerClassName}
+                      data-testid="document-date-format-trigger"
+                    >
                       <SelectValue />
                     </SelectTrigger>
 
@@ -313,6 +319,7 @@ export const DocumentPreferencesForm = ({
 
                 <FormControl>
                   <Combobox
+                    className="w-full"
                     triggerPlaceholder={
                       canInherit ? t`Inherit from organisation` : t`Local timezone`
                     }
@@ -347,7 +354,7 @@ export const DocumentPreferencesForm = ({
                     }))}
                     selectedValues={field.value}
                     onChange={field.onChange}
-                    className="w-full bg-background"
+                    className="w-full"
                     enableSearch={false}
                     emptySelectionPlaceholder={
                       canInherit ? t`Inherit from organisation` : t`Select signature types`
@@ -388,7 +395,7 @@ export const DocumentPreferencesForm = ({
                       }
                     >
                       <SelectTrigger
-                        className="bg-background text-muted-foreground"
+                        className={settingsSelectTriggerClassName}
                         data-testid="include-sender-details-trigger"
                       >
                         <SelectValue />
@@ -459,7 +466,7 @@ export const DocumentPreferencesForm = ({
                     }
                   >
                     <SelectTrigger
-                      className="bg-background text-muted-foreground"
+                      className={settingsSelectTriggerClassName}
                       data-testid="include-signing-certificate-trigger"
                     >
                       <SelectValue />
@@ -511,7 +518,7 @@ export const DocumentPreferencesForm = ({
                       field.onChange(value === 'true' ? true : value === 'false' ? false : null)
                     }
                   >
-                    <SelectTrigger className="bg-background text-muted-foreground">
+                    <SelectTrigger className={settingsSelectTriggerClassName}>
                       <SelectValue />
                     </SelectTrigger>
 
@@ -561,7 +568,7 @@ export const DocumentPreferencesForm = ({
                       value={field.value === null ? '-1' : '0'}
                       onValueChange={(value) => field.onChange(value === '-1' ? null : [])}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={settingsSelectTriggerClassName}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -648,7 +655,7 @@ export const DocumentPreferencesForm = ({
                     field.onChange(value === 'true' ? true : value === 'false' ? false : null)
                   }
                 >
-                  <SelectTrigger className="bg-background text-muted-foreground">
+                  <SelectTrigger className={settingsSelectTriggerClassName}>
                     <SelectValue />
                   </SelectTrigger>
 
@@ -725,7 +732,7 @@ export const DocumentPreferencesForm = ({
                         field.onChange(value === 'true' ? true : value === 'false' ? false : null)
                       }
                     >
-                      <SelectTrigger className="bg-background text-muted-foreground">
+                      <SelectTrigger className={settingsSelectTriggerClassName}>
                         <SelectValue />
                       </SelectTrigger>
 

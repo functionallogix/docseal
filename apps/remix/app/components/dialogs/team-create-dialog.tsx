@@ -232,7 +232,6 @@ export const TeamCreateDialog = ({ trigger, onCreated, ...props }: TeamCreateDia
                       </FormLabel>
                       <FormControl>
                         <Input
-                          className="bg-background"
                           {...field}
                           onChange={(event) => {
                             const oldGeneratedUrl = mapTextToUrl(field.value);
@@ -261,7 +260,7 @@ export const TeamCreateDialog = ({ trigger, onCreated, ...props }: TeamCreateDia
                         <Trans>Team URL</Trans>
                       </FormLabel>
                       <FormControl>
-                        <Input className="bg-background" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       {!form.formState.errors.teamUrl && (
                         <span className="text-xs font-normal text-foreground/50">

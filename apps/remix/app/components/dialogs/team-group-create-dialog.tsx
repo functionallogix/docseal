@@ -198,7 +198,7 @@ export const TeamGroupCreateDialog = ({ ...props }: TeamGroupCreateDialogProps) 
                                 })),
                               );
                             }}
-                            className="bg-background w-full"
+                            className="w-full"
                             emptySelectionPlaceholder={t`Select groups`}
                           />
                         </FormControl>
@@ -241,7 +241,6 @@ export const TeamGroupCreateDialog = ({ ...props }: TeamGroupCreateDialogProps) 
                           )}
                           <Input
                             readOnly
-                            className="bg-background"
                             value={
                               avaliableOrganisationGroups.find(
                                 ({ id }) => id === group.organisationGroupId,

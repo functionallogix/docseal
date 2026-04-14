@@ -104,7 +104,7 @@ export default function EnvelopeSignerForm() {
           <Input
             type="text"
             id="full-name"
-            className="mt-2 bg-background"
+            className="mt-2"
             value={fullName}
             disabled={isNameLocked}
             onChange={(e) => !isNameLocked && setFullName(e.target.value.trimStart())}

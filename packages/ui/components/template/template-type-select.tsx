@@ -24,7 +24,7 @@ export const TemplateTypeSelect = forwardRef<HTMLButtonElement, TemplateTypeSele
 
     return (
       <Select {...props}>
-        <SelectTrigger ref={ref} className="bg-background">
+        <SelectTrigger ref={ref}>
           <SelectValue />
         </SelectTrigger>
 

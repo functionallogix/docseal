@@ -476,7 +476,7 @@ export const EnvelopeEditorSettingsDialog = ({
                                   disabled={field.disabled}
                                   onValueChange={field.onChange}
                                 >
-                                  <SelectTrigger className="bg-background">
+                                  <SelectTrigger>
                                     <SelectValue />
                                   </SelectTrigger>
 
@@ -516,7 +516,7 @@ export const EnvelopeEditorSettingsDialog = ({
                                   )}
                                   selectedValues={field.value}
                                   onChange={field.onChange}
-                                  className="w-full bg-background"
+                                  className="w-full"
                                   emptySelectionPlaceholder="Select signature types"
                                 />
                               </FormControl>
@@ -543,7 +543,7 @@ export const EnvelopeEditorSettingsDialog = ({
                                   onValueChange={field.onChange}
                                   disabled={envelopeHasBeenSent}
                                 >
-                                  <SelectTrigger className="bg-background">
+                                  <SelectTrigger>
                                     <SelectValue />
                                   </SelectTrigger>
 
@@ -575,7 +575,6 @@ export const EnvelopeEditorSettingsDialog = ({
 
                               <FormControl>
                                 <Combobox
-                                  className="bg-background"
                                   options={TIME_ZONES}
                                   value={field.value}
                                   onChange={(value) => value && field.onChange(value)}
@@ -611,7 +610,7 @@ export const EnvelopeEditorSettingsDialog = ({
                             </FormLabel>
 
                             <FormControl>
-                              <Input className="bg-background" {...field} />
+                              <Input {...field} />
                             </FormControl>
 
                             <FormMessage />
@@ -640,7 +639,7 @@ export const EnvelopeEditorSettingsDialog = ({
                             </FormLabel>
 
                             <FormControl>
-                              <Input className="bg-background" {...field} />
+                              <Input {...field} />
                             </FormControl>
 
                             <FormMessage />
@@ -726,7 +725,7 @@ export const EnvelopeEditorSettingsDialog = ({
 
                               <FormControl>
                                 <Select {...field} onValueChange={field.onChange}>
-                                  <SelectTrigger className="bg-background text-muted-foreground">
+                                  <SelectTrigger className="text-muted-foreground">
                                     <SelectValue data-testid="documentDistributionMethodSelectValue" />
                                   </SelectTrigger>
 
@@ -806,10 +805,7 @@ export const EnvelopeEditorSettingsDialog = ({
                                         field.onChange(value === '-1' ? null : value)
                                       }
                                     >
-                                      <SelectTrigger
-                                        loading={isLoadingEmails}
-                                        className="bg-background"
-                                      >
+                                      <SelectTrigger loading={isLoadingEmails}>
                                         <SelectValue />
                                       </SelectTrigger>
 
@@ -894,7 +890,7 @@ export const EnvelopeEditorSettingsDialog = ({
                               </FormLabel>
 
                               <FormControl>
-                                <Textarea className="h-16 resize-none bg-background" {...field} />
+                                <Textarea className="h-16 resize-none" {...field} />
                               </FormControl>
 
                               <FormMessage />

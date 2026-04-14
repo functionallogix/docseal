@@ -217,7 +217,7 @@ export const ApiTokenForm = ({ className, tokens }: ApiTokenFormProps) => {
                 </FormLabel>
                 <div className="block md:py-1.5">
                   <Switch
-                    className="mt-2 bg-background"
+                    className="mt-2"
                     checked={noExpirationDate}
                     onCheckedChange={setNoExpirationDate}
                   />

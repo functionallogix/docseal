@@ -80,8 +80,12 @@ const nexisOutlineBtnClass =
 const nexisRecipientRowActionBtnClass =
   'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-none border-0 bg-transparent px-0 text-white shadow-none hover:bg-white/[0.08] hover:text-white focus-visible:ring-1 focus-visible:ring-[#48EAE5] focus-visible:ring-offset-0 disabled:opacity-40';
 
+/**
+ * No border, no fill — icons only on the row chrome (`SelectTrigger` defaults to
+ * `bg-dialog-panel`; we override with `!bg-transparent`).
+ */
 const nexisRoleTriggerClass =
-  'h-10 w-[50px] shrink-0 justify-center gap-0.5 border-white/15 bg-[#141414] px-1.5 py-0 text-white hover:bg-white/10 hover:text-white focus:ring-[#48EAE5] [&_svg]:size-[18px] [&_svg]:shrink-0 [&_svg]:text-white [&_svg.lucide-chevron-down]:text-slate-400';
+  'h-10 w-[50px] shrink-0 justify-center gap-0.5 !border-0 !bg-transparent px-1.5 py-0 text-white shadow-none ring-0 outline-none hover:!bg-transparent hover:text-white focus-visible:!border-0 focus-visible:ring-2 focus-visible:ring-[#48EAE5] focus-visible:ring-offset-0 [&_svg]:size-[18px] [&_svg]:shrink-0 [&_svg]:text-white [&_svg.lucide-chevron-down]:text-slate-400';
 
 export const EnvelopeEditorRecipientForm = () => {
   const nexisChrome = useEnvelopeEditorNexisChrome();

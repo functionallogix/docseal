@@ -147,7 +147,7 @@ export const EditorFieldRadioForm = ({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       data-testid="field-form-direction"
-                      className="w-full bg-background text-muted-foreground"
+                      className="w-full text-muted-foreground"
                     >
                       <SelectValue placeholder={t`Select direction`} />
                     </SelectTrigger>

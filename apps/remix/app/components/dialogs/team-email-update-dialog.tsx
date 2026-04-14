@@ -102,7 +102,7 @@ export const TeamEmailUpdateDialog = ({
     >
       <DialogTrigger onClick={(e) => e.stopPropagation()} asChild>
         {trigger ?? (
-          <Button variant="outline" className="bg-background">
+          <Button variant="outline">
             <Trans>Update team email</Trans>
           </Button>
         )}
@@ -134,7 +134,7 @@ export const TeamEmailUpdateDialog = ({
                       <Trans>Name</Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" placeholder={t`eg. Legal`} {...field} />
+                      <Input placeholder={t`eg. Legal`} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,7 +146,7 @@ export const TeamEmailUpdateDialog = ({
                   <Trans>Email</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input className="bg-background" value={teamEmail.email} disabled={true} />
+                  <Input value={teamEmail.email} disabled={true} />
                 </FormControl>
               </FormItem>
 

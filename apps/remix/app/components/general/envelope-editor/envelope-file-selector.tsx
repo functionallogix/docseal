@@ -32,8 +32,8 @@ export const EnvelopeItemSelector = ({
         'group flex h-fit w-72 min-w-72 max-w-72 shrink-0 cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors',
         nexisChrome
           ? isSelected
-            ? 'border-[#48EAE5]/45 bg-[#48EAE5]/10 text-slate-100 shadow-[0_0_20px_-10px_rgba(72,234,229,0.45)]'
-            : 'border-white/10 bg-white/[0.04] hover:bg-white/[0.07]'
+            ? 'border-0 bg-[#48EAE5]/10 text-slate-100 shadow-[0_0_20px_-10px_rgba(72,234,229,0.45)] ring-1 ring-[#48EAE5]/45'
+            : 'border-0 bg-white/[0.04] hover:bg-white/[0.07]'
           : isSelected
             ? 'border-green-200 bg-green-50 text-green-900 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-400'
             : 'border-border bg-muted/50 hover:bg-muted/70',

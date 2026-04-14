@@ -220,12 +220,7 @@ export const AddTemplateSettingsFormPartial = ({
                   </FormLabel>
 
                   <FormControl>
-                    <Input
-                      className="bg-background"
-                      {...field}
-                      maxLength={255}
-                      onBlur={handleAutoSave}
-                    />
+                    <Input {...field} maxLength={255} onBlur={handleAutoSave} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -260,7 +255,7 @@ export const AddTemplateSettingsFormPartial = ({
                         void handleAutoSave();
                       }}
                     >
-                      <SelectTrigger className="bg-background">
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
 
@@ -411,7 +406,7 @@ export const AddTemplateSettingsFormPartial = ({
                         void handleAutoSave();
                       }}
                     >
-                      <SelectTrigger className="bg-background text-muted-foreground">
+                      <SelectTrigger className="text-muted-foreground">
                         <SelectValue data-testid="documentDistributionMethodSelectValue" />
                       </SelectTrigger>
 
@@ -451,7 +446,7 @@ export const AddTemplateSettingsFormPartial = ({
                         field.onChange(value);
                         void handleAutoSave();
                       }}
-                      className="w-full bg-background"
+                      className="w-full"
                       emptySelectionPlaceholder={t`Select signature types`}
                     />
                   </FormControl>
@@ -515,10 +510,7 @@ export const AddTemplateSettingsFormPartial = ({
                                     field.onChange(value === '-1' ? null : value)
                                   }
                                 >
-                                  <SelectTrigger
-                                    loading={isLoadingEmails}
-                                    className="bg-background"
-                                  >
+                                  <SelectTrigger loading={isLoadingEmails}>
                                     <SelectValue />
                                   </SelectTrigger>
 
@@ -602,7 +594,7 @@ export const AddTemplateSettingsFormPartial = ({
 
                             <FormControl>
                               <Textarea
-                                className="h-16 resize-none bg-background"
+                                className="h-16 resize-none"
                                 {...field}
                                 maxLength={5000}
                                 onBlur={handleAutoSave}
@@ -659,12 +651,7 @@ export const AddTemplateSettingsFormPartial = ({
                           </FormLabel>
 
                           <FormControl>
-                            <Input
-                              className="bg-background"
-                              {...field}
-                              maxLength={255}
-                              onBlur={handleAutoSave}
-                            />
+                            <Input {...field} maxLength={255} onBlur={handleAutoSave} />
                           </FormControl>
 
                           <FormMessage />
@@ -689,7 +676,7 @@ export const AddTemplateSettingsFormPartial = ({
                                 void handleAutoSave();
                               }}
                             >
-                              <SelectTrigger className="bg-background">
+                              <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
 
@@ -755,12 +742,7 @@ export const AddTemplateSettingsFormPartial = ({
                           </FormLabel>
 
                           <FormControl>
-                            <Input
-                              className="bg-background"
-                              {...field}
-                              maxLength={255}
-                              onBlur={handleAutoSave}
-                            />
+                            <Input {...field} maxLength={255} onBlur={handleAutoSave} />
                           </FormControl>
 
                           <FormMessage />

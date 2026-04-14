@@ -218,7 +218,6 @@ export const AddSettingsFormPartial = ({
 
                   <FormControl>
                     <Input
-                      className="bg-background"
                       {...field}
                       disabled={document.status !== DocumentStatus.DRAFT || field.disabled}
                       maxLength={255}
@@ -262,7 +261,7 @@ export const AddSettingsFormPartial = ({
                       value={field.value}
                       disabled={field.disabled}
                     >
-                      <SelectTrigger className="bg-background">
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
 
@@ -389,7 +388,7 @@ export const AddSettingsFormPartial = ({
                           </FormLabel>
 
                           <FormControl>
-                            <Input className="bg-background" {...field} onBlur={handleAutoSave} />
+                            <Input {...field} onBlur={handleAutoSave} />
                           </FormControl>
 
                           <FormMessage />
@@ -418,7 +417,7 @@ export const AddSettingsFormPartial = ({
                                 field.onChange(value);
                                 void handleAutoSave();
                               }}
-                              className="w-full bg-background"
+                              className="w-full"
                               emptySelectionPlaceholder={t`Select signature types`}
                             />
                           </FormControl>
@@ -447,7 +446,7 @@ export const AddSettingsFormPartial = ({
                               value={field.value}
                               disabled={documentHasBeenSent}
                             >
-                              <SelectTrigger className="bg-background">
+                              <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
 
@@ -477,7 +476,6 @@ export const AddSettingsFormPartial = ({
 
                           <FormControl>
                             <Combobox
-                              className="bg-background"
                               options={TIME_ZONES}
                               {...field}
                               onChange={(value) => {
@@ -515,7 +513,7 @@ export const AddSettingsFormPartial = ({
                           </FormLabel>
 
                           <FormControl>
-                            <Input className="bg-background" {...field} onBlur={handleAutoSave} />
+                            <Input {...field} onBlur={handleAutoSave} />
                           </FormControl>
 
                           <FormMessage />

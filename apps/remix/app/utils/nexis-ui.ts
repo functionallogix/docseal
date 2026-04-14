@@ -166,11 +166,11 @@ export const nexisPreviewModeAlertClassName = cn(
   '[&>svg]:!text-[#48EAE5]',
 );
 
-/** Selected Recipient combobox — matches dark inputs; cyan focus (no recipient green ring). */
+/** Selected Recipient combobox — dark fill, no border (Nexis envelope editor sidebar). */
 export const nexisEnvelopeRecipientSelectorTriggerClassName = cn(
-  '!inline-flex h-auto min-h-10 w-full items-center rounded-md !border border-white/15 !bg-[#141414] px-3 py-2 text-sm font-normal !text-white shadow-none',
-  'hover:!border-white/15 hover:!bg-[#141414] hover:!text-white',
-  'focus-visible:!border-[#48EAE5]/40 focus-visible:outline-none focus-visible:!ring-2 focus-visible:!ring-[#48EAE5] focus-visible:!ring-offset-0',
+  '!inline-flex h-auto min-h-10 w-full items-center rounded-md !border-0 !bg-[#141414] px-3 py-2 text-sm font-normal !text-white shadow-none',
+  'hover:!border-0 hover:!bg-[#141414] hover:!text-white',
+  'focus-visible:!border-0 focus-visible:outline-none focus-visible:!ring-2 focus-visible:!ring-[#48EAE5] focus-visible:!ring-offset-0',
 );
 
 /** Recipient selector popover (cmdk). */

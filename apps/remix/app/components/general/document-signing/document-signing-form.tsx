@@ -266,7 +266,7 @@ export const DocumentSigningForm = ({
                     <Input
                       type="text"
                       id="full-name"
-                      className="mt-2 bg-background"
+                      className="mt-2"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value.trimStart())}
                     />

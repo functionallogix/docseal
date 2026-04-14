@@ -179,9 +179,9 @@ export default function CompletedSigningPage({ loaderData }: Route.ComponentProp
 
           {match({ status: signingStatus, deletedAt: document.deletedAt })
             .with({ status: 'COMPLETED' }, () => (
-              <div className="mt-4 flex items-center text-center text-documenso-700">
-                <CheckCircle2 className="mr-2 h-5 w-5" />
-                <span className="text-sm">
+              <div className="mt-4 flex items-center justify-center text-center text-primary">
+                <CheckCircle2 className="mr-2 h-5 w-5 shrink-0" aria-hidden />
+                <span className="text-sm font-medium">
                   <Trans>Everyone has signed</Trans>
                 </span>
               </div>

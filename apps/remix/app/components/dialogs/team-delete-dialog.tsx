@@ -177,7 +177,7 @@ export const TeamDeleteDialog = ({
                       </Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

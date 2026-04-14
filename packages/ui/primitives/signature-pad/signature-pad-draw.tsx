@@ -51,9 +51,6 @@ export type SignaturePadDrawProps = {
 };
 
 /**
- * Ink on the live Nexis pad. The panel uses a solid dark fill (`theme.css`); we still map
- * black/white so both stay legible and clearly different from each other while drawing.
- * PNG placement colors are applied separately via `resolveNexisPlacementFill`.
  */
 const resolveDisplayStrokeColor = (selectedColor: string, appearance: 'default' | 'nexis') => {
   if (appearance !== 'nexis') {
@@ -61,9 +58,7 @@ const resolveDisplayStrokeColor = (selectedColor: string, appearance: 'default' 
   }
 
   const map: Record<string, string> = {
-    // Dark ink on doc → lighter gray on pad (visible on charcoal; distinct from “white”).
-    black: '#B8C0CC',
-    // Light ink on doc → brighter stroke on pad (visible; distinct from “black”).
+    black: '#ffffff',
     white: '#EEF1F5',
     red: '#ef4444',
     blue: '#3b82f6',

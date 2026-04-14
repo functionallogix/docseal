@@ -178,7 +178,7 @@ export const EditorFieldDropdownForm = ({
                   >
                     <SelectTrigger
                       data-testid="field-form-defaultValue"
-                      className="w-full bg-background text-muted-foreground"
+                      className="w-full text-muted-foreground"
                     >
                       <SelectValue placeholder={t`Default Value`} />
                     </SelectTrigger>

@@ -114,7 +114,7 @@ export const DropdownFieldAdvancedSettings = ({
             handleFieldChange('defaultValue', val);
           }}
         >
-          <SelectTrigger className="mt-2 w-full bg-background text-muted-foreground">
+          <SelectTrigger className="mt-2 w-full text-muted-foreground">
             <SelectValue defaultValue={defaultValue} placeholder={`-- ${_(msg`Select`)} --`} />
           </SelectTrigger>
           <SelectContent position="popper">
@@ -132,7 +132,6 @@ export const DropdownFieldAdvancedSettings = ({
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center gap-2">
           <Switch
-            className="bg-background"
             checked={fieldState.required}
             onCheckedChange={(checked) => handleToggleChange('required', checked)}
           />
@@ -142,7 +141,6 @@ export const DropdownFieldAdvancedSettings = ({
         </div>
         <div className="flex flex-row items-center gap-2">
           <Switch
-            className="bg-background"
             checked={fieldState.readOnly}
             onCheckedChange={(checked) => handleToggleChange('readOnly', checked)}
           />

@@ -49,7 +49,10 @@ const Combobox = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn('my-2 w-full justify-between', className)}
+          className={cn(
+            'my-2 h-auto min-h-10 w-full justify-between rounded-full border-border bg-dialog-panel px-4 py-2 font-normal hover:bg-dialog-panel/90 hover:text-foreground',
+            className,
+          )}
           disabled={disabled}
           data-testid={testId}
         >

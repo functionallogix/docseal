@@ -298,7 +298,7 @@ export const TeamMemberCreateDialog = ({ trigger, ...props }: TeamMemberCreateDi
                                   })),
                                 );
                               }}
-                              className="w-full bg-background"
+                              className="w-full"
                               emptySelectionPlaceholder={t`Select members`}
                             />
                           )}
@@ -371,7 +371,6 @@ export const TeamMemberCreateDialog = ({ trigger, ...props }: TeamMemberCreateDi
                           )}
                           <Input
                             readOnly
-                            className="bg-background"
                             value={
                               organisationMemberQuery.data?.data.find(
                                 ({ id }) => id === member.organisationMemberId,

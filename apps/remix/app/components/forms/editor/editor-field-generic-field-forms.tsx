@@ -54,7 +54,6 @@ export const EditorGenericFontSizeField = ({
               type="number"
               min={8}
               max={96}
-              className="bg-background"
               placeholder={t`Field font size`}
               {...field}
               onChange={(e) => {
@@ -179,7 +178,6 @@ export const EditorGenericLineHeightField = ({
               type="number"
               min={FIELD_MIN_LINE_HEIGHT}
               max={FIELD_MAX_LINE_HEIGHT}
-              className="bg-background"
               placeholder={t`Line height`}
               {...field}
             />
@@ -215,7 +213,6 @@ export const EditorGenericLetterSpacingField = ({
               type="number"
               min={FIELD_MIN_LETTER_SPACING}
               max={FIELD_MAX_LETTER_SPACING}
-              className="bg-background"
               placeholder={t`Letter spacing`}
               {...field}
             />

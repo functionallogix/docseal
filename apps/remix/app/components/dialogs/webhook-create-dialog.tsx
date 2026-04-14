@@ -137,7 +137,7 @@ export const WebhookCreateDialog = ({ trigger, ...props }: WebhookCreateDialogPr
                         <Trans>Webhook URL</Trans>
                       </FormLabel>
                       <FormControl>
-                        <Input className="bg-background" {...field} />
+                        <Input {...field} />
                       </FormControl>
 
                       <FormDescription>
@@ -160,11 +160,7 @@ export const WebhookCreateDialog = ({ trigger, ...props }: WebhookCreateDialogPr
 
                       <div>
                         <FormControl>
-                          <Switch
-                            className="bg-background"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </div>
 
@@ -209,11 +205,7 @@ export const WebhookCreateDialog = ({ trigger, ...props }: WebhookCreateDialogPr
                       <Trans>Secret</Trans>
                     </FormLabel>
                     <FormControl>
-                      <PasswordInput
-                        className="bg-background"
-                        {...field}
-                        value={field.value ?? ''}
-                      />
+                      <PasswordInput {...field} value={field.value ?? ''} />
                     </FormControl>
 
                     <FormDescription>

@@ -169,7 +169,6 @@ export const EditorFieldNumberForm = ({
                 <FormControl>
                   <Input
                     data-testid="field-form-placeholder"
-                    className="bg-background"
                     placeholder={t`Placeholder`}
                     {...field}
                   />
@@ -188,12 +187,7 @@ export const EditorFieldNumberForm = ({
                   <Trans>Value</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    data-testid="field-form-value"
-                    className="bg-background"
-                    placeholder={t`Value`}
-                    {...field}
-                  />
+                  <Input data-testid="field-form-value" placeholder={t`Value`} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -215,7 +209,7 @@ export const EditorFieldNumberForm = ({
                   >
                     <SelectTrigger
                       data-testid="field-form-numberFormat"
-                      className="w-full bg-background text-muted-foreground"
+                      className="w-full text-muted-foreground"
                     >
                       <SelectValue placeholder={t`Field format`} />
                     </SelectTrigger>
@@ -271,7 +265,6 @@ export const EditorFieldNumberForm = ({
                     <FormControl>
                       <Input
                         data-testid="field-form-minValue"
-                        className="bg-background"
                         placeholder={t`E.g. 0`}
                         {...field}
                         value={field.value ?? ''}
@@ -296,7 +289,6 @@ export const EditorFieldNumberForm = ({
                     <FormControl>
                       <Input
                         data-testid="field-form-maxValue"
-                        className="bg-background"
                         placeholder={t`E.g. 100`}
                         {...field}
                         value={field.value ?? ''}

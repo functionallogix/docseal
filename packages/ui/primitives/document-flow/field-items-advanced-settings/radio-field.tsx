@@ -122,7 +122,7 @@ export const RadioFieldAdvancedSettings = ({
           </Label>
           <Input
             id="label"
-            className="mt-2 bg-background"
+            className="mt-2"
             placeholder={_(msg`Field label`)}
             value={fieldState.label}
             onChange={(e) => handleFieldChange('label', e.target.value)}
@@ -130,7 +130,6 @@ export const RadioFieldAdvancedSettings = ({
         </div>
         <div className="flex flex-row items-center gap-2">
           <Switch
-            className="bg-background"
             checked={fieldState.required}
             onCheckedChange={(checked) => handleToggleChange('required', checked)}
           />
@@ -140,7 +139,6 @@ export const RadioFieldAdvancedSettings = ({
         </div>
         <div className="flex flex-row items-center gap-2">
           <Switch
-            className="bg-background"
             checked={fieldState.readOnly}
             onCheckedChange={(checked) => handleToggleChange('readOnly', checked)}
           />

@@ -161,7 +161,7 @@ export const OrganisationEmailDomainCreateDialog = ({
                         <Trans>Domain Name</Trans>
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="example.com" className="bg-background" />
+                        <Input {...field} placeholder="example.com" />
                       </FormControl>
                       <FormMessage />
                       <FormDescription>

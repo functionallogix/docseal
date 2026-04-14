@@ -100,7 +100,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                         }))}
                         selectedValues={field.value}
                         onChange={field.onChange}
-                        className="w-full bg-background"
+                        className="w-full"
                         emptySelectionPlaceholder={t`Select signature types`}
                       />
                     </FormControl>
@@ -121,7 +121,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                     </FormLabel>
                     <FormControl>
                       <Select {...field} onValueChange={field.onChange} disabled={isSubmitting}>
-                        <SelectTrigger className="bg-background">
+                        <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -150,7 +150,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                     </FormLabel>
                     <FormControl>
                       <Select {...field} onValueChange={field.onChange} disabled={isSubmitting}>
-                        <SelectTrigger className="bg-background">
+                        <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -179,7 +179,6 @@ export const ConfigureDocumentAdvancedSettings = ({
                     </FormLabel>
                     <FormControl>
                       <Combobox
-                        className="bg-background"
                         options={TIME_ZONES}
                         {...field}
                         onChange={(value) => value && field.onChange(value)}
@@ -212,7 +211,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                       </Tooltip>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" {...field} disabled={isSubmitting} />
+                      <Input {...field} disabled={isSubmitting} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -236,7 +235,7 @@ export const ConfigureDocumentAdvancedSettings = ({
 
                     <FormControl>
                       <Select {...field} onValueChange={field.onChange} disabled={isSubmitting}>
-                        <SelectTrigger className="bg-background">
+                        <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -279,7 +278,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                       <FormControl>
                         <Input
                           id="subject"
-                          className="mt-2 bg-background"
+                          className="mt-2"
                           disabled={isSubmitting || !isEmailDistribution}
                           {...field}
                         />
@@ -302,7 +301,7 @@ export const ConfigureDocumentAdvancedSettings = ({
                       <FormControl>
                         <Textarea
                           id="message"
-                          className="mt-2 h-32 resize-none bg-background"
+                          className="mt-2 h-32 resize-none"
                           disabled={isSubmitting || !isEmailDistribution}
                           {...field}
                         />

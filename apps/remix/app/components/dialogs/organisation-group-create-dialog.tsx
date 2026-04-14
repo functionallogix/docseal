@@ -161,7 +161,7 @@ export const OrganisationGroupCreateDialog = ({
                       <Trans>Group Name</Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -178,7 +178,7 @@ export const OrganisationGroupCreateDialog = ({
                     </FormLabel>
                     <FormControl>
                       <Select {...field} onValueChange={field.onChange}>
-                        <SelectTrigger className="text-muted-foreground w-full">
+                        <SelectTrigger className="w-full text-muted-foreground">
                           <SelectValue />
                         </SelectTrigger>
 
@@ -217,7 +217,7 @@ export const OrganisationGroupCreateDialog = ({
                         loading={isLoadingMembers}
                         selectedValues={field.value}
                         onChange={field.onChange}
-                        className="bg-background w-full"
+                        className="w-full"
                         emptySelectionPlaceholder={t`Select members`}
                       />
                     </FormControl>

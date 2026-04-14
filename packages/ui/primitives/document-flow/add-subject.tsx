@@ -229,7 +229,7 @@ export const AddSubjectFormPartial = ({
                                   field.onChange(value === '-1' ? null : value)
                                 }
                               >
-                                <SelectTrigger loading={isLoadingEmails} className="bg-background">
+                                <SelectTrigger loading={isLoadingEmails}>
                                   <SelectValue />
                                 </SelectTrigger>
 
@@ -331,7 +331,7 @@ export const AddSubjectFormPartial = ({
 
                           <FormControl>
                             <Textarea
-                              className="mt-2 h-16 resize-none bg-background"
+                              className="mt-2 h-16 resize-none"
                               {...field}
                               maxLength={5000}
                             />

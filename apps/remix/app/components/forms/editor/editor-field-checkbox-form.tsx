@@ -192,7 +192,7 @@ export const EditorFieldCheckboxForm = ({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       data-testid="field-form-direction"
-                      className="w-full bg-background text-muted-foreground"
+                      className="w-full text-muted-foreground"
                     >
                       <SelectValue placeholder={t`Select direction`} />
                     </SelectTrigger>
@@ -225,7 +225,7 @@ export const EditorFieldCheckboxForm = ({
                       <Select {...field} onValueChange={field.onChange}>
                         <SelectTrigger
                           data-testid="field-form-validationRule"
-                          className="w-full bg-background text-muted-foreground"
+                          className="w-full text-muted-foreground"
                         >
                           <SelectValue placeholder={t`Select at least`} />
                         </SelectTrigger>
@@ -274,7 +274,7 @@ export const EditorFieldCheckboxForm = ({
                       >
                         <SelectTrigger
                           data-testid="field-form-validationLength"
-                          className="mt-5 w-full bg-background text-muted-foreground"
+                          className="mt-5 w-full text-muted-foreground"
                         >
                           <SelectValue placeholder={t`Pick a number`} />
                         </SelectTrigger>

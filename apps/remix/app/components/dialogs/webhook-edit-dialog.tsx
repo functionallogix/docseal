@@ -117,7 +117,7 @@ export const WebhookEditDialog = ({ trigger, webhook, ...props }: WebhookEditDia
                     <FormItem className="flex-1">
                       <FormLabel required>Webhook URL</FormLabel>
                       <FormControl>
-                        <Input className="bg-background" {...field} />
+                        <Input {...field} />
                       </FormControl>
 
                       <FormDescription>
@@ -140,11 +140,7 @@ export const WebhookEditDialog = ({ trigger, webhook, ...props }: WebhookEditDia
 
                       <div>
                         <FormControl>
-                          <Switch
-                            className="bg-background"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
                       </div>
 
@@ -187,11 +183,7 @@ export const WebhookEditDialog = ({ trigger, webhook, ...props }: WebhookEditDia
                   <FormItem>
                     <FormLabel>Secret</FormLabel>
                     <FormControl>
-                      <PasswordInput
-                        className="bg-background"
-                        {...field}
-                        value={field.value ?? ''}
-                      />
+                      <PasswordInput {...field} value={field.value ?? ''} />
                     </FormControl>
 
                     <FormDescription>

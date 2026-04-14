@@ -38,7 +38,7 @@ export const DocumentVisibilitySelect = forwardRef<HTMLButtonElement, DocumentVi
 
     return (
       <Select {...props} disabled={!canEdit || disabled}>
-        <SelectTrigger ref={ref} className="bg-background text-muted-foreground">
+        <SelectTrigger ref={ref} className="w-full text-muted-foreground">
           <SelectValue data-testid="documentVisibilitySelectValue" placeholder={t`Everyone`} />
         </SelectTrigger>
 

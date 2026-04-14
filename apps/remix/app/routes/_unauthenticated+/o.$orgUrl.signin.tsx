@@ -191,7 +191,7 @@ export default function OrganisationSignIn({ loaderData }: Route.ComponentProps)
           type="button"
           size="lg"
           variant="outline"
-          className="w-full bg-background"
+          className="w-full"
           loading={isSubmitting}
           disabled={!isConfirmationChecked}
           onClick={onSignInWithOIDCClick}

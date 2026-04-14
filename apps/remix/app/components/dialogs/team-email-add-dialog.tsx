@@ -113,7 +113,7 @@ export const TeamEmailAddDialog = ({ teamId, trigger, ...props }: TeamEmailAddDi
     >
       <DialogTrigger onClick={(e) => e.stopPropagation()} asChild={true}>
         {trigger ?? (
-          <Button variant="outline" loading={isPending} className="bg-background">
+          <Button variant="outline" loading={isPending}>
             <Plus className="-ml-1 mr-1 h-5 w-5" />
             <Trans>Add email</Trans>
           </Button>
@@ -146,7 +146,7 @@ export const TeamEmailAddDialog = ({ teamId, trigger, ...props }: TeamEmailAddDi
                       <Trans>Name</Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input className="bg-background" placeholder={t`eg. Legal`} {...field} />
+                      <Input placeholder={t`eg. Legal`} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -162,11 +162,7 @@ export const TeamEmailAddDialog = ({ teamId, trigger, ...props }: TeamEmailAddDi
                       <Trans>Email</Trans>
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        className="bg-background"
-                        placeholder="example@example.com"
-                        {...field}
-                      />
+                      <Input placeholder="example@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

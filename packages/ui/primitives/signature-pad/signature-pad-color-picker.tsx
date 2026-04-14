@@ -46,6 +46,8 @@ const colorSwatch = (key: string) => {
   return map[key] ?? 'bg-neutral-500 border-border';
 };
 
+const SIGNATURE_INK_COLORS = ['black', 'red', 'blue', 'green'] as const;
+
 export const SignaturePadColorPicker = ({
   selectedColor,
   setSelectedColor,
@@ -94,10 +96,7 @@ export const SignaturePadColorPicker = ({
           className={cn(isNexis && 'border-white/10 bg-[#141618] text-white')}
           align="end"
         >
-          {(isNexis
-            ? (['white', 'black', 'red', 'blue', 'green'] as const)
-            : (['black', 'red', 'blue', 'green'] as const)
-          ).map((key) => (
+          {SIGNATURE_INK_COLORS.map((key) => (
             <SelectItem key={key} value={key}>
               <div
                 className={cn(

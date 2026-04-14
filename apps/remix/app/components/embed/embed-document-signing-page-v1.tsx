@@ -448,7 +448,7 @@ export const EmbedSignDocumentV1ClientPage = ({
                         <Input
                           type="text"
                           id="full-name"
-                          className="mt-2 bg-background"
+                          className="mt-2"
                           disabled={isNameLocked}
                           value={fullName}
                           onChange={(e) => !isNameLocked && setFullName(e.target.value)}
@@ -463,7 +463,7 @@ export const EmbedSignDocumentV1ClientPage = ({
                         <Input
                           type="email"
                           id="email"
-                          className="mt-2 bg-background"
+                          className="mt-2"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           disabled={isEmailLocked}

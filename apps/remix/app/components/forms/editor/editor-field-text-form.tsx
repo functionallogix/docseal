@@ -206,7 +206,6 @@ export const EditorFieldTextForm = ({
                 <FormControl>
                   <Input
                     data-testid="field-form-characterLimit"
-                    className="bg-background"
                     placeholder={t`Character limit`}
                     {...field}
                     value={field.value || ''}

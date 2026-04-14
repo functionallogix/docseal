@@ -112,7 +112,7 @@ export const OrganisationUpdateForm = () => {
                   <Trans>Organisation Name</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input className="bg-background" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,10 +128,10 @@ export const OrganisationUpdateForm = () => {
                   <Trans>Organisation URL</Trans>
                 </FormLabel>
                 <FormControl>
-                  <Input className="bg-background" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 {!form.formState.errors.url && (
-                  <span className="text-foreground/50 text-xs font-normal">
+                  <span className="text-xs font-normal text-foreground/50">
                     {field.value ? (
                       `${NEXT_PUBLIC_WEBAPP_URL()}/o/${field.value}`
                     ) : (

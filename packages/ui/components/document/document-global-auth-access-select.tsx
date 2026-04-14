@@ -64,7 +64,7 @@ export const DocumentGlobalAuthAccessSelect = ({
       onChange={handleChange}
       disabled={disabled}
       placeholder={placeholder || _(msg`Select access methods`)}
-      className="bg-background text-muted-foreground"
+      className="w-full bg-dialog-panel text-muted-foreground"
       hideClearAllButton={false}
       data-testid="documentAccessSelectValue"
     />

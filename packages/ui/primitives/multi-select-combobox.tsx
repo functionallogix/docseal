@@ -114,7 +114,10 @@ export function MultiSelectCombobox<T = OptionValue>({
             role="combobox"
             disabled={loading}
             aria-expanded={open}
-            className={cn('w-[200px] px-3', className)}
+            className={cn(
+              'h-auto min-h-10 w-[200px] justify-between rounded-full border-border bg-dialog-panel px-4 py-2 font-normal hover:bg-dialog-panel/90 hover:text-foreground',
+              className,
+            )}
             data-testid={testId}
           >
             <AnimatePresence>
@@ -146,7 +149,7 @@ export function MultiSelectCombobox<T = OptionValue>({
               className="flex h-4 w-4 items-center justify-center rounded-full bg-gray-300 dark:bg-neutral-700"
               onClick={() => onChange([])}
             >
-              <XIcon className="text-muted-foreground h-3.5 w-3.5" />
+              <XIcon className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
           </div>
         )}
